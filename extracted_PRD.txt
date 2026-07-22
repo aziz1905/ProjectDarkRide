@@ -1,0 +1,361 @@
+PRODUCT REQUIREMENT DOCUMENT (PRD)
+
+Project: Dark Ride Maintenance v1.0 — Master Product Requirement Document
+
+Project Name:
+
+Dark Ride Maintenance (Project v1)
+
+Game Engine:
+
+Unity 2022.3.62f3 (LTS)
+
+Team Structure:
+
+2-Person Core Studio (Duo Developer)
+
+Target Platform:
+
+PC (Windows) — First Release: Itch.io → Steam
+
+Target Timeline:
+
+2 - 3 Bulan (12-Week Weekly Checkpoint Roadmap)
+
+Document Version:
+
+PRD v1.0 Master Edition — July 2026
+
+1. Product Overview & Objectives
+
+Dokumen ini mendefinisikan kebutuhan fungsional dan teknis untuk pengembangan versi v1.0 dari game Dark Ride Maintenance — sebuah game horor simulasi single-player berbasis pemeliharaan wahana rel (Dark Ride) yang dikembangkan menggunakan Unity 2022.3.62f3. Game ini mengusung estetika visual bersih dan tajam 'Clean Industrial Dark Ride' (terinspirasi dari kesuksesan game Shift at Midnight / Job-Sim Horror) yang teroptimasi secara presisi agar lancar 60 FPS di laptop kantoran/mahasiswa biasa (RAM 4GB, Intel UHD/Iris Xe/AMD Vega). Pemain bertugas menjalani masa uji coba 5 hari (5-Day Probation Trial) melakukan inspeksi dan perbaikan pada jalur rel, sensor, 3 Panel Room listrik (Zona 1, 2, & 3) dengan sistem pembacaan Lampu Indikator Kuning (Lampu Kuning Nyala Solid = Listrik Nyala & AMAN, Lampu Kuning Kedap-Kedip = Listrik Mati / Wajib Ganti Fuse), penggantian bohlam lampu (wajib membawa Bohlam Cadangan dari Workshop di inventory), kebersihan wahana, cermin galeri, gurney medis RS, gotong mayat animatronik, dan animatronik rumah hantu dalam durasi shift malam (00:00 – 06:00) menggunakan Maintenance Notebook [TAB] dan 5-Slot Workshop Tool Belt. Jika tugas tidak selesai 100% atau belum kembali ke Workshop sebelum jam 06:00, pemain dikenakan Sanksi Laporan & Retry (Maksimal 5x Retry -> Game Over).
+
+Objective Utama v1: Menciptakan MVP single-player imersif di Unity 2022.3.62f3 dengan 3 Zona Utama Terowongan Rel Dark Ride (Stasiun & Galeri, Graveyard, Hospital & Drop Track), gaya visual tajam Clean Industrial Dark Ride (Shift at Midnight Vibe) tanpa bintik noise VHS buram, sistem inspeksi Panel Room berbasis Lampu Indikator Kuning (Solid Yellow = Listrik Nyala/Aman, Blinking Yellow = Listrik Mati/Fuse Rusak), sistem alur 5-Day Probation Trial & Prologue Walkie-Talkie, 5-Slot Workshop Inventory (termasuk item Bohlam Lampu Cadangan), sistem kejutan bawaan wahana (Default Scares) & anomali horor (Mata merah Graveyard, Red Light Day 5, Cart Passenger), serta ending penolakan kerja (Resign).
+
+2. Scope (In-Scope vs Out-of-Scope)
+
+Dalam Ruang Lingkup (In-Scope v1)
+
+5-Day Probation State Machine: Siklus progres harian Day 1 - Day 5 dengan event spesifik per hari & alur Prologue Walkie-Talkie.
+
+Workshop Tool Belt (5 Slot): Sistem seleksi & inventaris maksimal 5 barang dari Workshop Notice Board (Trash Bag, Cloth, Kunci Panel, Senter, Bohlam Lampu Cadangan, Pack Fuse Baru, Palu, Obeng, Kunci Inggris).
+
+Dark Ride 3-Zone Architecture: 3 Zona terowongan ber-rel tematik (Zona 1: Stasiun & Galeri, Zona 2: Animatronic Graveyard, Zona 3: Abandoned Hospital & Drop Track). Lengkap dengan 3 Panel Room & Tunnel In-Out.
+
+Panel Room Lampu Indikator Kuning System: Mekanik inspeksi fuse panel: Lampu Kuning Nyala Solid = Listrik Nyala & Aman, Lampu Kuning Kedap-Kedip = Listrik Mati / Fuse Rusak.
+
+Default Attraction Scares & Anomaly Triggers: Pop-up animatronic, drop door, air horn 100dB, blackout Graveyard eyes, hospital shadow crossing, peeping entity, red lighting Day 5, back-seat cart passenger.
+
+Tugas Pemeliharaan Spesifik Matrix: Penggantian fuse di Panel Room 1/2/3, ganti bohlam (membawa Bohlam di inventory), lap cermin/lukisan/animatronik, dorong gurney, ganti roda gurney, gotong mayat animatronik, obeng + test ride darkride.
+
+Shift Timer & Retry Manager: Timer 00:00-06:00 dengan trigger Sanksi Laporan & Fade Black jika belum kembali ke Workshop. Max 5 Retries -> Game Over.
+
+Resign Ending Cutscene: Player menolak tawaran kerja tetap di akhir Day 5.
+
+Luar Ruang Lingkup (Out-of-Scope)
+
+Combat System: Tidak ada senjata atau pertarungan lawan monster.
+
+Multiplayer / Online: Murni Single Player offline.
+
+3. Functional Requirements (Technical Specs)
+
+Req ID
+
+Fitur / Sistem
+
+Spesifikasi Teknis Unity 2022.3
+
+FR-01
+
+Movement & Camera
+
+Pemain bergerak menggunakan WASD di lintasan 3 zona rel. Kecepatan jalan 1.5 m/s. Kamera First-Person dikendalikan mouse (FOV 60-70). Collision presisi pada rel, dinding tembok, & tunnel in-out.
+
+FR-02
+
+Notebook Hotkey [TAB]
+
+Tombol [TAB] me-render overlay Notebook Checklist secara instan. Game NO-PAUSE saat [TAB] dibuka. Menampilkan progress 0-100% dan daftar tugas per zona.
+
+FR-03
+
+Workshop Tool Belt (5 Slot)
+
+Player hanya bisa membawa 5 barang dari Workshop (Trash Bag, Cloth, Kunci Panel, Senter, Bohlam Lampu Cadangan, Pack Fuse Baru, Palu, Obeng, Kunci Inggris). Notice Board di Workshop menampilkan instruksi alat harian.
+
+FR-04
+
+Maintenance Interactions & Panel Lights
+
+Interaksi C# Raycast [E]: (1) Kunci Panel -> Open Panel Room 1/2/3 Door, (2) Reading Yellow Indicator Light State (Solid Yellow = SAFE / ON, Blinking Yellow = POWER OFF / BLOWN FUSE), (3) Fuse Replacement -> Swap Blinking Fuse with New Fuse item until Yellow LED turns Solid ON, (4) Trash Bag -> Debris 1.5s, (5) Cloth -> Wiping 2s, (6) Breaker Toggle + Spare Bulb Item in Inventory -> Bulb Replacement, (7) Hammer -> Rel/Lukisan, (8) Screwdriver + Test Ride -> Animatronic Fix, (9) Wrench -> Gurney Wheel, (10) Heavy Carry State -> Mayat RS.
+
+FR-05
+
+Default Scares & Anomaly Triggers
+
+Track trigger memicu: (a) Pop-Up, Drop Door, Air Horn 100dB, (b) Blackout Graveyard Zona 2 mata merah + skeleton walk, (c) Hospital Zona 3 shadow crossing & jumpscare, (d) Peeping entity saat buka panel, (e) Red Light Day 5, (f) Back-seat cart passenger chase di Downhill Green Track.
+
+FR-06
+
+5-Day Probation & Retry Controller
+
+State Machine mengelola Day 1-5. Timer 00:00 - 06:00. Tepat 06:00 jika belum di Workshop / progress < 100%: Trigger UI 'Sanksi Laporan' + Fade Black + Increment Retry Count. Jika Retry == 5 -> Game Over Screen.
+
+FR-07
+
+Resign Ending Cutscene System
+
+Di akhir Day 5, memicu cutscene penawaran karyawan tetap. Karakter pemain menolak (Resign Cutscene & Roll Credits).
+
+4. Non-Functional Requirements & URP Setup Guidelines for Programmers
+
+Bagian ini memberikan panduan konfigurasi teknis Universal Render Pipeline (URP) di Unity 2022.3.62f3 yang dikhususkan untuk Programmer (Anggota B) guna menjamin performa 60 FPS di laptop office/student:
+
+Parameter Grafis URP
+
+🔴 LOW Preset (Laptop Office 4GB)
+
+🟡 MEDIUM Preset (Laptop Iris Xe / Vega 8GB)
+
+🟢 HIGH Preset (PC Desktop / Gaming)
+
+URP Asset File
+
+URP_LowQuality.asset
+
+URP_MediumQuality.asset
+
+URP_HighQuality.asset
+
+Render Scale (Resolusi Internal)
+
+0.75x (720p internal upscale ke 1080p)
+
+0.85x (900p internal upscale ke 1080p)
+
+1.0x (Native Full HD 1080p)
+
+Flashlight Shadow Distance & Res
+
+Jarak 10m / Shadow Map 512px / Hard Shadows
+
+Jarak 20m / Shadow Map 1024px / Soft Shadows Low
+
+Jarak 35m / Shadow Map 2048px / Soft Shadows High
+
+Shadow Cascades (Main Light)
+
+1 Cascade (No Cascade Split)
+
+2 Cascades
+
+4 Cascades
+
+Anti-Aliasing Mode
+
+OFF (Disabled for 0% GPU Overhead)
+
+FXAA (Fast Approximate Anti-Aliasing)
+
+SMAA / TAA (Subpixel Morphological / Temporal)
+
+Global Texture Mipmap Limit
+
+Limit = 2 (Quarter Res / 512px Max)
+
+Limit = 1 (Half Res / 1024px)
+
+Limit = 0 (Full Res / 2048px)
+
+Post-Processing Pipeline
+
+Clean Crisp Color Grading Only (No Noise)
+
+Color Grading + Bloom Low + Subtle Grain
+
+Color Grading + Bloom High + Ambient Occlusion
+
+C# Implementation Code Snippets for Lead Programmer (Anggota B)
+
+1. Swap URP Quality Asset saat pemain memilih Preset Grafis:   GraphicsSettings.currentRenderPipeline = urpLowAsset;   QualitySettings.SetQualityLevel(0);2. Mengatur URP Render Scale secara Dinamis:   var urpAsset = (UniversalRenderPipelineAsset)GraphicsSettings.currentRenderPipeline;   urpAsset.renderScale = 0.75f;3. Memotong Resolusi Tekstur Global (Save VRAM):   QualitySettings.globalTextureMipmapLimit = 2; // Low (Quarter Res)4. Menyimpan & Memuat Pengaturan Grafis (Auto-Save PlayerPrefs):   PlayerPrefs.SetInt("GraphicsQuality", qualityIndex);   PlayerPrefs.Save();
+
+5. Shift Result Flow & Fail Condition System
+
+FAIL STATE SYSTEM: FAIL STATE & RETRY FLOW (SANKSI LAPORAN & GAME OVER):Jam 06:00:00 Tiba / Pemain Belum Kembali ke Workshop → System Check: ChecklistProgress < 100% atau InWorkshop == False→ Screen Fade Black + Bunyi Sirine Shift Pagi→ Tampil UI 'SURAT PEMBERITAHUAN SANKSI LAPORAN' dari Manajemen Taman Hiburan→ Rincian: 'Anda gagal menyelesaikan inspeksi & perawatan atau belum kembali ke Workshop tepat waktu.'→ RetryCount += 1→ IF RetryCount < 5: Button [Ulangi Shift Hari Ini (Retry Ongoing Day)]→ IF RetryCount == 5: Trigger GAME OVER Screen -> Forced Return to Main Menu / Day 1.
+
+6. Team Structure & Division of Responsibilities (Tim 2 Orang)
+
+Pengembangan v1 dilakukan secara independen oleh 2 orang anggota tim (Duo Developer) dengan pembagian peran dan tanggung jawab teknis sebagai berikut:
+
+Anggota A (Anda — Product Manager, Lead Artist & Co-Tech Art): Memegang GDD, PRD, Project Management (PM) & Checkpoints, Level Design (Layout 3 Zona Rel di Unity sesuai Peta Game), Narrative Design (Lore, Notebook Notes, Dialogue Walkie-Talkie), 3D Modeling Clean Crisp PBR, Texturing & Rigging (Props, Panel Room Yellow LED Indicator, Animatronik RS & Kuburan, Ghost Cart), 3D Animation, dan 50% Technical Art (URP Lighting setup, Dynamic Flashlight Shadow, Yellow Light Shader Graph, Occlusion Culling 3 Zona).
+
+Anggota B (Teman Anda — Lead Programmer, Sound Engineer & Co-Tech Art): Memegang seluruh C# Gameplay Programming (WASD Movement, Flashlight Controller, Raycast Interaction [E]), Systems Programming (Notebook Checklist [TAB] Manager, Workshop Tool Belt 5 Slot, Yellow Indicator Light State Logic, Maintenance Interaction Handlers, 5-Day Probation State Machine), Shift Timer 00:00-06:00 & Fail State Controller (Sanksi Laporan & Max 5x Retry UI), URP Quality Asset Management (C# URP Render Scale & Mipmap Swapper), Sound Engineering (3D HRTF Spatial Audio, Walkie-Talkie SFX, Klakson 100dB, Ambient loop 3 zona), dan 50% Technical Art (C# Animator controllers, Physics triggers, Dynamic UI integration, Unity Audio Mixer).
+
+7. 12-Week Production Roadmap & Weekly Checkpoints (Target 2-3 Bulan)
+
+Roadmap berikut membagi pengerjaan v1.0 selama 12 Minggu (maksimal 3 bulan) dengan target serah terima (checkpoint) yang sangat jelas per minggu antara Anggota A dan Anggota B:
+
+Minggu & Fase
+
+Tugas Anggota A (PM, Art, Design, TechArt 50%)
+
+Tugas Anggota B (Programmer, Sound, TechArt 50%)
+
+Weekly Checkpoint Deliverable
+
+M01 — Core Setup(Fase 1)
+
+Blokade Graybox 3 Zona Rel & Workshop sesuai Peta Game di Unity 2022.3.62f3. Master GDD/PRD.
+
+Project Setup Unity, URP 3 Quality Assets setup (Low/Med/High), WASD Character Controller, First-Person Camera Mouse Look, Senter Toggle.
+
+Player berjalan di 3 zona graybox & menyalakan senter.
+
+M02 — Workshop & Tools(Fase 1)
+
+3D Blockout Workshop, Notice Board, 3 Panel Rooms & Yellow Indicator Light Mesh, Breaker, Item Tools (Trash Bag, Cloth, Kunci, Bohlam Lampu, Palu, Obeng).
+
+Raycast Interaction System + Hold [E], Tool Belt Inventory 5 Slot, Yellow Panel Light state logic, Workshop item pickup logic.
+
+Player memegang tool belt 5 slot & membuka panel membaca lampu indikator kuning.
+
+M03 — Notebook & State(Fase 1)
+
+UI Mockup Notebook [TAB], Walkie-Talkie audio logs, Model dasar Animatronic Suster/Dokter RS & Kuburan.
+
+Notebook Hotkey [TAB] (No-Pause Overlay System), 5-Day Probation State Machine, Task Progress Manager.
+
+[TAB] menampilkan Notebook real-time & State Day 1-5 aktif.
+
+M04 — Timer & Retry System(Fase 1)
+
+Design UI Jam Shift (00:00-06:00), Mockup Cutscene Sanksi Laporan, SFX Requirement List.
+
+Shift Timer Manager (00:00-06:00), Sanksi Laporan & Retry System (Fade Black, Max 5x Retry -> Game Over).
+
+CHECKPOINT MILESTONE 1: Vertical Slice Core Loop Selesai.
+
+M05 — Default & Anomaly Scares(Fase 2)
+
+3D Models & Rigging pop-up props (Drop door, Pop-up monster, Air horn prop), Skeleton Walk Model, Red Light VFX.
+
+Track Sensor Trigger system, Anomaly Event Controller (Graveyard eyes, Hospital shadow crossing, Red Light Day 5).
+
+Sensor rel terinjak memicu default scare & event anomali aktif.
+
+M06 — Theme Zones & Tasks(Fase 2)
+
+3D Assets Terowongan 3 Zona (Gallery Zona 1, Graveyard Zona 2, Hospital Zona 3: Gurney, Cermin, Animatronik RS, Mayat).
+
+Maintenance Mechanics (Lap 2s, Gurney Push, Gurney Wheel Repair, Carry Mayat State, Obeng + Test Ride, Ganti Bohlam, Fuse Replacement).
+
+Seluruh 3 Zona Rel ber-asset tematik & 100% matriks maintenance aktif.
+
+M07 — Audio & Lighting(Fase 2)
+
+URP Lighting Setup per zona (Strobes Zona 1, Neon flicker Zona 3, Red Light Day 5, Occlusion Culling 3 zona).
+
+3D Spatial SFX (Walkie-Talkie, Desis pneumatik, Klakson 100dB, Ambient loop 3 zona, Footsteps), Unity Audio Mixer.
+
+Terowongan rel tampak atmosferik & 3D Spatial Audio terpasang.
+
+M08 — Special Cart & Ending(Fase 2)
+
+3D Ghost Cart model, Back-seat passenger entity model, Ending Cutscene UI & Resign dialogue.
+
+Back-seat cart passenger chase logic di Downhill Green Track, Fast Cart Drive system, Resign Ending Cutscene Controller.
+
+CHECKPOINT MILESTONE 2: Feature Complete Alpha Build Selesai.
+
+M09 — Polish & Tutorial(Fase 3)
+
+UI/UX Polish (HUD, Tooltips, Pause Menu UI Graphics Settings, UI Sanksi Laporan), Environmental Storytelling (Note/Log poster).
+
+Tutorial hint triggers di Zona 1, Bug fixing task interaction, Shift restart logic, Graphics Menu C# Manager.
+
+Game ramah dimainkan pemain baru dengan petunjuk awal & Graphics Menu jelas.
+
+M10 — Optimization & QA(Fase 3)
+
+Texture Compression, Mesh LODs, Lightmap Baking fine-tuning (Target 60 FPS PC Low-end).
+
+Profiler optimization (GC Allocations, C# scripts), Fix collision & sequence glitches.
+
+Game berjalan stabil 60 FPS tanpa memory leak atau bug kritis.
+
+M11 — Itch.io Release(Fase 3)
+
+Key Art Poster, Itch.io Banner & Cover, Gameplay Trailer (30-60 detik), Screenshots.
+
+Build Standalone Windows (.exe), Installer packaging, Upload & Setup Page di Itch.io.
+
+PUBLIC DEMO / ALPHA RELEASE ON ITCH.IO LIVE!
+
+M12 — Steam & Wishlist(Fase 3)
+
+Streamer Outreach Kit (Email/DM demo ke streamer horor YouTube/Twitch).
+
+Steamworks registration ($100 fee), Setup Steam Store Page ('Coming Soon') untuk Wishlist.
+
+CHECKPOINT FINAL: Steam Store Page Live & Wishlist Building Active.
+
+8. Recommended Publishing Strategy & Platform Selection
+
+STRATEGI PUBLISHING DIANJURKAN: Rekomendasi Utama: Publish Demo / Early Alpha terlebih dahulu di platform ITCH.IO, kemudian rilis halaman 'Coming Soon' di STEAM untuk mengumpulkan Wishlist menuju Full Commercial Launch.
+
+Tahap 1: Release di Itch.io (Minggu 11)
+
+Alasan Utama: Itch.io adalah hub terbesar bagi streamer & YouTuber horor indie (seperti Markiplier, ManlyBadassHero, Alpha Beta Gamer). Mereka aktif mencari game horor indie unik berdurasi pendek/menengah.
+
+Keuntungan Strategis: (1) Tanpa biaya registrasi awal. (2) Validasi pasar gratis & pengumpulan feedback/bug report langsung dari komunitas. (3) Membangun publisitas organik secara dramatis tanpa budget marketing.
+
+Tahap 2: Release Steam Store Page 'Coming Soon' & Wishlist Building (Minggu 12)
+
+Alasan Utama: Steam adalah pasar komersial utama untuk game PC. Namun rilis di Steam membutuhkan $100 Steamworks Fee per game.
+
+Strategi Eksekusi: Gunakan hype dan trafik dari Itch.io untuk mengarahkan pemain menekan tombol 'Add to Wishlist' di Steam. Setelah Wishlist mencapai target (misal 1.000 - 5.000 Wishlists), luncurkan rilis komersial v1.0 di Steam.
+
+9. 3D Asset Inventory & Implementation Techniques
+
+Berikut adalah daftar lengkap aset 3D yang wajib diimplementasikan untuk game Dark Ride Maintenance v1.0, dilengkapi dengan rekomendasi teknik 3D Modeling (Blender), Texturing, Rigging, dan Setup Material di Unity (URP):
+
+Kategori Aset 3D
+
+Daftar Objek 3D Spesifik
+
+Teknik Modeling & Texturing (Blender)
+
+Teknik Implementasi di Unity (URP)
+
+1. Modular Environment & Track(Arsitektur 3 Zona Rel)
+
+• Dinding Terowongan Modular 3 Zona (Lurus, S-Curve, Doorway)• Rel Besi Dark Ride (Landai, Naik Red Line, Turun Green Line)• Peron Loading Platform & Window Control Booth• Dinding & Plafon Bangsal Rumah Sakit Tua (Zona 3)• 3 Panel Rooms (Kotak Biru Zona 1, 2, & 3)• Workshop Room & Notice Board (Sudut Kanan Bawah)
+
+• Modular Grid Snapping di Blender (per 4m)• UV Unwrapping Clean Tileable / Color Palette Map• Low-Poly Geometry + Baked Normal Maps untuk baut/paku rel
+
+• Unity URP Lit Material (PBR Clean Crisp: Besi Mengkilap, Beton Basah, Plaster RS)• Vertex Color Blending via Shader Graph (Noda kotor/oli)• Occlusion Culling Static
+
+2. Workshop & Maintenance Props(Item Perawatan & Interaksi)
+
+• 5-Slot Workshop Items (Trash Bag, Cloth, Kunci Panel Room, Senter, Bohlam Lampu Cadangan, Pack Fuse Baru, Palu, Obeng, Kunci Inggris)• 3 Panel Room Fuse Boxes + Yellow Indicator LED Light Mesh (Engsel Pintu, Sekring Utuh vs Meleleh)• Breaker Saklar Listrik Utama Tuas Besar• Pressure Sensor Rel (Sensor Terinjak Staf)• Cleaning Tools & Tumpahan Oli / Fluid Medis
+
+• Hero Asset Modeling di Blender (Mid-Poly Rapi & Crisp)• Dedicated UV Unwrapping / Color Palette Map• PBR Texture Painting (Substance / Blender) untuk detail cat terkelupas, Lampu Indikator LED Mesh, & nomor seri panel
+
+• Mesh / Texture Swap State (Fuse Mati ↔ Fuse Baru, Bohlam Rusak ↔ Bohlam Baru)• URP Emissive Shader Graph untuk Lampu Indikator Kuning (Solid Yellow = Power ON / Blinking Yellow = Power OFF)• RigidBody & Sphere Collider untuk Tool Belt Selection• Decal Projector URP untuk Tumpahan Oli/Cairan Medis
+
+3. Animatronics & Scares Props(Properti Horor & Kejutan)
+
+• Animatronik Suster / Dokter RS Tua (Zona 3)• Gurney RS / Tempat Tidur Pasien Berdarah (Dapat didorong & roda lepas)• Animatronik Mayat RS (Dapat digotong)• Animatronik Tengkorak / Nenek Sihir Kuburan (Zona 2)• Drop Door Plafon Bermesin Pneumatik• Air Horn Prop 100dB• Lampu Neon Fluorescent Flicker RS
+
+• Rigged Character & Mechanical Prop Mesh di Blender (Mechanical Joint & Pneumatics detail)• Keyframe Animation (Pop-up jump, Drop door collapse, Skeleton walk animation, Kepala berputar)• PBR Texturing (Kulit karet animatronik retak, kain gorden RS lapuk)
+
+• Unity Animator Controller (State: Idle, Triggered, Jammed, Walking Skeleton)• Physics Push Interaction pada Gurney RS & Carry State Mayat• Dynamic Point Light / Red Light Component pada Lampu
+
+4. Ride Vehicles & Mystery Assets(Wahana Kereta & Anomali)
+
+• Ghost Cart (Kereta Pengunjung Wahana 2-Seater + Roda Rel)• Back-seat passenger entity model (Day 5 Climax di Downhill Track)• Damaged Staff Patrol Cart (Kereta Staf Hilang Hancur)• Automatic Ride Photo Camera System (Kamera Retro + Flash Prop)• Mesh / Billboard Bayangan Hitam (Anomali Melintas RS & Mengintip)
+
+• Hero Vehicle Modeling & Damage Sculpting di Blender• Unique PBR Texture Map (Cat fiberglass kusam, goresan bumper)• Alpha / Billboard Texture untuk Bayangan Anomali
+
+• Unity Spline / Waypoint Movement System untuk Kereta Meluncur• Spot Light Flash Component pada Ride Camera• Billboard / Particle System Effect pada Bayangan Melintas

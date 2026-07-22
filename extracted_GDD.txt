@@ -1,0 +1,435 @@
+GAME DESIGN DOCUMENT (GDD)
+
+Project: Dark Ride Maintenance v1.0 — Clean Industrial Dark Ride Edition
+
+Project Name:
+
+Dark Ride Maintenance (Project v1)
+
+Game Engine:
+
+Unity 2022.3.62f3 (LTS)
+
+Concept & Lead:
+
+Ignatzius (GDD, PM, Level/Narrative Design, 3D Art & Animation, 50% Tech Art)
+
+Technical Lead:
+
+Partner (C# Programmer, Sound Engineer, 50% Tech Art)
+
+Target Platform:
+
+PC (Windows) — First Launch: Itch.io → Steam
+
+Genre & Art Style:
+
+First-Person Job-Sim Horror / Clean Industrial Dark Ride Style (Shift at Midnight Inspired v1.0)
+
+1. Executive Summary & Narrative Concept
+
+Pemain berperan sebagai teknisi pemeliharaan malam (Night Shift Maintenance Staff) di sebuah taman hiburan tua. Sebelum resmi diterima menjadi karyawan tetap (Permanent Staff), pemain harus menjalani masa Uji Coba / Trial selama 5 Hari Kerja Shift Malam (00:00 – 06:00). Fokus utama permainan adalah menyelesaikan tugas teknis spesifik yang tercantum di Catatan Tugas Harian (Daily Maintenance Note) pada wahana DARK RIDE RUMAH HANTU — wahana indoor bertema horor dengan rute kereta rel (Ghost Carts / Ride Vehicles) yang terbagi secara terstruktur ke dalam 3 ZONA UTAMA WAHANA berdasarkan Peta Jalur Game (Game Map Layout).
+
+Game Pillars & Clean Visual Style (Shift at Midnight Inspired)
+
+Daily Maintenance Note & Workshop Board Focus: Setiap shift/hari memberikan daftar pekerjaan teknis yang jelas dan spesifik di notebook [TAB] dan papan petunjuk alat di Workshop.
+
+Clean Industrial Dark Ride Art Style (Shift at Midnight Vibe): Mengusung estetika visual yang bersih, tajam (crisp 1080p), dan kontras tinggi ala game 'Shift at Midnight'. Permukaan PBR mengkilap (besi rel, cermin, ubin RS, panel listrik) dengan sorotan senter realistis dan tanpa bintik noise VHS buram yang mengganggu penglihatan.
+
+Low-End Office Laptop Optimization (60 FPS Ready): Karena tidak memakai shader noise VHS bertumpuk, pemrosesan GPU justru makin adem! Menggunakan Lightmap Baking, Occlusion Culling 3 Zona, Texture Mipmapping 1K, dan Render Scale URP yang menjamin 60 FPS di laptop RAM 4GB (Intel UHD / Iris Xe / AMD Vega).
+
+Yellow Light Panel Inspection Mechanics: Mekanik sederhana & intuitif pada 3 Panel Room: Lampu Indikator Kuning Nyala Solid = Listrik Normal & Fuse Aman; Lampu Indikator Kuning Kedap-Kedip = Listrik Mati / Fuse Rusak (Wajib Ganti Fuse Baru).
+
+Unplanned Emergency Incidents: Kejadian darurat mekanik tak terduga yang terpicu secara dinamis (misal: kereta meluncur sendiri setelah fuse diganti, lampu neon mati mendadak, desis pneumatik bocor).
+
+Default Attraction Scares & Ambience: Kejutan bawaan wahana (pop-up prop mekanik, drop door jatuh, air horn 100dB) yang terpicu saat staf berjalan di atas sensor rel.
+
+5-Day Probation Timeline & Strict Retry Limit: Evaluasi masa percobaan 5 hari. Pemain wajib kembali ke Workshop sebelum jam 06:00 pagi. Gagal = Sanksi Laporan & Retry (Maksimal 5x Retry -> GAME OVER).
+
+SYARAT UTAMA SHIFT & PROBATION: DEADLINE SHIFT & ATURAN SANKSI (MAX 5 RETRIES):1. Pemain wajib menyelesaikan checklist [TAB] dan kembali ke Workshop sebelum 06:00 Pagi.2. Gagal sebelum 06:00 -> Layar Memudar Hitam (Fade Black) + Sanksi Laporan -> Restart Ongoing Day.3. Gagal 5 Kali berturut-turut pada day yang sama -> GAME OVER (Kembali ke Main Menu / Forced Day 1 / New Game).
+
+2. Alur Cerita & Progress Harian (5-Day Probation Narrative)
+
+1. Day-1 (Prologue & Pengenalan Workflow):   • Scene Awal: Game dimulai dengan scene pemain melihat tempat kerja sambil jalan ke tempat kerjanya di malam hari.   • Walkie-Talkie: Operator memberikan arahan dan instruksi awal melalui Walkie-Talkie.   • Notebook Checklist [TAB]: Pemain mengecek catatan tugas harian dengan menekan tombol [TAB].   • Workshop Equipment: Pemain menuju Workshop (di sudut kanan bawah area wahana) untuk mengambil barang-barang yang diperlukan (maksimal 5 barang sekaligus dalam inventory).   • Notice Board: Papan petunjuk di Workshop memberi instruksi alat apa saja yang diperlukan untuk tugas shift tersebut.   • Peralatan Utama Day-1: Trash Bag (sampah), Cloth/Lap (cairan/kaca), Kunci Panel Room (akses panel room 1, 2, 3), Pack Fuse Baru, Senter (penerangan saat lampu mati sesaat karena generator dimatikan bos kikir di malam hari), Bohlam Lampu Cadangan (wajib dibawa di inventory jika ada tugas ganti lampu).   • Inspeksi Panel Listrik: Pemain membuka pintu Panel Room menggunakan Kunci Panel. Memeriksa status Lampu Indikator Kuning (Lampu Kuning Nyala Solid = Listrik Nyala & Aman; Lampu Kuning Kedap-Kedip = Listrik Mati / Wajib Mengganti Fuse Baru dari inventory).   • Eksekusi & Return: Pemain menyusuri 3 Zona Wahana, mengeksekusi seluruh checklist lalu WAJIB kembali ke Workshop sebelum jam 06:00 Pagi.   • Sanksi & Retry: Jika jam 06:00 tiba dan belum kembali / checklist < 100%, pemain dikenakan sanksi laporan, layar memudar hitam (fade black), dan mengulang ongoing day (maksimal 5x fail -> Game Over ke Main Menu).2. Day-2 (Pekerjaan Tingkat Sedang):   • Hampir sama dengan Day 1, tetapi ditambah variasi tugas tingkat sedang (ganti bohlam lampu membawa Bohlam di inventory, cek & ganti fuse saat Lampu Kuning Kedap-Kedip di Panel Room 1/2/3, lap cermin galeri di Zona 1, perbaiki lukisan jatuh).3. Day-3 & Day-4 (Eskalasi Ketegangan & Anomali):   • Ketegangan meningkat pesat dari sedang hingga sangat tinggi.   • Bermunculan event anomali di Zona 2 & 3, entitas yang mengintip saat pemain mengecek panel / membetulkan sesuatu di zona rel, dan kejutan animatronik.4. Day-5 (Special Event, Climax & Ending):   • Seluruh lampu di semua ruangan di 3 Zona mendadak berubah menjadi MERAH (Red Emergency Lighting).   • Beban tugas maintenance sangat hectic dan serba darurat.   • Special Cart Chase Event: Ada entitas yang menumpangi kereta wahana di bagian belakang saat melintasi jalur meluncur Zona 3! Pemain yang berada di depan harus secepat mungkin memacu kereta menyusuri jalur turun (Green Track) menuju stasiun dan kabur dari kereta secepatnya.   • Ending: Lolos dari 5 hari uji coba, si anak/staf memutuskan TIDAK INGIN LANJUT KERJA (Resign / Menolak tawaran karyawan tetap).
+
+3. Layout 3 Zona Utama Wahana (Game Map Architecture)
+
+Berdasarkan rancangan denah Peta Wahana (Game Map), tata letak lintasan dan fasilitas wahana dibagi secara efisien menjadi 3 ZONA UTAMA yang dihubungkan oleh sekat terowongan penghubung (Tunnel In-Out):
+
+Nama Zona Wahana
+
+Elemen Jalur & Fasilitas Peta
+
+Tema Utama & Pekerjaan Spesifik
+
+ZONA 1 — Stasiun & Gallery Zone(Sisi Kiri Peta)
+
+• Peron Loading Platform (Stasiun awal/akhir)• Workshop Staf (Sudut Kanan Bawah)• Panel Room 1 (Kotak Biru Tengah Zona 1)• Jalur Rel Naik (Red Line Entrance) & Landai (Black Line)• Tunnel In-Out Penghubung ke Zona 2
+
+Stasiun Keberangkatan & Galeri Lukisan/Cermin (Clean Vintage Wood & Gold Tone). Fokus: Pembersihan sampah peron, perbaiki lukisan miring/jatuh, lap patung cermin, ganti bohlam lampu galeri (bawa di inventory), & cek Lampu Indikator Kuning Panel Room 1 (Ganti Fuse jika Lampu Kuning Kedap-Kedip).
+
+ZONA 2 — Animatronic Graveyard Zone(Sisi Tengah Peta)
+
+• Jalur Rel Winding Loops & Tikungan S (Black Line)• Panel Room 2 (Kotak Biru Atas Zona 2)• 2x Tunnel In-Out (Penghubung Zona 1 & Zona 3)• Dinding Penyekat Tembok (Olive Green Walls)
+
+Area Panggung Kuburan & Animatronik Tengkorak (Clean UV Blacklight Glow). Fokus: Lap animatronik kotor, betulkan posisi animatronik macet/jatuh ke rel, perbaiki komponen copot + Test Ride Darkride, & cek Lampu Indikator Kuning Panel Room 2 (Ganti Fuse jika Lampu Kuning Kedap-Kedip). (Anomali Day 4 Blackout & Mata Merah).
+
+ZONA 3 — Hospital Zone & Drop Track(Sisi Kanan Peta)
+
+• Jalur Rel Turun / Downhill Fast Track (Green Line Sisi Kanan)• Panel Room 3 (Kotak Biru Kanan Zona 3)• Bangsal RS & Ruang Medis Tua• Tunnel In-Out Menuju Peron Kepulangan
+
+Bangsal Rumah Sakit Tua & Turun Rel Curam (Clean Crisp Neon Green). Fokus: Lap animatronik suster/dokter, betulkan komponen copot + Test Ride, dorong gurney RS, perbaiki roda gurney (Kunci Inggris), gotong mayat animatronik jatuh ke gurney, & cek Lampu Indikator Kuning Panel Room 3 (Ganti Fuse jika Lampu Kuning Kedap-Kedip). (Special Event Day 5 Cart Chase di Jalur Turun).
+
+4. Game Loops
+
+Second-to-Second Loop (Inti Gameplay)
+
+Mekanik inti pemain setiap detik: berjalan menyusuri rel Dark Ride di 3 Zona utama sambil memegang senter dan alat kerja. Membuka Catatan Tugas Harian via tombol [TAB] untuk melihat lokasi & instruksi perbaikan. Pemain berinteraksi aktif dengan objek spesifik yang ada di Note: membuka Panel Room dengan Kunci Panel, mengecek Lampu Indikator Kuning (Lampu Kuning Nyala Solid = Listrik Nyala & Aman; Lampu Kuning Kedap-Kedip = Listrik Mati / Fuse Rusak $ightarrow$ Wajib Mengganti Fuse Baru), memasang bohlam lampu (bawa di inventory), mengelap tumpahan oli rel, memindahkan posisi animatronik macet, mendorong gurney RS, menggotong mayat animatronik, dan menarik lever rem darurat saat terjadi insiden.
+
+Minute-to-Minute Loop (Siklus Shift Malam)
+
+Shift Briefing & Workshop Walk (00:00 — Loading Platform & Workshop): Berjalan menyusuri tempat kerja, menerima petunjuk operator via Walkie-Talkie, cek Notebook [TAB], dan mengambil maksimal 5 alat di Workshop (termasuk Kunci Panel Room, Fuse Baru, & Bohlam Lampu).
+
+Track Inspection & Panel Check (00:15 — 04:30): Menyusuri 3 zona rel (Zona 1 Galeri, Zona 2 Kuburan, Zona 3 RS) untuk menyelesaikan tugas di Note (buka Panel Room 1/2/3, baca Lampu Indikator Kuning, ganti fuse jika Lampu Kuning Kedap-Kedip, ganti bohlam dari inventory, lap lukisan/cermin/animatronik, perbaiki baut rel).
+
+Unplanned Emergency & Anomaly Response (04:30 — 05:30): Terjadi insiden darurat teknis & anomali (blackout di Graveyard Zona 2, sosok melintas di RS Zona 3, entitas mengintip saat buka panel, kereta meluncur di jalur turun Green Track Zona 3). Pemain merespons cepat.
+
+Final Inspection & Workshop Return (05:30 — 06:00): Memastikan progress Note di [TAB] 100% dan kembali ke Workshop di sudut kanan bawah sebelum jam 06:00 pagi agar tidak KENA SANKSI LAPORAN & FADE BLACK.
+
+5. System & Game Mechanics
+
+Mekanik Inspeksi Panel Listrik & Lampu Indikator Kuning (Yellow Panel Indicator)
+
+Setiap Zona Wahana memiliki 1 Ruang Panel Listrik (Panel Room 1 di Zona 1, Panel Room 2 di Zona 2, dan Panel Room 3 di Zona 3). Pemain menggunakan Kunci Panel Room untuk membuka kotak panel fuse. Di dalam kotak panel terdapat Lampu Indikator Kuning per sirkuit:
+
+Lampu Indikator Kuning NYALA SOLID (ON / Steady Yellow): Status: AMAN / LISTRIK NYALA. Fuse bekerja normal dan sirkuit listrik zona aman. Pemain tidak perlu mengganti fuse.
+
+Lampu Indikator Kuning KEDAP-KEDIP (Blinking Yellow): Status: LISTRIK MATI / FUSE RUSAK. Fuse mengalami putus/kerusakan sirkuit. Pemain WAJIB melepas fuse lama dan memasang Fuse Baru dari inventory hingga lampu kuning kembali NYALA SOLID.
+
+Inventory & Workshop Tool System (Max 5 Items)
+
+Peralatan Workshop
+
+Fungsi Utama & Peruntukan
+
+Mekanik Interaksi
+
+Trash Bag (Kantong Sampah)
+
+Membersihkan puing-puing sampah, bungkus makanan, & kotoran di peron & rel 3 zona.
+
+Interaksi [E] tahan 1.5 detik per titik sampah.
+
+Cloth (Kain Lap)
+
+Mengelap kaca, cermin galeri Zona 1, cairan medis/oli tumpah, lukisan, & animatronik kotor.
+
+Interaksi [E] tahan 2 detik untuk pembersihan.
+
+Kunci Panel Room
+
+Membuka pintu 3 Ruang Panel Listrik (Panel Room 1, 2, & 3) di masing-masing zona untuk inspeksi Lampu Indikator Kuning.
+
+Unlocks 3 Panel Room Doors.
+
+Senter (Flashlight)
+
+Penerangan utama saat terjadi blackout / mati lampu sesaat.
+
+Toggle [F], baterai dapat meredup.
+
+Bohlam Lampu Cadangan
+
+Wajib dibawa dari Workshop di inventory (1 Slot) jika ingin mengganti lampu rusak/berkedip di zona tertentu.
+
+Dipasang pada socket setelah breaker dimatikan.
+
+Pack Fuse Baru
+
+Fuse cadangan untuk mengganti fuse saat Lampu Indikator Kuning kedap-kedip di Panel Room 1, 2, & 3.
+
+Dipasang di slot panel hingga lampu kuning Nyala Solid.
+
+Palu (Hammer)
+
+Membetulkan rel bengkok/baut longgar dan memasang lukisan jatuh di Zona 1.
+
+Interaksi perbaikan mekanis.
+
+Obeng (Screwdriver)
+
+Memperbaiki komponen animatronik yang copot di Zona 2 (Kuburan) & Zona 3 (RS).
+
+Membutuhkan Test Ride Darkride agar terchecklist.
+
+Kunci Inggris (Wrench)
+
+Memperbaiki gurney RS yang copot rodanya di Zona 3 (Rumah Sakit).
+
+Perbaikan roda gurney medis.
+
+Default Attraction Scares (Horor Bawaan Wahana)
+
+Pop-Up Animatronic Shock: Boneka monster/suster RS tiba-tiba melompat maju 30cm dari ceruk dinding dengan suara desis pneumatik nyaring.
+
+Drop Door Banging: Pintu jebakan kayu/besi di atas plafon tiba-tiba jatuh terbanting 5cm di atas kepala pemain.
+
+Air Horn & Audio Blast: Klakson angin bertekanan tinggi tiba-tiba membunyikan suara jeritan klakson 100dB di dekat telinga pemain.
+
+Efek Kejutan pada Pemain: Kejutan default ini menyebabkan guncangan kamera singkat (camera flinch), membuat senter meredup/terlepas sementara, dan menaikkan Panic Meter.
+
+6. Matriks Tugas Pemeliharaan (Maintenance Tasks Breakdown)
+
+Zona Wahana
+
+Nama Pekerjaan Maintenance
+
+Alat / Mekanik
+
+Tingkat Kesulitan
+
+Semua Zona
+
+Membersihkan puing-puing sampah di rel/peron
+
+Trash Bag
+
+Mudah
+
+Semua Zona
+
+Mengganti lampu yang rusak/berkedip
+
+Matikan Breaker + Membawa Bohlam Lampu di Inventory (1 Slot)
+
+Sedang
+
+Semua Zona
+
+Inspeksi Panel Listrik & Ganti Fuse (Lampu Kuning Kedap-Kedip)
+
+Kunci Panel + Fuse Baru (Ganti Fuse jika Lampu Kuning Kedap-Kedip; Nyala Solid = Listrik Normal/AMAN)
+
+Sedang
+
+Semua Zona
+
+Membetulkan bagian jalur rel yang rusak
+
+Palu (Hammer)
+
+Sedang
+
+Zona 1 (Gallery)
+
+Membetulkan posisi lukisan miring
+
+Tangan (Interaksi [E])
+
+Mudah
+
+Zona 1 (Gallery)
+
+Mengelap lukisan kotor / berdebu
+
+Cloth (Kain Lap)
+
+Sedang
+
+Zona 1 (Gallery)
+
+Mengelap patung cermin (mirror statue model)
+
+Cloth (Kain Lap)
+
+Sedang
+
+Zona 1 (Gallery)
+
+Membetulkan lukisan yang jatuh ke lantai
+
+Palu (Hammer)
+
+Sedang
+
+Zona 2 (Graveyard)
+
+Membetulkan posisi animatronik jatuh/menghalangi rel
+
+Tangan (Angkat/Geser)
+
+Mudah
+
+Zona 2 (Graveyard)
+
+Mengelap animatronik kotor
+
+Cloth (Kain Lap)
+
+Sedang
+
+Zona 2 (Graveyard)
+
+Perbaiki animatronik copot komponen + Test Ride
+
+Obeng + Test Ride Darkride
+
+Susah
+
+Zona 3 (Hospital)
+
+Membetulkan posisi animatronik suster/dokter di rel
+
+Tangan (Angkat/Geser)
+
+Mudah
+
+Zona 3 (Hospital)
+
+Mengelap animatronik suster/dokter kotor
+
+Cloth (Kain Lap)
+
+Sedang
+
+Zona 3 (Hospital)
+
+Perbaiki animatronik RS copot komponen + Test Ride
+
+Obeng + Test Ride Darkride
+
+Susah
+
+Zona 3 (Hospital)
+
+Mendorong gurney RS yang menghalangi rel
+
+Tangan (Dorong Gurney)
+
+Mudah
+
+Zona 3 (Hospital)
+
+Membetulkan gurney RS copot roda
+
+Kunci Inggris (Wrench)
+
+Susah
+
+Zona 3 (Hospital)
+
+Menggotong mayat animatronik jatuh dari gurney
+
+Carry State (Cari & Gotong ke Gurney)
+
+Sangat Susah
+
+7. Anomaly & Horror Events System
+
+Tipe Anomali
+
+Deskripsi & Kemunculan
+
+Lokasi / Day
+
+Respon Pemain & Bahaya
+
+Mati Lampu Sesaat(Gallery)
+
+Lampu mati mendadak beberapa detik. Tingkat horor biasa/ringan.
+
+Zona 1 (Gallery)(Day 1 - 4)
+
+Nyalakan senter. Tidak ada bahaya mematikan.
+
+Mati Lampu Mengerikan(Graveyard)
+
+Lampu mati total. Terlihat mata merah menyala menatap dalam gelap. Animatronik tengkorak berjalan mendekat!
+
+Zona 2 (Graveyard)(Day 4)
+
+Sorot senter / jauhi tengkorak. Jika tertangkap = Gagal Misi!
+
+Sosok Melintas& Jumpscare RS
+
+Sosok misterius melintas di depan rel dan menghilang (Day 3-4). Pada Day 4 memicu Jumpscare saat melewati area RS.
+
+Zona 3 (Hospital)(Day 3 - 4)
+
+Camera flinch / panik. Senter meredup sesaat.
+
+Red Emergency Light
+
+Seluruh lampu wahana berubah warna MERAH secara serentak.
+
+3 Zona Wahana(Day 5)
+
+Klimaks ketegangan. Atmosfer mencekam.
+
+Entitas Mengintip
+
+Saat pemain sedang memperbaiki panel/rel/animatronik, ada sosok bayangan mengintip dari balik dinding/pintu.
+
+Semua Zona(Day 3 - 4)
+
+Menambah tekanan psikologis saat bekerja.
+
+Animatronik Kagetkan Staf
+
+Animatronik mati mendadak bergerak sendiri memicu suara pneumatik nyaring saat staf mendekat.
+
+Zona 2 & 3(Day 3 - 4)
+
+Camera shake & audio blast 100dB.
+
+Entitas Menumpangi Kereta
+
+Saat mengendarai kereta menuju stasiun di jalur turun (Green Track Zona 3), entitas duduk di gerbong belakang kereta pemain!
+
+Zona 3 Fast Track(Day 5 Climax)
+
+Pacu kereta cepat ke stasiun & SEGERA KABUR sebelum tertangkap!
+
+8. Progression & Track Inspection Timeline (00:00 - 06:00)
+
+Waktu Shift
+
+Zona Rel & Fokus Inspeksi
+
+Eskalasi Horor & Event Hazard
+
+00:00 – 01:00Zona 1 (Gallery)
+
+Briefing Walkie-Talkie & Notebook [TAB]. Ambil alat di Workshop (termasuk Kunci Panel & Bohlam Lampu). Bersihkan peron stasiun, perbaiki mesin fog & cek Lampu Indikator Kuning Panel Room 1.
+
+DEFAULT SCARE: Pintu jebakan kayu jatuh terbanting tiba-tiba! Strobo flicker tak menentu. (Sangat Mudah)
+
+01:00 – 02:00Zona 1 & Zona 2
+
+Lap cermin lukisan galeri, betulkan lukisan miring/jatuh, ganti bohlam lampu berkedip (membawa Bohlam di inventory), cek Lampu Indikator Kuning Panel Room 2 (ganti fuse jika Lampu Kuning Kedap-Kedip), lap animatronik kotor.
+
+DEFAULT SCARE & BLACKOUT MILD: Pop-up monster melompat! Lampu mati sesaat di Galeri. Animatronik kagetkan staf. (Mudah)
+
+02:00 – 03:15Zona 3 (Hospital)
+
+Zona 3 RS Tua: Cek Lampu Indikator Kuning Panel Room 3 (ganti fuse jika Lampu Kuning Kedap-Kedip), dorong gurney rel, betulkan roda gurney, lap suster/dokter, gotong mayat animatronik ke gurney, ganti bohlam lampu neon bangsal (bawa di inventory).
+
+ANOMALI RS & ENTITAS MENGINTIP: Sosok melintas di rel & menghilang! Air horn 100dB. Entitas mengintip saat pemain membetulkan gurney / mengecek panel. (Sedang)
+
+03:15 – 04:30Zona 2 & 3 Vault
+
+Ganti fuse meledak (Lampu Kuning Kedap-Kedip) di Panel Room 2 & 3, perbaiki obeng animatronik copot + test ride.
+
+BLACKOUT MENGERIKAN (DAY 4): Mata merah menyala di Graveyard Zona 2! Animatronik tengkorak berjalan mendekat! (Sulit)
+
+04:30 – 05:30Zona 3 Downhill Track
+
+Reset rem darurat yang mengunci di jalur turun (Green Track Zona 3), perbaiki baut rel dengan palu.
+
+SPECIAL CART PASSENGER (DAY 5): Entitas menumpangi kereta di gerbong belakang! Pacu ke stasiun & kabur secepatnya! (Sangat Sulit)
+
+05:30 – 06:00Final Return & Workshop
+
+Pastikan checklist [TAB] 100% & bergegas kembali ke Workshop di sudut kanan bawah sebelum 06:00 Pagi.
+
+Lampu MERAH seluruh ruangan (Day 5). Timer mendekati 06:00! Gagal = Sanksi Laporan & Fade Black. (KLIMAKS)
