@@ -1,10 +1,10 @@
 GAME DESIGN DOCUMENT (GDD)
 
-Project: Dark Ride Maintenance v1.0 — Clean Industrial Dark Ride Edition
+Project: Dark Ride Maintenance v0.1 — Clean Industrial Dark Ride Edition
 
 Project Name:
 
-Dark Ride Maintenance (Project v1)
+Dark Ride Maintenance (Project v0.1)
 
 Game Engine:
 
@@ -24,11 +24,11 @@ PC (Windows) — First Launch: Itch.io → Steam
 
 Genre & Art Style:
 
-First-Person Job-Sim Horror / Clean Industrial Dark Ride Style (Shift at Midnight Inspired v1.0)
+First-Person Job-Sim Horror / Clean Industrial Dark Ride Style (Shift at Midnight Inspired v0.1)
 
 1. Executive Summary & Narrative Concept
 
-Pemain berperan sebagai teknisi pemeliharaan malam (Night Shift Maintenance Staff) di sebuah taman hiburan tua. Sebelum resmi diterima menjadi karyawan tetap (Permanent Staff), pemain harus menjalani masa Uji Coba / Trial selama 5 Hari Kerja Shift Malam (00:00 – 06:00). Fokus utama permainan adalah menyelesaikan tugas teknis spesifik yang tercantum di Catatan Tugas Harian (Daily Maintenance Note) pada wahana DARK RIDE RUMAH HANTU — wahana indoor bertema horor dengan rute kereta rel (Ghost Carts / Ride Vehicles) yang terbagi secara terstruktur ke dalam 3 ZONA UTAMA WAHANA berdasarkan Peta Jalur Game (Game Map Layout).
+Pemain berperan sebagai teknisi pemeliharaan malam (Night Shift Maintenance Staff) di sebuah taman hiburan tua. Sebelum resmi diterima menjadi karyawan tetap (Permanent Staff), pemain harus menjalani masa Uji Coba / Trial selama 5 Hari Kerja Shift Malam (00:00 – 06:00, durasi real-world: Day 1-4 = 15 menit [1 jam game = 150 detik]; Day 5 = 20 menit [1 jam game = 200 detik]). Fokus utama permainan adalah menyelesaikan tugas teknis spesifik yang tercantum di Catatan Tugas Harian (Daily Maintenance Note) pada wahana DARK RIDE RUMAH HANTU — wahana indoor bertema horor dengan rute kereta rel (Ghost Carts / Ride Vehicles) yang terbagi secara terstruktur ke dalam 3 ZONA UTAMA WAHANA berdasarkan Peta Jalur Game (Game Map Layout).
 
 Game Pillars & Clean Visual Style (Shift at Midnight Inspired)
 
@@ -44,9 +44,9 @@ Unplanned Emergency Incidents: Kejadian darurat mekanik tak terduga yang terpicu
 
 Default Attraction Scares & Ambience: Kejutan bawaan wahana (pop-up prop mekanik, drop door jatuh, air horn 100dB) yang terpicu saat staf berjalan di atas sensor rel.
 
-5-Day Probation Timeline & Strict Retry Limit: Evaluasi masa percobaan 5 hari. Pemain wajib kembali ke Workshop sebelum jam 06:00 pagi. Gagal = Sanksi Laporan & Retry (Maksimal 5x Retry -> GAME OVER).
+5-Day Probation Timeline & Strict Retry Limit: Evaluasi masa percobaan 5 hari. Pemain wajib kembali ke Workshop sebelum jam 06:00 pagi (Durasi Shift: Day 1-4 = 15 Menit, Day 5 = 20 Menit Nyata). Gagal = Sanksi Laporan & Retry (Maksimal 5x Retry -> GAME OVER).
 
-SYARAT UTAMA SHIFT & PROBATION: DEADLINE SHIFT & ATURAN SANKSI (MAX 5 RETRIES):1. Pemain wajib menyelesaikan checklist [TAB] dan kembali ke Workshop sebelum 06:00 Pagi.2. Gagal sebelum 06:00 -> Layar Memudar Hitam (Fade Black) + Sanksi Laporan -> Restart Ongoing Day.3. Gagal 5 Kali berturut-turut pada day yang sama -> GAME OVER (Kembali ke Main Menu / Forced Day 1 / New Game).
+SYARAT UTAMA SHIFT & PROBATION: DEADLINE SHIFT & ATURAN SANKSI (MAX 5 RETRIES):1. Pemain wajib menyelesaikan checklist [TAB] dan kembali ke Workshop sebelum 06:00 Pagi (Waktu Nyata: Day 1-4 = 15 Menit, Day 5 = 20 Menit).2. Gagal sebelum 06:00 -> Layar Memudar Hitam (Fade Black) + Sanksi Laporan -> Restart Ongoing Day.3. Gagal 5 Kali berturut-turut pada day yang sama -> GAME OVER (Kembali ke Main Menu / Forced Day 1 / New Game).
 
 2. Alur Cerita & Progress Harian (5-Day Probation Narrative)
 
