@@ -1,10 +1,10 @@
 PRODUCT REQUIREMENT DOCUMENT (PRD)
 
-Project: Dark Ride Maintenance v1.0 — Master Product Requirement Document
+Project: Dark Ride Maintenance v0.1 — Master Product Requirement Document
 
 Project Name:
 
-Dark Ride Maintenance (Project v1)
+Dark Ride Maintenance (Project v0.1)
 
 Game Engine:
 
@@ -24,17 +24,17 @@ Target Timeline:
 
 Document Version:
 
-PRD v1.0 Master Edition — July 2026
+PRD v0.1 Master Edition — July 2026
 
 1. Product Overview & Objectives
 
-Dokumen ini mendefinisikan kebutuhan fungsional dan teknis untuk pengembangan versi v1.0 dari game Dark Ride Maintenance — sebuah game horor simulasi single-player berbasis pemeliharaan wahana rel (Dark Ride) yang dikembangkan menggunakan Unity 2022.3.62f3. Game ini mengusung estetika visual bersih dan tajam 'Clean Industrial Dark Ride' (terinspirasi dari kesuksesan game Shift at Midnight / Job-Sim Horror) yang teroptimasi secara presisi agar lancar 60 FPS di laptop kantoran/mahasiswa biasa (RAM 4GB, Intel UHD/Iris Xe/AMD Vega). Pemain bertugas menjalani masa uji coba 5 hari (5-Day Probation Trial) melakukan inspeksi dan perbaikan pada jalur rel, sensor, 3 Panel Room listrik (Zona 1, 2, & 3) dengan sistem pembacaan Lampu Indikator Kuning (Lampu Kuning Nyala Solid = Listrik Nyala & AMAN, Lampu Kuning Kedap-Kedip = Listrik Mati / Wajib Ganti Fuse), penggantian bohlam lampu (wajib membawa Bohlam Cadangan dari Workshop di inventory), kebersihan wahana, cermin galeri, gurney medis RS, gotong mayat animatronik, dan animatronik rumah hantu dalam durasi shift malam (00:00 – 06:00) menggunakan Maintenance Notebook [TAB] dan 5-Slot Workshop Tool Belt. Jika tugas tidak selesai 100% atau belum kembali ke Workshop sebelum jam 06:00, pemain dikenakan Sanksi Laporan & Retry (Maksimal 5x Retry -> Game Over).
+Dokumen ini mendefinisikan kebutuhan fungsional dan teknis untuk pengembangan versi v0.1 dari game Dark Ride Maintenance — sebuah game horor simulasi single-player berbasis pemeliharaan wahana rel (Dark Ride) yang dikembangkan menggunakan Unity 2022.3.62f3. Game ini mengusung estetika visual bersih dan tajam 'Clean Industrial Dark Ride' (terinspirasi dari kesuksesan game Shift at Midnight / Job-Sim Horror) yang teroptimasi secara presisi agar lancar 60 FPS di laptop kantoran/mahasiswa biasa (RAM 4GB, Intel UHD/Iris Xe/AMD Vega). Pemain bertugas menjalani masa uji coba 5 hari (5-Day Probation Trial) melakukan inspeksi dan perbaikan pada jalur rel, sensor, 3 Panel Room listrik (Zona 1, 2, & 3) dengan sistem pembacaan Lampu Indikator Kuning (Lampu Kuning Nyala Solid = Listrik Nyala & AMAN, Lampu Kuning Kedap-Kedip = Listrik Mati / Wajib Ganti Fuse), penggantian bohlam lampu (wajib membawa Bohlam Cadangan dari Workshop di inventory), kebersihan wahana, cermin galeri, gurney medis RS, gotong mayat animatronik, dan animatronik rumah hantu dalam durasi shift malam (00:00 – 06:00, durasi real-world: Day 1-4 = 15 menit di mana 1 jam game = 150 detik; Day 5 = 20 menit di mana 1 jam game = 200 detik) menggunakan Maintenance Notebook [TAB] dan 5-Slot Workshop Tool Belt. Jika tugas tidak selesai 100% atau belum kembali ke Workshop sebelum jam 06:00, pemain dikenakan Sanksi Laporan & Retry (Maksimal 5x Retry -> Game Over).
 
-Objective Utama v1: Menciptakan MVP single-player imersif di Unity 2022.3.62f3 dengan 3 Zona Utama Terowongan Rel Dark Ride (Stasiun & Galeri, Graveyard, Hospital & Drop Track), gaya visual tajam Clean Industrial Dark Ride (Shift at Midnight Vibe) tanpa bintik noise VHS buram, sistem inspeksi Panel Room berbasis Lampu Indikator Kuning (Solid Yellow = Listrik Nyala/Aman, Blinking Yellow = Listrik Mati/Fuse Rusak), sistem alur 5-Day Probation Trial & Prologue Walkie-Talkie, 5-Slot Workshop Inventory (termasuk item Bohlam Lampu Cadangan), sistem kejutan bawaan wahana (Default Scares) & anomali horor (Mata merah Graveyard, Red Light Day 5, Cart Passenger), serta ending penolakan kerja (Resign).
+Objective Utama v0.1: Menciptakan MVP single-player imersif di Unity 2022.3.62f3 dengan 3 Zona Utama Terowongan Rel Dark Ride (Stasiun & Galeri, Graveyard, Hospital & Drop Track), gaya visual tajam Clean Industrial Dark Ride (Shift at Midnight Vibe) tanpa bintik noise VHS buram, sistem inspeksi Panel Room berbasis Lampu Indikator Kuning (Solid Yellow = Listrik Nyala/Aman, Blinking Yellow = Listrik Mati/Fuse Rusak), sistem alur 5-Day Probation Trial & Prologue Walkie-Talkie, 5-Slot Workshop Inventory (termasuk item Bohlam Lampu Cadangan), sistem kejutan bawaan wahana (Default Scares) & anomali horor (Mata merah Graveyard, Red Light Day 5, Cart Passenger), serta ending penolakan kerja (Resign).
 
 2. Scope (In-Scope vs Out-of-Scope)
 
-Dalam Ruang Lingkup (In-Scope v1)
+Dalam Ruang Lingkup (In-Scope v0.1)
 
 5-Day Probation State Machine: Siklus progres harian Day 1 - Day 5 dengan event spesifik per hari & alur Prologue Walkie-Talkie.
 
@@ -48,7 +48,7 @@ Default Attraction Scares & Anomaly Triggers: Pop-up animatronic, drop door, air
 
 Tugas Pemeliharaan Spesifik Matrix: Penggantian fuse di Panel Room 1/2/3, ganti bohlam (membawa Bohlam di inventory), lap cermin/lukisan/animatronik, dorong gurney, ganti roda gurney, gotong mayat animatronik, obeng + test ride darkride.
 
-Shift Timer & Retry Manager: Timer 00:00-06:00 dengan trigger Sanksi Laporan & Fade Black jika belum kembali ke Workshop. Max 5 Retries -> Game Over.
+Shift Timer & Retry Manager: Timer 00:00-06:00 (Durasi Nyata: Day 1-4 = 15 Menit, Day 5 = 20 Menit) dengan trigger Sanksi Laporan & Fade Black jika belum kembali ke Workshop. Max 5 Retries -> Game Over.
 
 Resign Ending Cutscene: Player menolak tawaran kerja tetap di akhir Day 5.
 
@@ -100,7 +100,7 @@ FR-06
 
 5-Day Probation & Retry Controller
 
-State Machine mengelola Day 1-5. Timer 00:00 - 06:00. Tepat 06:00 jika belum di Workshop / progress < 100%: Trigger UI 'Sanksi Laporan' + Fade Black + Increment Retry Count. Jika Retry == 5 -> Game Over Screen.
+State Machine mengelola Day 1-5. Timer 00:00 - 06:00 (Durasi Nyata: Day 1-4 = 15 Menit [1 Jam Game = 150 Detik], Day 5 = 20 Menit [1 Jam Game = 200 Detik]). Tepat 06:00 jika belum di Workshop / progress < 100%: Trigger UI 'Sanksi Laporan' + Fade Black + Increment Retry Count. Jika Retry == 5 -> Game Over Screen.
 
 FR-07
 
@@ -186,7 +186,7 @@ FAIL STATE SYSTEM: FAIL STATE & RETRY FLOW (SANKSI LAPORAN & GAME OVER):Jam 06:0
 
 6. Team Structure & Division of Responsibilities (Tim 2 Orang)
 
-Pengembangan v1 dilakukan secara independen oleh 2 orang anggota tim (Duo Developer) dengan pembagian peran dan tanggung jawab teknis sebagai berikut:
+Pengembangan v0.1 dilakukan secara independen oleh 2 orang anggota tim (Duo Developer) dengan pembagian peran dan tanggung jawab teknis sebagai berikut:
 
 Anggota A (Anda — Product Manager, Lead Artist & Co-Tech Art): Memegang GDD, PRD, Project Management (PM) & Checkpoints, Level Design (Layout 3 Zona Rel di Unity sesuai Peta Game), Narrative Design (Lore, Notebook Notes, Dialogue Walkie-Talkie), 3D Modeling Clean Crisp PBR, Texturing & Rigging (Props, Panel Room Yellow LED Indicator, Animatronik RS & Kuburan, Ghost Cart), 3D Animation, dan 50% Technical Art (URP Lighting setup, Dynamic Flashlight Shadow, Yellow Light Shader Graph, Occlusion Culling 3 Zona).
 
@@ -194,7 +194,7 @@ Anggota B (Teman Anda — Lead Programmer, Sound Engineer & Co-Tech Art): Memega
 
 7. 12-Week Production Roadmap & Weekly Checkpoints (Target 2-3 Bulan)
 
-Roadmap berikut membagi pengerjaan v1.0 selama 12 Minggu (maksimal 3 bulan) dengan target serah terima (checkpoint) yang sangat jelas per minggu antara Anggota A dan Anggota B:
+Roadmap berikut membagi pengerjaan v0.1 selama 12 Minggu (maksimal 3 bulan) dengan target serah terima (checkpoint) yang sangat jelas per minggu antara Anggota A dan Anggota B:
 
 Minggu & Fase
 
@@ -314,11 +314,11 @@ Tahap 2: Release Steam Store Page 'Coming Soon' & Wishlist Building (Minggu 12)
 
 Alasan Utama: Steam adalah pasar komersial utama untuk game PC. Namun rilis di Steam membutuhkan $100 Steamworks Fee per game.
 
-Strategi Eksekusi: Gunakan hype dan trafik dari Itch.io untuk mengarahkan pemain menekan tombol 'Add to Wishlist' di Steam. Setelah Wishlist mencapai target (misal 1.000 - 5.000 Wishlists), luncurkan rilis komersial v1.0 di Steam.
+Strategi Eksekusi: Gunakan hype dan trafik dari Itch.io untuk mengarahkan pemain menekan tombol 'Add to Wishlist' di Steam. Setelah Wishlist mencapai target (misal 1.000 - 5.000 Wishlists), luncurkan rilis komersial v0.1 di Steam.
 
 9. 3D Asset Inventory & Implementation Techniques
 
-Berikut adalah daftar lengkap aset 3D yang wajib diimplementasikan untuk game Dark Ride Maintenance v1.0, dilengkapi dengan rekomendasi teknik 3D Modeling (Blender), Texturing, Rigging, dan Setup Material di Unity (URP):
+Berikut adalah daftar lengkap aset 3D yang wajib diimplementasikan untuk game Dark Ride Maintenance v0.1, dilengkapi dengan rekomendasi teknik 3D Modeling (Blender), Texturing, Rigging, dan Setup Material di Unity (URP):
 
 Kategori Aset 3D
 
