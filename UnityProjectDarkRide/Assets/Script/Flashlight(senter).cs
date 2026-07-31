@@ -16,7 +16,6 @@ public class EquipableFlashlight : MonoBehaviour
 
     [Header("Keybindings")]
     [SerializeField] private KeyCode equipKey = KeyCode.F;              // Tombol F untuk Equip/Unequip
-    [SerializeField] private KeyCode alternateEquipKey = KeyCode.Alpha1; // Atau Tombol 1
 
     // Status Internal Senter
     private bool isEquipped = false; // Default: FALSE (Tangan Kosong saat spawn)
@@ -41,7 +40,7 @@ public class EquipableFlashlight : MonoBehaviour
     private void Update()
     {
         // 1. INTERAKSI EQUIP / UNEQUIP (Tekan tombol F atau 1)
-        if (Input.GetKeyDown(equipKey) || Input.GetKeyDown(alternateEquipKey))
+        if (Input.GetKeyDown(equipKey))
         {
             ToggleEquip();
         }
