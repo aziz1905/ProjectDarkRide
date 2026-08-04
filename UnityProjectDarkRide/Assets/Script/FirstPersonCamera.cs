@@ -43,7 +43,7 @@ public class FirstPersonCamera : MonoBehaviour
             playerBody.Rotate(Vector3.up * mouseX);
         }
 
-        // Fitur Tambahan: Buka kunci kursor jika tekan Escape (Utility untuk Testing)
+        // Buka kunci kursor jika tekan Escape (Utility untuk Testing)
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             UnlockCursor();
