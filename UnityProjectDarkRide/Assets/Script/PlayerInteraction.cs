@@ -2,9 +2,13 @@ using UnityEngine;
 
 public class PlayerInteraction : MonoBehaviour
 {
-    [Header("Raycast Settings")]
+    [Header("Raycast / SphereCast Settings")]
     [SerializeField] private Transform cameraTransform;
-    [SerializeField] private float interactDistance = 2.5f; // Jarak jangkauan Raycast
+    [SerializeField] private float interactDistance = 2.5f; // Jarak jangkauan (2.5 meter)
+    
+    [Tooltip("Ubah nilai ini untuk memperlebar/memperkecil area deteksi pandangan!")]
+    [SerializeField] private float interactRadius = 0.3f;   // LEBAR DETEKSI (0.3 meter)
+    
     [SerializeField] private LayerMask interactableLayer = ~0;
 
     [Header("Keybindings")]
@@ -24,7 +28,6 @@ public class PlayerInteraction : MonoBehaviour
 
     private void Update()
     {
-        Debug.DrawRay(cameraTransform.position, cameraTransform.forward * interactDistance, Color.red);
         DetectInteractable();
         HandleInteraction();
     }
@@ -34,7 +37,8 @@ public class PlayerInteraction : MonoBehaviour
         Ray ray = new Ray(cameraTransform.position, cameraTransform.forward);
         RaycastHit hit;
 
-        if (Physics.Raycast(ray, out hit, interactDistance, interactableLayer))
+        // MENGGUNAKAN SPHERECAST AGAR DETEKSI PANDANGAN JAUH LEBIH LEBAR & MUDAH!
+        if (Physics.SphereCast(ray, interactRadius, out hit, interactDistance, interactableLayer))
         {
             IInteractable interactable = hit.collider.GetComponent<IInteractable>();
             if (interactable != null)
@@ -55,9 +59,7 @@ public class PlayerInteraction : MonoBehaviour
     {
         if (currentInteractable == null) return;
 
-        // ===================================================
-        // MODE 1: TAP [E] INSTAN (Untuk Ambil Barang / Saklar)
-        // ===================================================
+        // MODE 1: TAP [E] INSTAN
         if (currentInteractable.HoldDuration <= 0.05f)
         {
             if (Input.GetKeyDown(interactKey))
@@ -66,12 +68,9 @@ public class PlayerInteraction : MonoBehaviour
                 currentInteractable.OnInteract();
             }
         }
-        // ===================================================
         // MODE 2: HOLD [E] TAHAN
-        // ===================================================
         else
         {
-            // 1. Saat tombol [E] MULAI DITAHAN
             if (Input.GetKeyDown(interactKey))
             {
                 isHolding = true;
@@ -79,16 +78,12 @@ public class PlayerInteraction : MonoBehaviour
                 holdTimer = 0f;
             }
 
-            // 2. Selama tombol [E] SEDANG DITAHAN
             if (Input.GetKey(interactKey) && isHolding && !hasTriggered)
             {
                 holdTimer += Time.deltaTime;
                 float progress = Mathf.Clamp01(holdTimer / currentInteractable.HoldDuration);
-
-                // Log persentase Hold ke Console
                 Debug.Log($"[HOLD E] Progress: {(progress * 100):F0}%");
 
-                // 3. Saat Hold [E] SELESAI 100%
                 if (holdTimer >= currentInteractable.HoldDuration)
                 {
                     hasTriggered = true;
@@ -98,7 +93,6 @@ public class PlayerInteraction : MonoBehaviour
                 }
             }
 
-            // 4. Jika tombol [E] DILEPAS sebelum 100% -> Reset Progress!
             if (Input.GetKeyUp(interactKey))
             {
                 ResetHold();
@@ -114,11 +108,20 @@ public class PlayerInteraction : MonoBehaviour
         holdTimer = 0f;
     }
 
-    // Visualisasi garis Raycast di Scene View
+    // Visualisasi area bola deteksi di Scene View
     private void OnDrawGizmosSelected()
     {
-        if (cameraTransform == null) return;
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawRay(cameraTransform.position, cameraTransform.forward * interactDistance);
+         if (cameraTransform == null) return;
+        
+        Gizmos.color = Color.cyan; // Warna laser Cyan terang
+        
+        Vector3 origin = cameraTransform.position;
+        Vector3 direction = cameraTransform.forward * interactDistance;
+        // Menggambar garis laser lurus tebal dari kamera ke depan (2.5 meter)
+        Gizmos.DrawRay(origin, direction);
+        Gizmos.DrawRay(origin + cameraTransform.right * 0.015f, direction);
+        Gizmos.DrawRay(origin - cameraTransform.right * 0.015f, direction);
+        Gizmos.DrawRay(origin + cameraTransform.up * 0.015f, direction);
+        Gizmos.DrawRay(origin - cameraTransform.up * 0.015f, direction);
     }
 }

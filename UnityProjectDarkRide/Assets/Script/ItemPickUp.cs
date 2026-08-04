@@ -2,8 +2,9 @@ using UnityEngine;
 
 public class ItemPickup : MonoBehaviour, IInteractable
 {
-    [Header("Interaction Settings")]
-    [Tooltip("Kosongkan jika ingin otomatis mengikuti nama objek di Hierarchy")]
+    [Header("Item Data")]
+    [Tooltip("Nama bersih item untuk ToolBelt (misal: TrashBag, FusePack, Cloth, Bulb, Key, Hammer). Jika kosong, otomatis ambil nama Objek/Parent.")]
+    [SerializeField] private string itemName = "";
     [SerializeField] private string customPrompt = "";
 
     public string GetInteractPrompt()
@@ -11,7 +12,8 @@ public class ItemPickup : MonoBehaviour, IInteractable
         if (!string.IsNullOrEmpty(customPrompt))
             return customPrompt;
         
-        return "Tekan [E] Ambil " + gameObject.name;
+        string nameToShow = GetCleanItemName();
+        return "Tekan [E] Ambil " + nameToShow;
     }
 
     public float HoldDuration => 0f; // TAP Instan
@@ -22,15 +24,38 @@ public class ItemPickup : MonoBehaviour, IInteractable
         
         if (toolBelt != null)
         {
-            string itemNameFromHierarchy = gameObject.name;
+            string nameToSave = GetCleanItemName();
             
-            // MASUKKAN KE SABUK (TANGAN TETAP KOSONG)
-            bool success = toolBelt.AddItemToFirstAvailableSlot(itemNameFromHierarchy);
+            // MASUKKAN KE SABUK
+            bool success = toolBelt.AddItemToFirstAvailableSlot(nameToSave);
             
             if (success)
             {
-                gameObject.SetActive(false); // Sembunyikan item
+                // Sembunyikan induk utama jika dipasang di InteractionArea
+                GameObject rootToDisable = transform.parent != null ? transform.parent.gameObject : gameObject;
+                rootToDisable.SetActive(false); 
             }
         }
+    }
+
+    private string GetCleanItemName()
+    {
+        if (!string.IsNullOrEmpty(itemName))
+            return itemName;
+
+        // JIKA SCRIPT BERADA DI CHILD OBJECT APA PUN, OTOMATIS AMBIL NAMA PARENT INDUKNYA!
+        string rawName = (transform.parent != null) ? transform.parent.name : gameObject.name;
+        return CleanName(rawName);
+    }
+
+    private string CleanName(string rawName)
+    {
+        string cleaned = rawName.Replace("(Clone)", "").Trim();
+        int spaceIndex = cleaned.IndexOf(' ');
+        if (spaceIndex > 0)
+        {
+            cleaned = cleaned.Substring(0, spaceIndex);
+        }
+        return cleaned;
     }
 }
