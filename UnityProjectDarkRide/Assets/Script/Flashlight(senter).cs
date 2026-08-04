@@ -39,7 +39,7 @@ public class EquipableFlashlight : MonoBehaviour
 
     private void Update()
     {
-        // 1. INTERAKSI EQUIP / UNEQUIP (Tekan tombol F atau 1)
+        // 1. INTERAKSI EQUIP / UNEQUIP (Tekan tombol F)
         if (Input.GetKeyDown(equipKey))
         {
             ToggleEquip();

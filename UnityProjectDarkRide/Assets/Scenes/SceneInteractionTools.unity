@@ -253,7 +253,7 @@ GameObject:
   - component: {fileID: 391266824}
   - component: {fileID: 391266823}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: Meja
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

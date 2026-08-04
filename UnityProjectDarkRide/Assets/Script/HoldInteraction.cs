@@ -41,7 +41,7 @@ public class HoldInteraction : MonoBehaviour, IInteractable
             }
         }
 
-        // BERHASIL!
+        // BERHASIL
         isCompleted = true;
         Debug.Log($"[HOLD COMPLETED] Interaksi Tahan E pada '{gameObject.name}' Berhasil!");
 

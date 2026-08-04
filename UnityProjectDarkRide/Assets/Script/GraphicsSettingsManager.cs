@@ -15,7 +15,7 @@ public class GraphicsSettingsManager : MonoBehaviour
         QualitySettings.SetQualityLevel(qualityIndex, true);
 
         if (qualityIndex == 0)
-            QualitySettings.globalTextureMipmapLimit = 2; // Low (Quarter Res)
+            QualitySettings.globalTextureMipmapLimit = 2; // Low
         else if (qualityIndex == 1)
             QualitySettings.globalTextureMipmapLimit = 1; // Medium
         else

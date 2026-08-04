@@ -67,7 +67,7 @@ public class PlayerInteraction : MonoBehaviour
             }
         }
         // ===================================================
-        // MODE 2: HOLD [E] TAHAN (Untuk Lap Cermin / Maintenance)
+        // MODE 2: HOLD [E] TAHAN
         // ===================================================
         else
         {

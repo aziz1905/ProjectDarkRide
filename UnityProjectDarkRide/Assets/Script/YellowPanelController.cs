@@ -39,7 +39,7 @@ public class YellowPanelController : MonoBehaviour, IInteractable
         ToolBeltManager toolBelt = FindObjectOfType<ToolBeltManager>();
         string currentItem = toolBelt != null ? toolBelt.ActiveItemName : "Kosong";
 
-        // PERIKSA NAMA ITEM APAKAH SESUAI
+        // PERIKSA NAMA 
         if (toolBelt != null && currentItem.Trim() == requiredItemName.Trim())
         {
             isFuseBroken = false; // Fuse diganti -> Lampu berhenti berkedip

@@ -12,7 +12,7 @@ public class ToolBeltManager : MonoBehaviour
     [Tooltip("Drag 5 GameObject 3D Mesh alat di tangan di sini")]
     [SerializeField] private GameObject[] heldItemMeshes = new GameObject[5];
 
-    // Array menyimpan nama item di masing-masing slot (Kosong = "Empty")
+    // Array menyimpan nama item di masing-masing slot (Kosong)
     private string[] slotItemNames = new string[5];
 
     private void Start()

@@ -14,7 +14,7 @@ public class ItemPickup : MonoBehaviour, IInteractable
         return "Tekan [E] Ambil " + gameObject.name;
     }
 
-    public float HoldDuration => 0f; // TAP Instan!
+    public float HoldDuration => 0f; // TAP Instan
 
     public void OnInteract()
     {
