@@ -872,7 +872,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 25c205bfa65d708458dc3b42509291e2, type: 2}
+  - {fileID: 2100000, guid: f874969d76fcaf34b977169a79028fbd, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1051,10 +1051,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1570764258465612953, guid: 95f61664be404284687c615ff3d8f01a, type: 3}
-      propertyPath: m_Center.y
-      value: 0.9
-      objectReference: {fileID: 0}
     - target: {fileID: 2959405193453507392, guid: 95f61664be404284687c615ff3d8f01a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1098,10 +1094,6 @@ PrefabInstance:
     - target: {fileID: 5646786114361232814, guid: 95f61664be404284687c615ff3d8f01a, type: 3}
       propertyPath: m_Name
       value: player
-      objectReference: {fileID: 0}
-    - target: {fileID: 7441043894510967033, guid: 95f61664be404284687c615ff3d8f01a, type: 3}
-      propertyPath: interactDistance
-      value: 2.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

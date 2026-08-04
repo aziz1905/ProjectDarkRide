@@ -729,7 +729,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 25c205bfa65d708458dc3b42509291e2, type: 2}
+  - {fileID: 2100000, guid: f874969d76fcaf34b977169a79028fbd, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -782,6 +782,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 290183566221554787, guid: 95f61664be404284687c615ff3d8f01a, type: 3}
+      propertyPath: m_BackGroundColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 290183566221554787, guid: 95f61664be404284687c615ff3d8f01a, type: 3}
+      propertyPath: m_BackGroundColor.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 290183566221554787, guid: 95f61664be404284687c615ff3d8f01a, type: 3}
+      propertyPath: m_BackGroundColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 290183566221554787, guid: 95f61664be404284687c615ff3d8f01a, type: 3}
+      propertyPath: m_BackGroundColor.r
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2959405193453507392, guid: 95f61664be404284687c615ff3d8f01a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -826,6 +842,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: player
       objectReference: {fileID: 0}
+    - target: {fileID: 8142365774001854404, guid: 95f61664be404284687c615ff3d8f01a, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: f874969d76fcaf34b977169a79028fbd, type: 2}
+    - target: {fileID: 8947135820361149267, guid: 95f61664be404284687c615ff3d8f01a, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: f874969d76fcaf34b977169a79028fbd, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
