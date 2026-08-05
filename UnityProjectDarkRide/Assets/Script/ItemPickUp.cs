@@ -43,7 +43,7 @@ public class ItemPickup : MonoBehaviour, IInteractable
         if (!string.IsNullOrEmpty(itemName))
             return itemName;
 
-        // JIKA SCRIPT BERADA DI CHILD OBJECT APA PUN, OTOMATIS AMBIL NAMA PARENT INDUKNYA!
+        // JIKA SCRIPT BERADA DI CHILD OBJECT APA PUN, OTOMATIS AMBIL NAMA PARENT INDUKNYA
         string rawName = (transform.parent != null) ? transform.parent.name : gameObject.name;
         return CleanName(rawName);
     }
