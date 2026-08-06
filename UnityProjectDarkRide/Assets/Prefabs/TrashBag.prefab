@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3171036010413994064}
   - component: {fileID: 7807001229476922409}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: InteractionAreaTrashBag
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -78,27 +78,27 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 87cd0b39789c65a458406170ebd77f1b, type: 3}
       propertyPath: m_LocalScale.x
-      value: 50
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 87cd0b39789c65a458406170ebd77f1b, type: 3}
       propertyPath: m_LocalScale.y
-      value: 50
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 87cd0b39789c65a458406170ebd77f1b, type: 3}
       propertyPath: m_LocalScale.z
-      value: 50
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 87cd0b39789c65a458406170ebd77f1b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.25
+      value: -128.75
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 87cd0b39789c65a458406170ebd77f1b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.36
+      value: 0.9400147
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 87cd0b39789c65a458406170ebd77f1b, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 5.19
+      value: 91.670006
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 87cd0b39789c65a458406170ebd77f1b, type: 3}
       propertyPath: m_LocalRotation.w

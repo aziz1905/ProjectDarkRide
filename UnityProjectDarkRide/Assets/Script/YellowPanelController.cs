@@ -69,4 +69,8 @@ public class YellowPanelController : MonoBehaviour, IInteractable
             yellowIndicatorLight.enabled = true;
         }
     }
+
+    // Getters Status
+    public bool IsFuseBroken => isFuseBroken;
+    public bool IsPowerOn => !isFuseBroken;
 }

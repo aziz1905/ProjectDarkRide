@@ -40,7 +40,13 @@ public class PlayerInteraction : MonoBehaviour
         // MENGGUNAKAN SPHERECAST AGAR DETEKSI PANDANGAN JAUH LEBIH LEBAR & MUDAH!
         if (Physics.SphereCast(ray, interactRadius, out hit, interactDistance, interactableLayer))
         {
-            IInteractable interactable = hit.collider.GetComponent<IInteractable>();
+            // PENCARIAN BULLETPROOF: Cek di Objek Collider, Parent, maupun Child!
+            IInteractable interactable = hit.collider.GetComponentInParent<IInteractable>();
+            if (interactable == null)
+            {
+                interactable = hit.collider.GetComponentInChildren<IInteractable>();
+            }
+
             if (interactable != null)
             {
                 if (currentInteractable != interactable)

@@ -11,6 +11,10 @@ public class HoldInteraction : MonoBehaviour, IInteractable
     [Tooltip("Kosongkan jika interaksi ini bisa dilakukan tanpa membawa alat apa pun")]
     [SerializeField] private string requiredItemName = ""; 
 
+    [Header("Task Manager Synergy (Opsional)")]
+    [Tooltip("Isi dengan Task ID jika interaksi ini merupakan bagian dari tugas di Notebook TAB (misal: CLEAN_TRASH, FIX_PANEL, WIPE_MIRROR)")]
+    [SerializeField] private string taskId = "";
+
     [Header("Options After Hold Completed")]
     [SerializeField] private bool isCompleted = false;
     [SerializeField] private bool disableObjectOnComplete = false;
@@ -44,6 +48,16 @@ public class HoldInteraction : MonoBehaviour, IInteractable
         // BERHASIL
         isCompleted = true;
         Debug.Log($"[HOLD COMPLETED] Interaksi Tahan E pada '{gameObject.name}' Berhasil!");
+
+        // Laporkan ke TaskManager (Untuk Checklist Notebook TAB M03)
+        if (!string.IsNullOrEmpty(taskId))
+        {
+            TaskManager taskMgr = FindObjectOfType<TaskManager>();
+            if (taskMgr != null)
+            {
+                taskMgr.CompleteTask(taskId);
+            }
+        }
 
         // Eksekusi Event/Aksi Custom
         OnHoldCompleted?.Invoke();

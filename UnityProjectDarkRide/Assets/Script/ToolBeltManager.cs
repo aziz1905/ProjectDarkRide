@@ -147,8 +147,8 @@ public class ToolBeltManager : MonoBehaviour
         // Spawn Prefab jika di-drag di Inspector
         if (prefabToSpawn != null)
         {
-            // Spawn 0.8m di depan & 0.3m di atas mata player agar aman dari tembus lantai
-            Vector3 spawnPos = Camera.main.transform.position + (Camera.main.transform.forward * 0.8f) + (Vector3.up * 0.3f);
+            // Spawn 0.8m di depan & 0.1m di BAWAH mata kamera (pas di posisi dada/tangan player)
+            Vector3 spawnPos = Camera.main.transform.position + (Camera.main.transform.forward * 0.8f) - (Vector3.up * 0.1f);
             GameObject droppedObj = Instantiate(prefabToSpawn, spawnPos, prefabToSpawn.transform.rotation);
             
             droppedObj.name = cleanItemName; // Pastikan nama objek bersih agar bisa diambil lagi
