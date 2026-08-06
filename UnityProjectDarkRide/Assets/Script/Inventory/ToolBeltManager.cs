@@ -205,4 +205,17 @@ public class ToolBeltManager : MonoBehaviour
     // Getters
     public int ActiveSlotIndex => activeEquippedSlotIndex;
     public string ActiveItemName => (activeEquippedSlotIndex >= 0 && activeEquippedSlotIndex < maxSlots) ? slotItemNames[activeEquippedSlotIndex] : "Empty";
+
+    /// <summary>
+    /// Menghapus / mengonsumsi item yang sedang dipegang di tangan saat ini (misal: Bulb / FusePack yang selesai dipakai).
+    /// </summary>
+    public void ConsumeActiveItem()
+    {
+        if (activeEquippedSlotIndex < 0) return;
+        string consumedItem = slotItemNames[activeEquippedSlotIndex];
+        Debug.Log($"[TOOL BELT] Item '{consumedItem}' di Slot {activeEquippedSlotIndex + 1} telah HABIS DIPAKAI!");
+        // Kosongkan slot di sabuk dan kembalikan tangan ke kondisi kosong
+        slotItemNames[activeEquippedSlotIndex] = "Empty";
+        UnequipToEmptyHands();
+    }
 }

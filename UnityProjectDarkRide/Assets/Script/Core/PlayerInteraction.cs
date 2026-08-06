@@ -37,10 +37,8 @@ public class PlayerInteraction : MonoBehaviour
         Ray ray = new Ray(cameraTransform.position, cameraTransform.forward);
         RaycastHit hit;
 
-        // MENGGUNAKAN SPHERECAST AGAR DETEKSI PANDANGAN JAUH LEBIH LEBAR & MUDAH!
         if (Physics.SphereCast(ray, interactRadius, out hit, interactDistance, interactableLayer))
         {
-            // PENCARIAN BULLETPROOF: Cek di Objek Collider, Parent, maupun Child!
             IInteractable interactable = hit.collider.GetComponentInParent<IInteractable>();
             if (interactable == null)
             {
@@ -114,16 +112,13 @@ public class PlayerInteraction : MonoBehaviour
         holdTimer = 0f;
     }
 
-    // Visualisasi area bola deteksi di Scene View
     private void OnDrawGizmosSelected()
     {
-         if (cameraTransform == null) return;
+        if (cameraTransform == null) return;
         
-        Gizmos.color = Color.cyan; // Warna laser Cyan terang
-        
+        Gizmos.color = Color.cyan;
         Vector3 origin = cameraTransform.position;
         Vector3 direction = cameraTransform.forward * interactDistance;
-        // Menggambar garis laser lurus tebal dari kamera ke depan (2.5 meter)
         Gizmos.DrawRay(origin, direction);
         Gizmos.DrawRay(origin + cameraTransform.right * 0.015f, direction);
         Gizmos.DrawRay(origin - cameraTransform.right * 0.015f, direction);
