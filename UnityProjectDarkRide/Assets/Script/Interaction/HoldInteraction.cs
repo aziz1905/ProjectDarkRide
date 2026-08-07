@@ -86,8 +86,15 @@ public class HoldInteraction : MonoBehaviour, IInteractable
 
         if (changeColorOnComplete)
         {
-            Renderer rend = GetComponent<Renderer>();
-            if (rend != null) rend.material.color = completedColor;
+            // 🟢 UBAH WARNA SELURUH MESH ANAK (Kepala & Badan)!
+            Renderer[] renderers = GetComponentsInChildren<Renderer>();
+            foreach (Renderer rend in renderers)
+            {
+                if (rend != null)
+                {
+                    rend.material.color = completedColor;
+                }
+            }
         }
 
         if (disableObjectOnComplete)
