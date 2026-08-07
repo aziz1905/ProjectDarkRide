@@ -25,7 +25,8 @@ public class HoldInteraction : MonoBehaviour, IInteractable
     [SerializeField] private bool changeColorOnComplete = false;
     [SerializeField] private Color completedColor = Color.cyan;
 
-    [Header("Custom Action (Event)")]
+    [Header("Custom Actions (Events)")]
+    [Tooltip("Dipanggil saat 100% Selesai.")]
     public UnityEvent OnHoldCompleted;
 
     // --- IMPLEMENTASI INTERFACE IINTERACTABLE ---
@@ -50,25 +51,7 @@ public class HoldInteraction : MonoBehaviour, IInteractable
         return promptText;
     }
 
-    public float HoldDuration
-    {
-        get
-        {
-            if (isCompleted) return 0f;
-
-            // Kunci progress bar jika alat belum dipegang di tangan!
-            if (!string.IsNullOrEmpty(requiredItemName))
-            {
-                ToolBeltManager toolBelt = FindObjectOfType<ToolBeltManager>();
-                string currentItem = toolBelt != null ? toolBelt.ActiveItemName : "Kosong";
-                bool hasRequiredItem = currentItem.Trim().Equals(requiredItemName.Trim(), System.StringComparison.OrdinalIgnoreCase);
-
-                if (!hasRequiredItem) return 0f;
-            }
-
-            return holdTime;
-        }
-    }
+    public float HoldDuration => isCompleted ? 0f : holdTime;
 
     public void OnInteract()
     {
@@ -111,6 +94,26 @@ public class HoldInteraction : MonoBehaviour, IInteractable
         {
             gameObject.SetActive(false);
         }
+    }
+
+    /// <summary>
+    /// Fungsi Universal 1-klik untuk meluruskan ROTASI objek saja ke (0,0,0).
+    /// </summary>
+    public void ResetRotationToZero()
+    {
+        transform.localRotation = Quaternion.Euler(Vector3.zero);
+        Debug.Log($"[ROTATE RESET] Rotasi '{gameObject.name}' telah diluruskan ke (0,0,0)!");
+    }
+
+    /// <summary>
+    /// Fungsi Universal 1-klik untuk mereset POSISI dan ROTASI objek sekaligus ke (0,0,0) lokal.
+    /// Sangat cocok untuk mengembalikan Lukisan Jatuh / Komponen Copot ke posisi awal induknya.
+    /// </summary>
+    public void ResetTransformToZero()
+    {
+        transform.localPosition = Vector3.zero;
+        transform.localRotation = Quaternion.identity;
+        Debug.Log($"[TRANSFORM RESET] Posisi dan Rotasi '{gameObject.name}' di-reset ke (0,0,0)!");
     }
 
     // Reset status (opsional)

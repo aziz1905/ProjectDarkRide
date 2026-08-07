@@ -63,12 +63,21 @@ public class PlayerInteraction : MonoBehaviour
     {
         if (currentInteractable == null) return;
 
+        // 🔴 PROTEKSI UTAMA: Jika UI Prompt bertuliskan [BUTUH ALAT] atau [BAHAYA],
+        // BLOKIR TOTAL seluruh aksi Tap & Hold E!
+        string prompt = currentInteractable.GetInteractPrompt();
+        if (prompt.StartsWith("[BUTUH ALAT]") || prompt.StartsWith("[BAHAYA]"))
+        {
+            ResetHold();
+            return;
+        }
+
         // MODE 1: TAP [E] INSTAN
         if (currentInteractable.HoldDuration <= 0.05f)
         {
             if (Input.GetKeyDown(interactKey))
             {
-                Debug.Log("[TAP SUCCESS] Tekan E Instan pada: " + currentInteractable.GetInteractPrompt());
+                Debug.Log("[TAP SUCCESS] Tekan E Instan pada: " + prompt);
                 currentInteractable.OnInteract();
             }
         }
@@ -91,7 +100,7 @@ public class PlayerInteraction : MonoBehaviour
                 if (holdTimer >= currentInteractable.HoldDuration)
                 {
                     hasTriggered = true;
-                    Debug.Log("[HOLD SUCCESS] Tahan E 100% Selesai pada: " + currentInteractable.GetInteractPrompt());
+                    Debug.Log("[HOLD SUCCESS] Tahan E 100% Selesai pada: " + prompt);
                     currentInteractable.OnInteract();
                     ResetHold();
                 }
