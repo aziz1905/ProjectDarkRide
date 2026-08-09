@@ -583,13 +583,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4527408982301123702}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.284, y: -0.251, z: 0.458}
-  m_LocalScale: {x: 0.07084069, y: 0.1189353, z: 0.06911081}
+  m_LocalRotation: {x: 0.6189394, y: -0, z: -0, w: 0.7854388}
+  m_LocalPosition: {x: 0.2840004, y: -0.257, z: 0.472}
+  m_LocalScale: {x: 7, y: 6, z: 6}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2330520346076899100}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 76.477, y: 0, z: 0}
 --- !u!33 &1150101567131952596
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -597,7 +597,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4527408982301123702}
-  m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: -3488548101605975067, guid: 31e2be95d8cf28f47a3560794c04cddf, type: 3}
 --- !u!23 &4405791423471397436
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -618,7 +618,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: -6478536213147159724, guid: 31e2be95d8cf28f47a3560794c04cddf, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -950,6 +950,16 @@ MonoBehaviour:
   - taskId: WIPE_PAINTING
     taskDescription: Mengelap Lukisan
     requiredCount: 2
+    currentCount: 0
+    isCompleted: 0
+  - taskId: FIX_RAIL
+    taskDescription: Membetulkan Rel Yang Rusak
+    requiredCount: 1
+    currentCount: 0
+    isCompleted: 0
+  - taskId: WIPE_STATUE
+    taskDescription: Membersihkan Kotoran Pada Patung
+    requiredCount: 1
     currentCount: 0
     isCompleted: 0
   notebookTitleText: {fileID: 0}
