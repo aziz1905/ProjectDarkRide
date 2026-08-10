@@ -15,7 +15,7 @@ public class EquipableFlashlight : MonoBehaviour
     [SerializeField] private AudioClip clickSFX; // SFX klik saklar lampu
 
     [Header("Keybindings")]
-    [SerializeField] private KeyCode equipKey = KeyCode.F;              // Tombol F untuk Equip/Unequip
+    [SerializeField] private KeyCode equipKey = KeyCode.F; // Tombol F untuk Equip/Unequip Senter
 
     // Status Internal Senter
     private bool isEquipped = false; // Default: FALSE (Tangan Kosong saat spawn)
@@ -26,14 +26,12 @@ public class EquipableFlashlight : MonoBehaviour
         if (audioSource == null)
             audioSource = GetComponent<AudioSource>();
 
-        // Pengecekan keamanan jika slot Inspector lupa ditarik
         if (flashlightMesh == null)
-            Debug.LogError("[Flashlight Error] Slot 'Flashlight Mesh' di Inspector masih KOSONG/NONE! Harap drag objek Cylinder ke slot ini.");
+            Debug.LogError("[Flashlight Error] Slot 'Flashlight Mesh' di Inspector masih KOSONG! Harap drag objek Cylinder ke slot ini.");
 
         if (flashlightSpotLight == null)
-            Debug.LogError("[Flashlight Error] Slot 'Flashlight Spot Light' di Inspector masih KOSONG/NONE! Harap drag objek Spot Light ke slot ini.");
+            Debug.LogError("[Flashlight Error] Slot 'Flashlight Spot Light' di Inspector masih KOSONG! Harap drag objek Spot Light ke slot ini.");
 
-        // Set status awal game: Tangan KOSONG (Mesh tersembunyi & lampu mati)
         UpdateFlashlightState();
     }
 
@@ -45,8 +43,8 @@ public class EquipableFlashlight : MonoBehaviour
             ToggleEquip();
         }
 
-        // 2. INTERAKSI SAKLAR LAMPU (Klik Kiri)
-        if (Input.GetMouseButtonDown(0))
+        // 2. INTERAKSI SAKLAR LAMPU SENTER (KLIK KANAN / Mouse1)
+        if (Input.GetMouseButtonDown(1))
         {
             // HANYA BISA DIKLIK JIKA SENTER SEDANG DI-EQUIP!
             if (isEquipped)
@@ -69,10 +67,8 @@ public class EquipableFlashlight : MonoBehaviour
             isLightOn = false;
         }
 
-        // Tampilkan pesan di Console Unity untuk verifikasi
-        Debug.Log("[Flashlight] Status Equip Berubah: " + (isEquipped ? "SENTER DI-EQUIP (Di Tangan)" : "SENTER DI-UNEQUIP (Tangan Kosong)"));
+        Debug.Log("[Flashlight] Status Equip: " + (isEquipped ? "SENTER DI-EQUIP (Di Tangan)" : "SENTER DI-UNEQUIP (Kantong)"));
 
-        // Play SFX Equip/Unequip
         if (audioSource != null && equipSFX != null)
         {
             audioSource.PlayOneShot(equipSFX);
@@ -82,16 +78,14 @@ public class EquipableFlashlight : MonoBehaviour
     }
 
     /// <summary>
-    /// Menyalakan / mematikan saklar lampu senter via Klik Kiri
+    /// Menyalakan / mematikan saklar lampu senter via KLIK KANAN
     /// </summary>
     public void ToggleLightSwitch()
     {
         isLightOn = !isLightOn;
 
-        // Tampilkan pesan di Console Unity untuk verifikasi
         Debug.Log("[Flashlight] Saklar Lampu: " + (isLightOn ? "LAMPU NYALA (ON)" : "LAMPU MATI (OFF)"));
 
-        // Play SFX Klik Saklar
         if (audioSource != null && clickSFX != null)
         {
             audioSource.PlayOneShot(clickSFX);
@@ -105,13 +99,11 @@ public class EquipableFlashlight : MonoBehaviour
     /// </summary>
     private void UpdateFlashlightState()
     {
-        // Sembunyikan / Munculkan 3D Mesh Cylinder
         if (flashlightMesh != null)
         {
             flashlightMesh.SetActive(isEquipped);
         }
 
-        // Nyalakan / Matikan komponen cahaya Spot Light
         if (flashlightSpotLight != null)
         {
             flashlightSpotLight.enabled = isEquipped && isLightOn;

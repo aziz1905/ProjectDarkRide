@@ -259,7 +259,7 @@ GameObject:
   - component: {fileID: 6381275476663378829}
   - component: {fileID: 652176510847890988}
   - component: {fileID: 7318446520868011426}
-  - component: {fileID: 7970622474991652160}
+  - component: {fileID: 3170336367986267793}
   m_Layer: 0
   m_Name: BesiKiri
   m_TagString: Untagged
@@ -353,7 +353,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &7970622474991652160
+--- !u!114 &3170336367986267793
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -362,22 +362,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 5614439822835816696}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f4e69f917adb364ca3e29e3b5c72232, type: 3}
+  m_Script: {fileID: 11500000, guid: dbe2eb98d68feef44b952737f33c51e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  promptText: Tahan [E] 2d Perbaiki Objek
-  holdTime: 2
   requiredItemName: Hammer
+  requiredHits: 3
   taskId: FIX_RAIL
-  isCompleted: 0
   disableObjectOnComplete: 0
   changeColorOnComplete: 1
-  completedColor: {r: 0.122380376, g: 1, b: 0, a: 1}
-  OnHoldCompleted:
+  completedColor: {r: 0, g: 1, b: 0, a: 1}
+  OnTaskCompleted:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7970622474991652160}
-        m_TargetAssemblyTypeName: HoldInteraction, Assembly-CSharp
+      - m_Target: {fileID: 3170336367986267793}
+        m_TargetAssemblyTypeName: TimingTaskInteractable, Assembly-CSharp
         m_MethodName: ResetRotationToZero
         m_Mode: 1
         m_Arguments:

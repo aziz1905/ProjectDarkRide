@@ -14,10 +14,8 @@ public class FirstPersonCamera : MonoBehaviour
 
     private void Start()
     {
-        // Kunci kursor di tengah layar dan sembunyikan kursor
         LockCursor();
         
-        // Auto-assign playerBody jika belum di-assign di Inspector
         if (playerBody == null && transform.parent != null)
         {
             playerBody = transform.parent;
@@ -26,15 +24,20 @@ public class FirstPersonCamera : MonoBehaviour
 
     private void Update()
     {
-        // Ambil input pergerakan mouse (frame-rate independent dengan Time.deltaTime)
+        // 🛑 JIKA MINIGAME TIMING SEDANG AKTIF: BEKUKAN KAMERA & JANGAN KUNCI KURSOR!
+        if (TimingMinigameController.Instance != null && TimingMinigameController.Instance.IsPlaying)
+        {
+            return;
+        }
+
+        // Ambil input pergerakan mouse
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
-        // Hitung rotasi vertikal (Pitch) & Clamp batas atas-bawah
+        // Hitung rotasi vertikal (Pitch)
         xRotation -= mouseY;
         xRotation = Mathf.Clamp(xRotation, minPitch, maxPitch);
 
-        // Terapkan rotasi vertikal ke Kamera ini
         transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
 
         // Terapkan rotasi horizontal ke Badan Player
@@ -43,7 +46,7 @@ public class FirstPersonCamera : MonoBehaviour
             playerBody.Rotate(Vector3.up * mouseX);
         }
 
-        // Buka kunci kursor jika tekan Escape (Utility untuk Testing)
+        // Buka kunci kursor jika tekan Escape (Utility Testing)
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             UnlockCursor();

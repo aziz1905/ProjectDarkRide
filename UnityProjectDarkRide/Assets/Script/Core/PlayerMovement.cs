@@ -24,6 +24,12 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        // 🛑 JIKA MINIGAME TIMING SEDANG AKTIF: BEKUKAN PERGERAKAN WASD PLAYER!
+        if (TimingMinigameController.Instance != null && TimingMinigameController.Instance.IsPlaying)
+        {
+            return;
+        }
+
         // 1. Cek apakah pemain berada di atas tanah
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
 
@@ -33,8 +39,8 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // 2. Ambil Input WASD / Arrow Keys
-        float x = Input.GetAxis("Horizontal"); // A (-1) dan D (+1)
-        float z = Input.GetAxis("Vertical");   // S (-1) dan W (+1)
+        float x = Input.GetAxis("Horizontal");
+        float z = Input.GetAxis("Vertical");
 
         // 3. Arah pergerakan relatif terhadap rotasi karakter
         Vector3 move = transform.right * x + transform.forward * z;

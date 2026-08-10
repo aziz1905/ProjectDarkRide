@@ -45,7 +45,7 @@ GameObject:
   - component: {fileID: 6764950314069468090}
   - component: {fileID: 8739306389088395413}
   m_Layer: 0
-  m_Name: AnimatronikJatuh
+  m_Name: Animatronik
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -84,7 +84,6 @@ MonoBehaviour:
   holdTime: 2
   requiredItemName: 
   taskId: 
-  isCompleted: 0
   disableObjectOnComplete: 1
   changeColorOnComplete: 0
   completedColor: {r: 0, g: 1, b: 0.060203552, a: 1}

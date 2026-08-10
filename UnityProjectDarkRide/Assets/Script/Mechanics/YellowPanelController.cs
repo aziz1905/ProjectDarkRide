@@ -2,8 +2,9 @@ using UnityEngine;
 
 /// <summary>
 /// Kontroler Panel Listrik Kuning (Fuse Panel).
-/// Mengelola lampu indikator kuning (kedap-kedip saat fuse rusak, nyala solid saat normal)
-/// serta proses penggantian fuse dengan FusePack.
+/// Mengelola lampu indikator kuning serta proses penggantian fuse dengan FusePack.
+/// Syarat Keselamatan: Sakelar Listrik (PowerSwitch) WAJIB MATI (OFF) terlebih dahulu sebelum fuse diganti!
+/// Saat Sakelar Listrik MATI (OFF), Lampu Indikator Kuning Panel juga ikut MATI (PADAM).
 /// </summary>
 public class YellowPanelController : MonoBehaviour, IInteractable
 {
@@ -11,6 +12,13 @@ public class YellowPanelController : MonoBehaviour, IInteractable
     [Tooltip("CENTANG (TRUE) agar lampu KEDAP-KEDIP saat game mulai!")]
     [SerializeField] private bool isFuseBroken = true; 
     [SerializeField] private string requiredItemName = "FusePack";
+
+    [Header("Power Safety Settings")]
+    [Tooltip("Drag Objek switchListrik / PowerSwitchCube di sini!")]
+    [SerializeField] private PowerSwitchInteractable powerSwitch;
+    
+    [Tooltip("Jika CENTANG (TRUE), penggantian fuse WAJIB saat sakelar listrik MATI (OFF) demi keselamatan kerja.")]
+    [SerializeField] private bool requirePowerOff = true;
 
     [Header("Yellow Light Settings")]
     [SerializeField] private Light yellowIndicatorLight; // Point Light Kuning
@@ -25,6 +33,9 @@ public class YellowPanelController : MonoBehaviour, IInteractable
     [Tooltip("Isi dengan ID Tugas di TaskManager Notebook TAB (misal: FIX_PANEL / FIX_FUSE)")]
     [SerializeField] private string taskId = "FIX_PANEL";
 
+    // Pengecekan apakah sakelar listrik masih ON
+    public bool IsSwitchOn => (powerSwitch == null) || powerSwitch.IsPowerOn;
+
     // --- IMPLEMENTASI INTERFACE IINTERACTABLE ---
 
     public string GetInteractPrompt()
@@ -32,46 +43,48 @@ public class YellowPanelController : MonoBehaviour, IInteractable
         if (!isFuseBroken)
             return "Panel Listrik [NORMAL / SOLID YELLOW]";
 
+        // 1. Pengecekan Keselamatan: Sakelar Listrik Masih ON?
+        if (requirePowerOff && IsSwitchOn)
+        {
+            return "[BAHAYA] Matikan Sakelar Listrik Terlebih Dahulu!";
+        }
+
+        // 2. Cek Alat di Tangan
         ToolBeltManager toolBelt = FindObjectOfType<ToolBeltManager>();
         string currentItem = toolBelt != null ? toolBelt.ActiveItemName : "Kosong";
         bool hasRequiredItem = currentItem.Trim().Equals(requiredItemName.Trim(), System.StringComparison.OrdinalIgnoreCase);
 
-        if (hasRequiredItem)
-        {
-            return $"Tahan [E] {repairHoldTime:F0}d Ganti Fuse ({requiredItemName})";
-        }
-        else
+        if (!hasRequiredItem)
         {
             return $"[BUTUH ALAT] Membutuhkan '{requiredItemName}' di Tangan!";
         }
+
+        return $"Tahan [E] {repairHoldTime:F0}d Ganti Fuse ({requiredItemName})";
     }
 
-    public float HoldDuration
-    {
-        get
-        {
-            if (!isFuseBroken) return 0f;
-
-            ToolBeltManager toolBelt = FindObjectOfType<ToolBeltManager>();
-            string currentItem = toolBelt != null ? toolBelt.ActiveItemName : "Kosong";
-            bool hasRequiredItem = currentItem.Trim().Equals(requiredItemName.Trim(), System.StringComparison.OrdinalIgnoreCase);
-
-            return hasRequiredItem ? repairHoldTime : 0f;
-        }
-    }
+    public float HoldDuration => isFuseBroken ? repairHoldTime : 0f;
 
     public void OnInteract()
     {
         if (!isFuseBroken) return;
 
+        // 1. CEK KESELAMATAN SAKELAR LISTRIK
+        if (requirePowerOff && IsSwitchOn)
+        {
+            Debug.LogWarning("[FUSE REPAIR FAILED] Listrik masih menyala! Matikan Sakelar di Panel Listrik terlebih dahulu!");
+            return;
+        }
+
+        // 2. CEK ALAT DI TANGAN
         ToolBeltManager toolBelt = FindObjectOfType<ToolBeltManager>();
         string currentItem = toolBelt != null ? toolBelt.ActiveItemName : "Kosong";
         bool hasRequiredItem = currentItem.Trim().Equals(requiredItemName.Trim(), System.StringComparison.OrdinalIgnoreCase);
 
         if (!hasRequiredItem) return;
 
+        // BERHASIL GANTI FUSE
         isFuseBroken = false;
-        Debug.Log("[PANEL REPAIRED] Fuse lama berhasil diganti! Panel kembali NORMAL / SOLID YELLOW!");
+        Debug.Log("[PANEL REPAIRED] Fuse lama berhasil diganti! Panel kembali NORMAL!");
 
         // Hapus FusePack dari Sabuk
         if (toolBelt != null)
@@ -94,16 +107,24 @@ public class YellowPanelController : MonoBehaviour, IInteractable
     {
         if (yellowIndicatorLight == null) return;
 
+        // 🔴 1. JIKA SAKELAR MATI (OFF): Lampu Indikator Kuning Panel PADAM TOTAL!
+        if (powerSwitch != null && !powerSwitch.IsPowerOn)
+        {
+            yellowIndicatorLight.enabled = false;
+            return;
+        }
+
+        // 🟢 2. JIKA SAKELAR NYALA (ON):
         if (isFuseBroken)
         {
-            // 🟡 1. KEDAP-KEDIP (Flickering) = Fuse Rusak
+            // 🟡 Kedap-kedip jika Fuse Rusak
             float flicker = Mathf.PingPong(Time.time * blinkSpeed, 1.0f);
             yellowIndicatorLight.intensity = Mathf.Lerp(minIntensity, maxIntensity, flicker);
             yellowIndicatorLight.enabled = true;
         }
         else
         {
-            // 🟡 2. NYALA SOLID (Konstan) = Fuse Normal
+            // 🟡 Nyala Solid jika Fuse Sudah Diganti
             yellowIndicatorLight.intensity = maxIntensity;
             yellowIndicatorLight.enabled = true;
         }
@@ -111,5 +132,4 @@ public class YellowPanelController : MonoBehaviour, IInteractable
 
     public void SetFuseBrokenState(bool broken) => isFuseBroken = broken;
     public bool IsFuseBroken => isFuseBroken;
-    public bool IsPowerOn => !isFuseBroken;
 }

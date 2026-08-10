@@ -112,56 +112,6 @@
                 "value": "{\"m_Value\":false}"
             },
             {
-                "type": "System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
-                "key": "export.exportRecursive",
-                "value": "{\"m_Value\":false}"
-            },
-            {
-                "type": "System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
-                "key": "export.exportAsGroup",
-                "value": "{\"m_Value\":false}"
-            },
-            {
-                "type": "System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
-                "key": "export.objApplyTransform",
-                "value": "{\"m_Value\":false}"
-            },
-            {
-                "type": "System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
-                "key": "export.objExportRightHanded",
-                "value": "{\"m_Value\":true}"
-            },
-            {
-                "type": "System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
-                "key": "export.objExportCopyTextures",
-                "value": "{\"m_Value\":true}"
-            },
-            {
-                "type": "System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
-                "key": "export.objExportVertexColors",
-                "value": "{\"m_Value\":false}"
-            },
-            {
-                "type": "System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
-                "key": "export.objTextureOffsetScale",
-                "value": "{\"m_Value\":false}"
-            },
-            {
-                "type": "System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
-                "key": "export.objQuads",
-                "value": "{\"m_Value\":true}"
-            },
-            {
-                "type": "System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
-                "key": "editor.showEditorNotifications",
-                "value": "{\"m_Value\":false}"
-            },
-            {
-                "type": "System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
-                "key": "UVEditor.showPreviewMaterial",
-                "value": "{\"m_Value\":true}"
-            },
-            {
                 "type": "UnityEngine.ProBuilder.SelectMode, Unity.ProBuilder, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
                 "key": "editor.selectMode",
                 "value": "{\"m_Value\":1}"
@@ -184,12 +134,12 @@
             {
                 "type": "System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
                 "key": "ShapeBuilder.ActiveShapeIndex",
-                "value": "{\"m_Value\":1}"
+                "value": "{\"m_Value\":7}"
             },
             {
                 "type": "System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
                 "key": "ShapeBuilder.LastPivotLocation",
-                "value": "{\"m_Value\":1}"
+                "value": "{\"m_Value\":0}"
             },
             {
                 "type": "UnityEngine.ProBuilder.PivotLocation, Unity.ProBuilder, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
@@ -204,7 +154,7 @@
             {
                 "type": "UnityEngine.Vector3, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
                 "key": "ShapeBuilder.LastSize",
-                "value": "{\"m_Value\":{\"x\":12.850090026855469,\"y\":0.0,\"z\":8.065032958984375}}"
+                "value": "{\"m_Value\":{\"x\":0.9078464508056641,\"y\":1.307755470275879,\"z\":-1.7989501953125}}"
             },
             {
                 "type": "UnityEngine.Quaternion, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
@@ -277,6 +227,11 @@
                 "value": "{}"
             },
             {
+                "type": "UnityEngine.ProBuilder.Shapes.Shape, Unity.ProBuilder, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+                "key": "ShapeBuilder.Cone",
+                "value": "{}"
+            },
+            {
                 "type": "System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
                 "key": "smoothing.PreviewOpacity",
                 "value": "{\"m_Value\":0.5}"
@@ -285,16 +240,6 @@
                 "type": "System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
                 "key": "smoothing.NormalsSize",
                 "value": "{\"m_Value\":0.10000000149011612}"
-            },
-            {
-                "type": "System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
-                "key": "uv.uvEditorGridSnapIncrement",
-                "value": "{\"m_Value\":0.125}"
-            },
-            {
-                "type": "UnityEditor.ProBuilder.Actions.Export+ExportFormat, Unity.ProBuilder.Editor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
-                "key": "export.format",
-                "value": "{\"m_Value\":0}"
             }
         ]
     }

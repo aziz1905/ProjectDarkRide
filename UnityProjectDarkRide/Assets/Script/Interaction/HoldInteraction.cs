@@ -20,7 +20,6 @@ public class HoldInteraction : MonoBehaviour, IInteractable
     [SerializeField] private string taskId = "";
 
     [Header("Options After Hold Completed")]
-    [SerializeField] private bool isCompleted = false;
     [SerializeField] private bool disableObjectOnComplete = false;
     [SerializeField] private bool changeColorOnComplete = false;
     [SerializeField] private Color completedColor = Color.cyan;
@@ -28,6 +27,9 @@ public class HoldInteraction : MonoBehaviour, IInteractable
     [Header("Custom Actions (Events)")]
     [Tooltip("Dipanggil saat 100% Selesai.")]
     public UnityEvent OnHoldCompleted;
+
+    // Internal State Guard (Otomatis di balik layar)
+    private bool isCompleted = false;
 
     // --- IMPLEMENTASI INTERFACE IINTERACTABLE ---
 

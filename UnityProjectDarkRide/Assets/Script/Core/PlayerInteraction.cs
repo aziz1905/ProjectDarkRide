@@ -1,18 +1,23 @@
 using UnityEngine;
 
+/// <summary>
+/// Sistem Interaksi First-Person Player (Raycast Laser + SphereCast Fleksibel).
+/// Mendukung tombol [E] untuk interaksi umum dunia dan [Klik Kiri] untuk interaksi alat khusus.
+/// </summary>
 public class PlayerInteraction : MonoBehaviour
 {
     [Header("Raycast / SphereCast Settings")]
     [SerializeField] private Transform cameraTransform;
     [SerializeField] private float interactDistance = 2.5f; // Jarak jangkauan (2.5 meter)
     
-    [Tooltip("Ubah nilai ini untuk memperlebar/memperkecil area deteksi pandangan!")]
-    [SerializeField] private float interactRadius = 0.3f;   // LEBAR DETEKSI (0.3 meter)
+    [Tooltip("Radius bantuan jika pandangan agak meleset dari objek (0.3 - 0.5 meter)")]
+    [SerializeField] private float interactRadius = 0.35f;
     
     [SerializeField] private LayerMask interactableLayer = ~0;
 
     [Header("Keybindings")]
-    [SerializeField] private KeyCode interactKey = KeyCode.E;
+    [SerializeField] private KeyCode interactKey = KeyCode.E;          // Tombol E untuk interaksi umum (Buka Pintu, dll)
+    [SerializeField] private KeyCode toolUseKey = KeyCode.Mouse0;       // Klik Kiri untuk interaksi alat khusus (Buka Kunci, dll)
 
     // Internal State
     private IInteractable currentInteractable;
@@ -34,26 +39,43 @@ public class PlayerInteraction : MonoBehaviour
 
     private void DetectInteractable()
     {
-        Ray ray = new Ray(cameraTransform.position, cameraTransform.forward);
+        Vector3 origin = cameraTransform.position;
+        Vector3 forward = cameraTransform.forward;
         RaycastHit hit;
+        IInteractable foundInteractable = null;
 
-        if (Physics.SphereCast(ray, interactRadius, out hit, interactDistance, interactableLayer))
+        // 🎯 TAHAP 1: Raycast Tajam (Laser Presisi)
+        if (Physics.Raycast(origin, forward, out hit, interactDistance, interactableLayer, QueryTriggerInteraction.Collide))
         {
-            IInteractable interactable = hit.collider.GetComponentInParent<IInteractable>();
-            if (interactable == null)
-            {
-                interactable = hit.collider.GetComponentInChildren<IInteractable>();
-            }
+            foundInteractable = hit.collider.GetComponentInParent<IInteractable>();
+            if (foundInteractable == null)
+                foundInteractable = hit.collider.GetComponentInChildren<IInteractable>();
+            if (foundInteractable == null)
+                foundInteractable = hit.collider.GetComponent<IInteractable>();
+        }
 
-            if (interactable != null)
+        // 🌐 TAHAP 2: SphereCast Bantuan
+        if (foundInteractable == null && interactRadius > 0f)
+        {
+            if (Physics.SphereCast(origin, interactRadius, forward, out hit, interactDistance, interactableLayer, QueryTriggerInteraction.Collide))
             {
-                if (currentInteractable != interactable)
-                {
-                    ResetHold();
-                    currentInteractable = interactable;
-                }
-                return;
+                foundInteractable = hit.collider.GetComponentInParent<IInteractable>();
+                if (foundInteractable == null)
+                    foundInteractable = hit.collider.GetComponentInChildren<IInteractable>();
+                if (foundInteractable == null)
+                    foundInteractable = hit.collider.GetComponent<IInteractable>();
             }
+        }
+
+        // Simpan Status Interactable yang Ditemukan
+        if (foundInteractable != null)
+        {
+            if (currentInteractable != foundInteractable)
+            {
+                ResetHold();
+                currentInteractable = foundInteractable;
+            }
+            return;
         }
 
         ResetHold();
@@ -63,50 +85,55 @@ public class PlayerInteraction : MonoBehaviour
     {
         if (currentInteractable == null) return;
 
-        // 🔴 PROTEKSI UTAMA: Jika UI Prompt bertuliskan [BUTUH ALAT] atau [BAHAYA],
-        // BLOKIR TOTAL seluruh aksi Tap & Hold E!
         string prompt = currentInteractable.GetInteractPrompt();
-        if (prompt.StartsWith("[BUTUH ALAT]") || prompt.StartsWith("[BAHAYA]"))
+
+        // 🔴 PROTEKSI: Jika UI Prompt bertuliskan [BUTUH ALAT] atau [BAHAYA] atau [TERKUNCI],
+        // BLOKIR TOTAL seluruh aksi!
+        if (prompt.StartsWith("[BUTUH ALAT]") || prompt.StartsWith("[BAHAYA]") || prompt.StartsWith("[TERKUNCI]"))
         {
             ResetHold();
             return;
         }
 
-        // MODE 1: TAP [E] INSTAN
+        // 🟢 DETEKSI TOMBOL: Apakah interaksi ini meminta [Klik Kiri] / [LMB] atau tombol [E]?
+        bool isToolClick = prompt.Contains("Klik Kiri") || prompt.Contains("[LMB]") || prompt.Contains("Click");
+        KeyCode activeKey = isToolClick ? toolUseKey : interactKey;
+
+        // MODE 1: TAP INSTAN
         if (currentInteractable.HoldDuration <= 0.05f)
         {
-            if (Input.GetKeyDown(interactKey))
+            if (Input.GetKeyDown(activeKey))
             {
-                Debug.Log("[TAP SUCCESS] Tekan E Instan pada: " + prompt);
+                Debug.Log("[INTERACT SUCCESS] Interaksi berhasil pada: " + prompt);
                 currentInteractable.OnInteract();
             }
         }
-        // MODE 2: HOLD [E] TAHAN
+        // MODE 2: HOLD TAHAN
         else
         {
-            if (Input.GetKeyDown(interactKey))
+            if (Input.GetKeyDown(activeKey))
             {
                 isHolding = true;
                 hasTriggered = false;
                 holdTimer = 0f;
             }
 
-            if (Input.GetKey(interactKey) && isHolding && !hasTriggered)
+            if (Input.GetKey(activeKey) && isHolding && !hasTriggered)
             {
                 holdTimer += Time.deltaTime;
                 float progress = Mathf.Clamp01(holdTimer / currentInteractable.HoldDuration);
-                Debug.Log($"[HOLD E] Progress: {(progress * 100):F0}%");
+                Debug.Log($"[HOLD PROGRESS] {(progress * 100):F0}%");
 
                 if (holdTimer >= currentInteractable.HoldDuration)
                 {
                     hasTriggered = true;
-                    Debug.Log("[HOLD SUCCESS] Tahan E 100% Selesai pada: " + prompt);
+                    Debug.Log("[HOLD SUCCESS] 100% Selesai pada: " + prompt);
                     currentInteractable.OnInteract();
                     ResetHold();
                 }
             }
 
-            if (Input.GetKeyUp(interactKey))
+            if (Input.GetKeyUp(activeKey))
             {
                 ResetHold();
             }

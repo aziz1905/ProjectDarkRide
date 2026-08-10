@@ -3,9 +3,7 @@ using UnityEngine;
 /// <summary>
 /// Mekanik Mengganti Bohlam Lampu Rusak / Berkedip.
 /// Menangani pencahayaan (Light) serta visual mesh (BolaPijar).
-/// Syarat:
-/// 1. Player harus memegang item 'Bulb' di tangan (Tool Belt).
-/// 2. Sakelar Listrik (PowerSwitch) di ruangan/panel terkait WAJIB MATI (OFF) terlebih dahulu (Safety Check).
+/// Syarat: Player cukup memegang item 'Bulb' di tangan dan Menahan tombol [E].
 /// </summary>
 public class LampBulbFixture : MonoBehaviour, IInteractable
 {
@@ -14,18 +12,11 @@ public class LampBulbFixture : MonoBehaviour, IInteractable
     [SerializeField] private bool isBulbBroken = true;
     [SerializeField] private string requiredItemName = "Bulb";
 
-    [Header("Power Safety Settings")]
-    [Tooltip("Drag Objek switchListrik / PowerSwitchCube di sini!")]
-    [SerializeField] private PowerSwitchInteractable powerSwitch;
-    
-    [Tooltip("Jika CENTANG (TRUE), penggantian lampu WAJIB saat sakelar listrik MATI (OFF) demi keselamatan.")]
-    [SerializeField] private bool requirePowerOff = true;
-
     [Header("Visual & Light Components")]
     [Tooltip("Drag komponen Spot Light / Point Light lampu di sini")]
     [SerializeField] private Light bulbLight;               
 
-    [Tooltip("Drag Objek 'BolaPijar' dari Hierarchy ke sini agar otomatis mati saat listrik padam")]
+    [Tooltip("Drag Objek 'BolaPijar' dari Hierarchy ke sini")]
     [SerializeField] private GameObject bolaPijarObject;   
 
     [Header("Flicker Light Settings")]
@@ -37,17 +28,8 @@ public class LampBulbFixture : MonoBehaviour, IInteractable
     [SerializeField] private float replaceHoldTime = 2.0f;
 
     [Header("Task Manager Integration")]
-    [Tooltip("Isi dengan ID Tugas di TaskManager Notebook TAB (misal: FIX_BULB)")]
+    [Tooltip("Isi dengan ID Tugas di TaskManager Notebook TAB (misal: FIX_BULB / LAMP_FIX)")]
     [SerializeField] private string taskId = "FIX_BULB";
-
-    // Pengecekan apakah daya listrik sakelar menyala
-    public bool IsRoomPowerOn
-    {
-        get
-        {
-            return (powerSwitch == null) || powerSwitch.IsPowerOn;
-        }
-    }
 
     // --- IMPLEMENTASI INTERFACE IINTERACTABLE ---
 
@@ -55,12 +37,6 @@ public class LampBulbFixture : MonoBehaviour, IInteractable
     {
         if (!isBulbBroken)
             return "Bohlam Lampu [NORMAL]";
-
-        // Pengecekan Keselamatan: Apakah Sakelar Listrik Masih NYALA (ON)?
-        if (requirePowerOff && IsRoomPowerOn)
-        {
-            return "[BAHAYA] Matikan Sakelar Listrik Terlebih Dahulu!";
-        }
 
         // Cek Alat di Tangan
         ToolBeltManager toolBelt = FindObjectOfType<ToolBeltManager>();
@@ -75,36 +51,13 @@ public class LampBulbFixture : MonoBehaviour, IInteractable
         return $"Tahan [E] {replaceHoldTime:F0}d Ganti Bohlam ({requiredItemName})";
     }
 
-    public float HoldDuration
-    {
-        get
-        {
-            if (!isBulbBroken) return 0f;
-
-            // Kunci jika listrik belum mati
-            if (requirePowerOff && IsRoomPowerOn) return 0f;
-
-            // Kunci jika alat belum dipegang di tangan
-            ToolBeltManager toolBelt = FindObjectOfType<ToolBeltManager>();
-            string currentItem = toolBelt != null ? toolBelt.ActiveItemName : "Kosong";
-            bool hasRequiredItem = currentItem.Trim().Equals(requiredItemName.Trim(), System.StringComparison.OrdinalIgnoreCase);
-
-            return hasRequiredItem ? replaceHoldTime : 0f;
-        }
-    }
+    public float HoldDuration => isBulbBroken ? replaceHoldTime : 0f;
 
     public void OnInteract()
     {
         if (!isBulbBroken) return;
 
-        // 1. CEK KESELAMATAN LISTRIK
-        if (requirePowerOff && IsRoomPowerOn)
-        {
-            Debug.LogWarning("[LAMP REPAIR FAILED] Listrik masih menyala! Matikan Sakelar di Panel Listrik terlebih dahulu!");
-            return;
-        }
-
-        // 2. CEK ALAT DI TANGAN PLAYER
+        // CEK ALAT DI TANGAN PLAYER
         ToolBeltManager toolBelt = FindObjectOfType<ToolBeltManager>();
         string currentItem = toolBelt != null ? toolBelt.ActiveItemName : "Kosong";
         bool hasRequiredItem = currentItem.Trim().Equals(requiredItemName.Trim(), System.StringComparison.OrdinalIgnoreCase);
@@ -134,15 +87,6 @@ public class LampBulbFixture : MonoBehaviour, IInteractable
 
     private void Update()
     {
-        // 1. JIKA SAKELAR MATI (OFF):
-        if (!IsRoomPowerOn)
-        {
-            if (bulbLight != null) bulbLight.enabled = false;
-            if (bolaPijarObject != null) bolaPijarObject.SetActive(false);
-            return;
-        }
-
-        // 2. JIKA SAKELAR NYALA (ON):
         if (isBulbBroken)
         {
             // 🟡 Bohlam Rusak = Kedap-Kedip (Flickering)
