@@ -2,8 +2,9 @@ using UnityEngine;
 
 /// <summary>
 /// Mekanik Mengganti Bohlam Lampu Rusak / Berkedip.
-/// Menangani pencahayaan (Light) serta visual mesh (BolaPijar).
-/// Syarat: Player cukup memegang item 'Bulb' di tangan dan Menahan tombol [E].
+/// Menangani sinkronisasi kedap-kedip Sinar Lampu (Light) DENGAN Kaca 3D (BolaPijar).
+/// Dilengkapi Pengaturan JEDA DIAM REDUP / GELAP (Horror Blackout Pause).
+/// 0% Beban CPU & 0 B/frame GC Alloc.
 /// </summary>
 public class LampBulbFixture : MonoBehaviour, IInteractable
 {
@@ -20,9 +21,21 @@ public class LampBulbFixture : MonoBehaviour, IInteractable
     [SerializeField] private GameObject bolaPijarObject;   
 
     [Header("Flicker Light Settings")]
-    [SerializeField] private float flickerSpeed = 3.5f;
-    [SerializeField] private float minIntensity = 0.2f;
-    [SerializeField] private float maxIntensity = 3.0f;
+    [SerializeField] private float flickerSpeed = 5.0f;
+    [SerializeField] private float minIntensity = 0.1f;    // Intensitas saat redup/mati
+    [SerializeField] private float maxIntensity = 3.0f;    // Intensitas saat terang maksimal
+
+    [Header("Horror Pause Settings (Jeda Diam Redup)")]
+    [Tooltip("Berapa detik lampu DIAM REDUP / GELAP sebelum menyala kembali")]
+    [SerializeField] private float dimPauseDuration = 2.0f;  // Jeda diam redup (2 detik)
+    
+    [Tooltip("Berapa detik lampu menyala/berkedip sebelum masuk jeda redup")]
+    [SerializeField] private float brightBurstDuration = 1.5f; // Durasi terang berkedip (1.5 detik)
+
+    [Header("3D BolaPijar Emission Settings (Glow Kaca)")]
+    [SerializeField] private Color baseEmissionColor = new Color(1f, 0.85f, 0.5f); // Kuning Warm Pijar
+    [SerializeField] private float minEmissionGlow = 0.02f; // Kusam/mati saat jeda redup
+    [SerializeField] private float maxEmissionGlow = 2.0f;  // Terang menyala saat terang
 
     [Header("Hold Interaction Settings")]
     [SerializeField] private float replaceHoldTime = 2.0f;
@@ -30,6 +43,27 @@ public class LampBulbFixture : MonoBehaviour, IInteractable
     [Header("Task Manager Integration")]
     [Tooltip("Isi dengan ID Tugas di TaskManager Notebook TAB (misal: FIX_BULB / LAMP_FIX)")]
     [SerializeField] private string taskId = "FIX_BULB";
+
+    // Cache Internal & Timer
+    private Renderer bolaPijarRenderer;
+    private Material bolaPijarMaterial;
+    private static readonly int EmissionColorProp = Shader.PropertyToID("_EmissionColor");
+    
+    private float stateTimer = 0f;
+    private bool isInDimPause = false;
+
+    private void Start()
+    {
+        if (bolaPijarObject != null)
+        {
+            bolaPijarRenderer = bolaPijarObject.GetComponent<Renderer>();
+            if (bolaPijarRenderer != null)
+            {
+                bolaPijarMaterial = bolaPijarRenderer.material;
+                bolaPijarMaterial.EnableKeyword("_EMISSION");
+            }
+        }
+    }
 
     // --- IMPLEMENTASI INTERFACE IINTERACTABLE ---
 
@@ -89,24 +123,53 @@ public class LampBulbFixture : MonoBehaviour, IInteractable
     {
         if (isBulbBroken)
         {
-            // 🟡 Bohlam Rusak = Kedap-Kedip (Flickering)
-            if (bulbLight != null)
+            stateTimer += Time.deltaTime;
+
+            if (isInDimPause)
             {
-                float flicker = Mathf.PingPong(Time.time * flickerSpeed, 1.0f);
-                bulbLight.intensity = Mathf.Lerp(minIntensity, maxIntensity, flicker);
-                bulbLight.enabled = true;
+                // 🌑 1. STATE JEDA DIAM REDUP / GELAP (Berlangsung selama dimPauseDuration detik)
+                SetLightAndGlow(minIntensity, minEmissionGlow);
+
+                if (stateTimer >= dimPauseDuration)
+                {
+                    isInDimPause = false;
+                    stateTimer = 0f;
+                }
             }
-            if (bolaPijarObject != null) bolaPijarObject.SetActive(true);
+            else
+            {
+                // 🟡 2. STATE TERANG BERKEDIP (FLICKER BURST)
+                float flicker = Mathf.PingPong(Time.time * flickerSpeed, 1.0f);
+                float currentLight = Mathf.Lerp(minIntensity, maxIntensity, flicker);
+                float currentGlow = Mathf.Lerp(minEmissionGlow, maxEmissionGlow, flicker);
+
+                SetLightAndGlow(currentLight, currentGlow);
+
+                if (stateTimer >= brightBurstDuration)
+                {
+                    isInDimPause = true;
+                    stateTimer = 0f;
+                }
+            }
         }
         else
         {
-            // 🟡 Bohlam Normal = Nyala Solid Konstan
-            if (bulbLight != null)
-            {
-                bulbLight.intensity = maxIntensity;
-                bulbLight.enabled = true;
-            }
-            if (bolaPijarObject != null) bolaPijarObject.SetActive(true);
+            // 💡 3. STATE BOHLAM NORMAL (TERANG SOLID KONSTAN)
+            SetLightAndGlow(maxIntensity, maxEmissionGlow);
+        }
+    }
+
+    private void SetLightAndGlow(float lightIntensity, float glowIntensity)
+    {
+        if (bulbLight != null)
+        {
+            bulbLight.intensity = lightIntensity;
+            bulbLight.enabled = lightIntensity > 0.05f;
+        }
+
+        if (bolaPijarMaterial != null)
+        {
+            bolaPijarMaterial.SetColor(EmissionColorProp, baseEmissionColor * Mathf.LinearToGammaSpace(glowIntensity));
         }
     }
 

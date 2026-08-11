@@ -45,8 +45,8 @@ Light:
   m_Type: 0
   m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 25
-  m_Range: 20
+  m_Intensity: 10
+  m_Range: 15
   m_SpotAngle: 55
   m_InnerSpotAngle: 45
   m_CookieSize: 10
@@ -82,7 +82,7 @@ Light:
   m_RenderMode: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 279
   m_RenderingLayerMask: 1
   m_Lightmapping: 4
   m_LightShadowCasterMode: 0
@@ -363,7 +363,7 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
+  m_RenderPostProcessing: 1
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0
@@ -535,7 +535,7 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
+  m_RenderPostProcessing: 1
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0
@@ -853,6 +853,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   interactKey: 101
+  toolUseKey: 323
 --- !u!114 &6708064672332486163
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -923,43 +924,30 @@ MonoBehaviour:
   dayTitle: CATATAN SHIFT HARI 1
   taskList:
   - taskId: CLEAN_TRASH
-    taskDescription: Bersihkan Puing Sampah
+    taskDescription: Puing-puing sampah berserakan di sepanjang jalur rel dan lantai
+      wahana
+    requiredCount: 9
+    currentCount: 0
+    isCompleted: 0
+  - taskId: INSPECT_PANELS
+    taskDescription: 'periksa rutin panel listrik '
     requiredCount: 3
     currentCount: 0
     isCompleted: 0
-  - taskId: FIX_PANEL
-    taskDescription: Ganti Fuse Panel Listrik Utama
-    requiredCount: 1
-    currentCount: 0
-    isCompleted: 0
-  - taskId: WIPE_MIRROR
-    taskDescription: Lap Cermin Kotor
-    requiredCount: 1
+  - taskId: WIPE_DIRT
+    taskDescription: Lap cermin/lukisan dan beberapa aniatronik di zone gallery,
+      graveyard dan hospital
+    requiredCount: 3
     currentCount: 0
     isCompleted: 0
   - taskId: LAMP_FIX
-    taskDescription: Ganti Lampu Yang Berkedip Dengan lampu Yang Baru
-    requiredCount: 1
-    currentCount: 0
-    isCompleted: 0
-  - taskId: FIX_CROOKED_PAINTING
-    taskDescription: Membetulkan Lukisan yang Miring
-    requiredCount: 1
-    currentCount: 0
-    isCompleted: 0
-  - taskId: WIPE_PAINTING
-    taskDescription: Mengelap Lukisan
+    taskDescription: Salah satu lampu galeri mengalami korsleting bohlam dan berkedip-kedip
     requiredCount: 2
     currentCount: 0
     isCompleted: 0
-  - taskId: FIX_RAIL
-    taskDescription: Membetulkan Rel Yang Rusak
-    requiredCount: 1
-    currentCount: 0
-    isCompleted: 0
-  - taskId: WIPE_STATUE
-    taskDescription: Membersihkan Kotoran Pada Patung
-    requiredCount: 1
+  - taskId: FIX_CROOKED_PAINTING
+    taskDescription: lukisan di lorong galeri posisinya miring
+    requiredCount: 2
     currentCount: 0
     isCompleted: 0
   notebookTitleText: {fileID: 0}

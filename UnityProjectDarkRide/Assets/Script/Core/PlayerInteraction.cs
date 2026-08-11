@@ -21,6 +21,7 @@ public class PlayerInteraction : MonoBehaviour
 
     // Internal State
     private IInteractable currentInteractable;
+    private InteractableOutline currentOutline;
     private float holdTimer = 0f;
     private bool isHolding = false;
     private bool hasTriggered = false;
@@ -74,6 +75,32 @@ public class PlayerInteraction : MonoBehaviour
             {
                 ResetHold();
                 currentInteractable = foundInteractable;
+
+                // 🌟 AKTIFKAN OUTLINE GARIS LUAR PUTIH OTOMATIS PADA OBJEK BER-RENDERER!
+                MonoBehaviour mb = foundInteractable as MonoBehaviour;
+                if (mb != null)
+                {
+                    // Cari GameObject yang memiliki 3D Mesh Renderer (jika script di InteractionArea, targetkan Parentnya!)
+                    GameObject targetObj = mb.gameObject;
+                    if (targetObj.GetComponentInChildren<Renderer>() == null && mb.transform.parent != null)
+                    {
+                        targetObj = mb.transform.parent.gameObject;
+                    }
+
+                    currentOutline = targetObj.GetComponentInParent<InteractableOutline>();
+                    if (currentOutline == null) currentOutline = targetObj.GetComponentInChildren<InteractableOutline>();
+                    if (currentOutline == null) currentOutline = targetObj.GetComponent<InteractableOutline>();
+
+                    if (currentOutline == null)
+                    {
+                        currentOutline = targetObj.AddComponent<InteractableOutline>();
+                    }
+
+                    if (currentOutline != null)
+                    {
+                        currentOutline.SetOutlineActive(true);
+                    }
+                }
             }
             return;
         }
@@ -142,6 +169,13 @@ public class PlayerInteraction : MonoBehaviour
 
     private void ResetHold()
     {
+        // Matikan Garis Luar Putih saat Berpaling
+        if (currentOutline != null)
+        {
+            currentOutline.SetOutlineActive(false);
+            currentOutline = null;
+        }
+
         currentInteractable = null;
         isHolding = false;
         hasTriggered = false;

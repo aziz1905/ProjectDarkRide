@@ -49,13 +49,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isBulbBroken: 1
   requiredItemName: Bulb
-  powerSwitch: {fileID: 0}
-  requirePowerOff: 1
   bulbLight: {fileID: 3673545481716910019}
   bolaPijarObject: {fileID: 6661959098253255015}
-  flickerSpeed: 3.5
+  flickerSpeed: 1
   minIntensity: 0.2
   maxIntensity: 3.5
+  dimPauseDuration: 1
+  brightBurstDuration: 1.5
+  baseEmissionColor: {r: 1, g: 0.85, b: 0.5, a: 1}
+  minEmissionGlow: 0.05
+  maxEmissionGlow: 2
   replaceHoldTime: 2
   taskId: LAMP_FIX
 --- !u!114 &2225457560273631339
@@ -74,7 +77,6 @@ MonoBehaviour:
   holdTime: 2
   requiredItemName: Bulb
   taskId: LAMP_FIX
-  isCompleted: 0
   disableObjectOnComplete: 0
   changeColorOnComplete: 0
   completedColor: {r: 0, g: 1, b: 1, a: 1}
@@ -211,6 +213,10 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4140211337572878892, guid: 1fc3503cbd12cc74a9e684aeea303637, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 1121d4784751f52478f78839c842721f, type: 2}
     - target: {fileID: 5985981039444576958, guid: 1fc3503cbd12cc74a9e684aeea303637, type: 3}
       propertyPath: m_Name
       value: Bulb

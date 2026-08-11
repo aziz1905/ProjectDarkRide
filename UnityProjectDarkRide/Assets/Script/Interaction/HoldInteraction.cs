@@ -88,14 +88,23 @@ public class HoldInteraction : MonoBehaviour, IInteractable
 
         if (changeColorOnComplete)
         {
-            // 🟢 UBAH WARNA SELURUH MESH ANAK (Kepala & Badan)!
+            // 🟢 UBAH WARNA SELURUH MESH ANAK (Support URP _BaseColor & Standard _Color)!
             Renderer[] renderers = GetComponentsInChildren<Renderer>();
             foreach (Renderer rend in renderers)
             {
-                if (rend != null)
+                if (rend != null && rend.material != null)
                 {
+                    rend.material.SetColor("_BaseColor", completedColor);
                     rend.material.color = completedColor;
                 }
+            }
+
+            // Update memori outline agar warna hijau baru tidak tertimpa kembali ke merah!
+            InteractableOutline outline = GetComponentInParent<InteractableOutline>();
+            if (outline == null) outline = GetComponentInChildren<InteractableOutline>();
+            if (outline != null)
+            {
+                outline.RefreshMaterials();
             }
         }
 
