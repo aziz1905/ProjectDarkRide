@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &770099621227559810
+--- !u!1 &6152596772065954668
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,48 +8,80 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 9209961216698062779}
-  - component: {fileID: 7583910526930002623}
-  - component: {fileID: 2015364938356001584}
-  - component: {fileID: 6440957601822942873}
-  - component: {fileID: 8483687930231406005}
+  - component: {fileID: 3480357441186456583}
   m_Layer: 0
-  m_Name: Switch
+  m_Name: Pintu
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &9209961216698062779
+--- !u!4 &3480357441186456583
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 770099621227559810}
+  m_GameObject: {fileID: 6152596772065954668}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.6, y: 0, z: 0}
-  m_LocalScale: {x: 0.7, y: 0.343091, z: 0.285488}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 476.935, y: -18.296, z: 58.7589}
+  m_LocalScale: {x: 21.668077, y: 4.725713, z: 6.468279}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 958102594767290057}
   m_Father: {fileID: 9148483968784878201}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &7583910526930002623
+--- !u!1 &7184792266911723577
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6147017395951089174}
+  - component: {fileID: 1594712068758493736}
+  - component: {fileID: 5202132916945735749}
+  - component: {fileID: 8511921027662372453}
+  - component: {fileID: 6631785892390001949}
+  m_Layer: 0
+  m_Name: MeshPintu
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6147017395951089174
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7184792266911723577}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.01199913, y: -0.012239933, z: 0.07012081}
+  m_LocalScale: {x: 0.010259622, y: 0.2113057, z: 0.15471354}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 958102594767290057}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!33 &1594712068758493736
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 770099621227559810}
+  m_GameObject: {fileID: 7184792266911723577}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &2015364938356001584
+--- !u!23 &5202132916945735749
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 770099621227559810}
+  m_GameObject: {fileID: 7184792266911723577}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -85,13 +117,13 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &6440957601822942873
+--- !u!65 &8511921027662372453
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 770099621227559810}
+  m_GameObject: {fileID: 7184792266911723577}
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -104,24 +136,32 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.67, y: 1.79, z: 2.58}
+  m_Size: {x: 1.23, y: 1.1, z: 1.1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &8483687930231406005
+--- !u!114 &6631785892390001949
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 770099621227559810}
+  m_GameObject: {fileID: 7184792266911723577}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5e5169dd9db4084296c60c2fd7c3acf, type: 3}
+  m_Script: {fileID: 11500000, guid: d28b54f0507035d4f9ab3d701ebb5bb5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isPowerOn: 1
-  switchLeverTransform: {fileID: 0}
-  onRotation: {x: 0, y: 0, z: 30}
-  offRotation: {x: 0, y: 0, z: -30}
+  isOpen: 0
+  isLocked: 0
+  requiredKeyName: 
+  openAngle: 90
+  swingSpeed: 4
+  invertSwingDirection: 1
+  doorThicknessAxis: 0
+  doorHingeTransform: {fileID: 958102594767290057}
+  audioSource: {fileID: 0}
+  openSound: {fileID: 0}
+  closeSound: {fileID: 0}
+  lockedSound: {fileID: 0}
 --- !u!1 &7631890216762572736
 GameObject:
   m_ObjectHideFlags: 0
@@ -134,6 +174,7 @@ GameObject:
   - component: {fileID: 5680640592221032928}
   - component: {fileID: 2510411876061467885}
   - component: {fileID: 1378668707791741111}
+  - component: {fileID: 9190521787220548450}
   m_Layer: 0
   m_Name: SwitchListrik
   m_TagString: Untagged
@@ -151,10 +192,10 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 24.103, y: 11.153, z: 12.088}
-  m_LocalScale: {x: 0.036587, y: 0.24437, z: 0.16841}
+  m_LocalScale: {x: 0.04615084, y: 0.21160828, z: 0.15460064}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 9209961216698062779}
+  - {fileID: 3480357441186456583}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &5680640592221032928
@@ -228,3 +269,57 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &9190521787220548450
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7631890216762572736}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fbada7127490a64d8974c26afc19af5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isFuseBroken: 1
+  requiredItemName: FusePack
+  powerSwitch: {fileID: 0}
+  requirePowerOff: 1
+  yellowIndicatorLight: {fileID: 0}
+  blinkSpeed: 6
+  minIntensity: 0.2
+  maxIntensity: 5
+  repairHoldTime: 2
+  taskId: FIX_PANEL
+--- !u!1 &7762913551595319566
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 958102594767290057}
+  m_Layer: 0
+  m_Name: EngselPintu
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &958102594767290057
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7762913551595319566}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalPosition: {x: -22.0269, y: 3.8840003, z: -9.0141}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 6147017395951089174}
+  m_Father: {fileID: 3480357441186456583}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}

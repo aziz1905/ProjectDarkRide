@@ -394947,10 +394947,6 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 97560306}
     - target: {fileID: 6708064672332486163, guid: 95f61664be404284687c615ff3d8f01a, type: 3}
-      propertyPath: itemMeshList.Array.data[5].worldPrefab
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 6708064672332486163, guid: 95f61664be404284687c615ff3d8f01a, type: 3}
       propertyPath: itemMeshList.Array.data[6].worldPrefab
       value: 
       objectReference: {fileID: 500486390}
