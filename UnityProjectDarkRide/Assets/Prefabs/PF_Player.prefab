@@ -847,8 +847,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cameraTransform: {fileID: 0}
-  interactDistance: 2.5
-  interactRadius: 0.3
+  interactDistance: 2
+  interactRadius: 0.5
   interactableLayer:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -870,6 +870,8 @@ MonoBehaviour:
   activeEquippedSlotIndex: -1
   dropKey: 103
   dropForwardForce: 2
+  tutorialTaskId: TAKE_TOOLS
+  requiredToolCount: 4
   itemMeshList:
   - itemName: Cloth
     heldMesh: {fileID: 2435606495749516227}
@@ -923,35 +925,62 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dayTitle: CATATAN SHIFT HARI 1
   taskList:
+  - taskId: TAKE_TOOLS
+    taskDescription: Ambil 4 alat dasar di Workshop
+    isSubTask: 0
+    parentTaskId: 
+    isRevealed: 1
+    requiredCount: 1
+    currentCount: 0
+    isCompleted: 0
   - taskId: CLEAN_TRASH
     taskDescription: Puing-puing sampah berserakan di sepanjang jalur rel dan lantai
       wahana
+    isSubTask: 0
+    parentTaskId: 
+    isRevealed: 1
     requiredCount: 9
     currentCount: 0
     isCompleted: 0
-  - taskId: INSPECT_PANELS
-    taskDescription: 'periksa rutin panel listrik '
-    requiredCount: 3
-    currentCount: 0
-    isCompleted: 0
   - taskId: WIPE_DIRT
-    taskDescription: Lap cermin/lukisan dan beberapa aniatronik di zone gallery,
-      graveyard dan hospital
-    requiredCount: 3
+    taskDescription: Lap cermin/lukisan dan animatronik yang ada di zona
+    isSubTask: 0
+    parentTaskId: 
+    isRevealed: 1
+    requiredCount: 4
     currentCount: 0
     isCompleted: 0
   - taskId: LAMP_FIX
     taskDescription: Salah satu lampu galeri mengalami korsleting bohlam dan berkedip-kedip
-    requiredCount: 2
+    isSubTask: 0
+    parentTaskId: 
+    isRevealed: 1
+    requiredCount: 1
     currentCount: 0
     isCompleted: 0
   - taskId: FIX_CROOKED_PAINTING
     taskDescription: lukisan di lorong galeri posisinya miring
+    isSubTask: 0
+    parentTaskId: 
+    isRevealed: 1
     requiredCount: 2
+    currentCount: 0
+    isCompleted: 0
+  - taskId: INSPECT_PANELS
+    taskDescription: periksa dan pastikan panel listrik aman
+    isSubTask: 0
+    parentTaskId: 
+    isRevealed: 1
+    requiredCount: 3
     currentCount: 0
     isCompleted: 0
   notebookTitleText: {fileID: 0}
   taskChecklistText: {fileID: 0}
+  completionMark: '[X]'
+  completionMarkColor: '#44FF44'
+  mainTaskBullet: "\u2022 "
+  subTaskBullet: '    > '
+  addSpacingBetweenTasks: 1
 --- !u!1 &8115186149073660174
 GameObject:
   m_ObjectHideFlags: 0

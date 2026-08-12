@@ -18,6 +18,12 @@ public class ToolBeltManager : MonoBehaviour
     [SerializeField] private KeyCode dropKey = KeyCode.G;    // Tombol G untuk Drop Barang
     [SerializeField] private float dropForwardForce = 2.0f;  // Dorongan jatuh ke depan
 
+    [Header("Tutorial Task Integration (Day 1)")]
+    [Tooltip("ID Tugas di TaskManager untuk tutorial ambil alat (misal: TAKE_TOOLS)")]
+    [SerializeField] private string tutorialTaskId = "TAKE_TOOLS";
+    [Tooltip("Berapa alat yang harus diambil di Workshop untuk menyelesaikan tugas ini")]
+    [SerializeField] private int requiredToolCount = 4;
+
     [Header("Dynamic 3D Mesh Lookup")]
     [Tooltip("Daftar pencocokan nama item dengan 3D Mesh di tangan & Prefab di folder Assets/Prefabs/")]
     [SerializeField] private InventoryMeshLink[] itemMeshList;
@@ -111,6 +117,22 @@ public class ToolBeltManager : MonoBehaviour
                 Debug.Log($"[Tool Belt] Item '{itemName}' Disimpan di Sabuk (Slot {i + 1}).");
                 
                 UpdateHeldItemVisuals();
+
+                // 🌟 CEK TUTORIAL TASK: Jika sudah mengambil jumlah alat yang ditentukan, selesaikan task!
+                if (!string.IsNullOrEmpty(tutorialTaskId) && TaskManager.Instance != null)
+                {
+                    int filledSlots = 0;
+                    for (int j = 0; j < maxSlots; j++)
+                    {
+                        if (slotItemNames[j] != "Empty") filledSlots++;
+                    }
+
+                    if (filledSlots >= requiredToolCount)
+                    {
+                        TaskManager.Instance.CompleteTask(tutorialTaskId);
+                    }
+                }
+
                 return true;
             }
         }
