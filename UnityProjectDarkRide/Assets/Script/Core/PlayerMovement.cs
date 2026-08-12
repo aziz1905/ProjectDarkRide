@@ -24,8 +24,8 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        // 🛑 JIKA MINIGAME TIMING SEDANG AKTIF: BEKUKAN PERGERAKAN WASD PLAYER!
-        if (TimingMinigameController.Instance != null && TimingMinigameController.Instance.IsPlaying)
+        // 🛑 SISTEM KUNCI UNIVERSAL: Jika ada Minigame/Menu yang aktif, tahan WASD!
+        if (GameInputLock.IsInputLocked)
         {
             return;
         }

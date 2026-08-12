@@ -24,8 +24,8 @@ public class FirstPersonCamera : MonoBehaviour
 
     private void Update()
     {
-        // 🛑 JIKA MINIGAME TIMING SEDANG AKTIF: BEKUKAN KAMERA & JANGAN KUNCI KURSOR!
-        if (TimingMinigameController.Instance != null && TimingMinigameController.Instance.IsPlaying)
+        // 🛑 SISTEM KUNCI UNIVERSAL: Jika ada Minigame/Menu yang aktif, tahan kamera!
+        if (GameInputLock.IsInputLocked)
         {
             return;
         }

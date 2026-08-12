@@ -129,9 +129,8 @@ public class TimingMinigameController : MonoBehaviour
             minigameDarkVolume.weight = 1f;
         }
 
-        // 🖱️ 3. BUKA KUNCI KURSOR
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
+        // 🛑 3. KUNCI INPUT UNIVERSAL: Bekukan WASD & Kamera, Buka Kursor Mouse
+        GameInputLock.LockInput();
 
         if (minigamePanel != null) minigamePanel.SetActive(true);
         gameObject.SetActive(true);
@@ -317,9 +316,8 @@ public class TimingMinigameController : MonoBehaviour
             minigameDarkVolume.weight = 0f;
         }
 
-        // 🔒 3. KUNCI KURSOR KEMBALI
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        // 🔓 3. BUKA KUNCI INPUT UNIVERSAL: Pulihkan WASD & Kamera
+        GameInputLock.UnlockInput();
 
         if (isSuccess)
         {

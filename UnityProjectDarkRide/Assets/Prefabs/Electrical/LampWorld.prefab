@@ -52,13 +52,13 @@ MonoBehaviour:
   bulbLight: {fileID: 3673545481716910019}
   bolaPijarObject: {fileID: 6661959098253255015}
   flickerSpeed: 1
-  minIntensity: 0.2
+  minIntensity: 0
   maxIntensity: 3.5
   dimPauseDuration: 1
-  brightBurstDuration: 1.5
-  baseEmissionColor: {r: 1, g: 0.85, b: 0.5, a: 1}
-  minEmissionGlow: 0.05
-  maxEmissionGlow: 2
+  brightBurstDuration: 2
+  baseEmissionColor: {r: 1, g: 0.90902656, b: 0.5019608, a: 1}
+  minEmissionGlow: 0
+  maxEmissionGlow: 1
   replaceHoldTime: 2
   taskId: LAMP_FIX
 --- !u!114 &2225457560273631339
@@ -216,7 +216,7 @@ PrefabInstance:
     - target: {fileID: 4140211337572878892, guid: 1fc3503cbd12cc74a9e684aeea303637, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 1121d4784751f52478f78839c842721f, type: 2}
+      objectReference: {fileID: 2100000, guid: 1ff92dbdcbe72ab4ba080ae765c60493, type: 2}
     - target: {fileID: 5985981039444576958, guid: 1fc3503cbd12cc74a9e684aeea303637, type: 3}
       propertyPath: m_Name
       value: Bulb

@@ -1,69 +1,81 @@
 using UnityEngine;
 
 /// <summary>
-/// Trigger Area di Lorong / Pintu Masuk Zona.
-/// Saat pemain berjalan melangkah melewati trigger ini:
-/// 1. Jika TIDAK ada kerusakan (hasBrokenCable = false): Langsung mencentang [✓] tugas 'Periksa & Pastikan Panel Aman'.
-/// 2. Jika ADA kerusakan (hasBrokenCable = true): Memicu sub-task dinamis 'Perbaiki Kabel Putus' di Notebook TAB!
+/// Trigger Area Inspeksi Zona / Ruang Panel.
+/// Saat pemain berjalan melewati trigger ini:
+/// 1. Jika TIDAK ada masalah kelistrikan (hasWiringTask = false):
+///    Langsung menyelesaikan / menambah progres tugas 'Inspeksi Seluruh Panel Listrik' di Notebook TAB.
+/// 2. Jika ADA masalah kelistrikan/kabel (hasWiringTask = true):
+///    Memunculkan tugas lanjutan 'Betulkan Kabel Listrik di Zona Ini' di Notebook TAB dan mengaktifkan objek JunctionBox/CablePannel.
 /// </summary>
 [RequireComponent(typeof(Collider))]
 public class ZoneTaskTrigger : MonoBehaviour
 {
-    [Header("Task Settings")]
-    [Tooltip("ID Tugas Utama di TaskManager (misal: CHECK_PANEL_ZONE_1)")]
-    [SerializeField] private string zoneCheckTaskId = "CHECK_PANEL_ZONE_1";
+    [Header("Task Settings (Inspeksi)")]
+    [Tooltip("ID Tugas Inspeksi di TaskManager (misal: INSPECT_PANELS / CHECK_ZONE_3)")]
+    [SerializeField] private string inspectionTaskId = "INSPECT_PANELS";
 
-    [Header("Broken Cable Conditional Trigger")]
-    [Tooltip("CENTANG jika di zona ini ditentukan ada kabel yang rusak/putus")]
-    [SerializeField] private bool hasBrokenCable = false;
+    [Header("Wiring Maintenance Conditional")]
+    [Tooltip("CENTANG jika di zona ini ditentukan ada tugas sambung kabel yang perlu dikerjakan")]
+    [SerializeField] private bool hasWiringTask = false;
 
-    [Tooltip("ID Sub-Task kabel rusak yang akan dimunculkan jika hasBrokenCable = true")]
-    [SerializeField] private string brokenCableSubTaskId = "FIX_CABLE_ZONE_1";
+    [Tooltip("ID Tugas Sambung Kabel yang akan dimunculkan di Notebook jika hasWiringTask = true")]
+    [SerializeField] private string wiringTaskId = "FIX_WIRE";
 
-    [Header("Visual & Audio Feedback (Opsional)")]
-    [SerializeField] private GameObject brokenCableVisual;  // 3D Objek kabel konslet
+    [Header("Connected 3D Object (Opsional)")]
+    [Tooltip("Drag Objek CablePannel / JunctionBox yang akan diaktifkan")]
+    [SerializeField] private GameObject wiringPanelObject;
+
+    [Header("Audio & Efek (Opsional)")]
     [SerializeField] private AudioSource audioSource;
-    [SerializeField] private AudioClip sparkSound;          // Suara percikan konslet (BZZZT!)
+    [SerializeField] private AudioClip anomalySound; // Suara korsleting / peringatan (BZZZT!)
 
     private bool hasTriggered = false;
+
+    private void Start()
+    {
+        // Pastikan collider diatur sebagai Trigger
+        Collider col = GetComponent<Collider>();
+        if (col != null) col.isTrigger = true;
+    }
 
     private void OnTriggerEnter(Collider other)
     {
         if (hasTriggered) return;
 
-        // Periksa apakah yang menginjak trigger adalah Player
+        // Periksa apakah yang melintas adalah Player
         if (other.CompareTag("Player") || other.GetComponent<CharacterController>() != null || other.name.ToLower().Contains("player"))
         {
             hasTriggered = true;
 
-            if (hasBrokenCable)
+            // ⚠️ KASUS 1: ZONA BUTUH PERBAIKAN KABEL
+            if (hasWiringTask)
             {
-                // ⚠️ KASUS 1: ADA KABEL RUSAK -> Picu Sub-Task Kabel Rusak di Notebook TAB!
-                Debug.Log($"<color=yellow>[ZONE TRIGGER] Pemain memasuki zona dengan kabel rusak! Memicu sub-task: {brokenCableSubTaskId}</color>");
-                
-                if (TaskManager.Instance != null && !string.IsNullOrEmpty(brokenCableSubTaskId))
+                Debug.Log($"<color=yellow>[ZONE TRIGGER] Pemain memasuki zona kabel bermasalah! Membuka tugas: {wiringTaskId}</color>");
+
+                if (TaskManager.Instance != null && !string.IsNullOrEmpty(wiringTaskId))
                 {
-                    TaskManager.Instance.RevealSubTask(brokenCableSubTaskId);
+                    TaskManager.Instance.RevealSubTask(wiringTaskId);
                 }
 
-                if (brokenCableVisual != null)
+                if (wiringPanelObject != null)
                 {
-                    brokenCableVisual.SetActive(true);
+                    wiringPanelObject.SetActive(true);
                 }
 
-                if (audioSource != null && sparkSound != null)
+                if (audioSource != null && anomalySound != null)
                 {
-                    audioSource.PlayOneShot(sparkSound);
+                    audioSource.PlayOneShot(anomalySound);
                 }
             }
+            // 🟢 KASUS 2: ZONA AMAN / INSPEKSI BERHASIL
             else
             {
-                // 🟢 KASUS 2: ZONA AMAN (TIDAK ADA KERUSAKAN) -> Langsung Centang [✓] Tugas Utama!
-                Debug.Log($"<color=green>[ZONE TRIGGER] Pemain memasuki zona aman. Tugas '{zoneCheckTaskId}' SELESAI [✓]!</color>");
+                Debug.Log($"<color=green>[ZONE TRIGGER] Inspeksi Zona Berhasil! Progres tugas '{inspectionTaskId}' bertambah [✓].</color>");
 
-                if (TaskManager.Instance != null && !string.IsNullOrEmpty(zoneCheckTaskId))
+                if (TaskManager.Instance != null && !string.IsNullOrEmpty(inspectionTaskId))
                 {
-                    TaskManager.Instance.CompleteTask(zoneCheckTaskId);
+                    TaskManager.Instance.CompleteTask(inspectionTaskId);
                 }
             }
         }
