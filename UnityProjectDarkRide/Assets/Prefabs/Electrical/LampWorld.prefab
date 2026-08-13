@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3389878205053305146}
   - component: {fileID: 9209960502908565915}
-  - component: {fileID: 2225457560273631339}
   m_Layer: 0
   m_Name: LampWorld
   m_TagString: Untagged
@@ -51,7 +50,7 @@ MonoBehaviour:
   requiredItemName: Bulb
   bulbLight: {fileID: 3673545481716910019}
   bolaPijarObject: {fileID: 6661959098253255015}
-  flickerSpeed: 1
+  flickerSpeed: 0
   minIntensity: 0
   maxIntensity: 3.5
   dimPauseDuration: 1
@@ -61,28 +60,6 @@ MonoBehaviour:
   maxEmissionGlow: 1
   replaceHoldTime: 2
   taskId: LAMP_FIX
---- !u!114 &2225457560273631339
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 969055030165341856}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f4e69f917adb364ca3e29e3b5c72232, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  promptText: Tahan [E] 2d Buka Pintu
-  holdTime: 2
-  requiredItemName: Bulb
-  taskId: LAMP_FIX
-  disableObjectOnComplete: 0
-  changeColorOnComplete: 0
-  completedColor: {r: 0, g: 1, b: 1, a: 1}
-  OnHoldCompleted:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!1 &6903678807821339449
 GameObject:
   m_ObjectHideFlags: 0

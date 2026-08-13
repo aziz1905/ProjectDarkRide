@@ -66,7 +66,7 @@ GameObject:
   - component: {fileID: 5793796972530304660}
   - component: {fileID: 3448850170453337215}
   - component: {fileID: 6952956355431249354}
-  - component: {fileID: 4748097313362521158}
+  - component: {fileID: 2816843828971114012}
   m_Layer: 0
   m_Name: Lukisan
   m_TagString: Untagged
@@ -158,9 +158,9 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 6.9, y: 1.12, z: 1.12}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &4748097313362521158
+  m_Size: {x: 6.9, y: 1.35, z: 1.34}
+  m_Center: {x: 2.75, y: 0, z: 0}
+--- !u!114 &2816843828971114012
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -169,28 +169,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 5191452603933304593}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f4e69f917adb364ca3e29e3b5c72232, type: 3}
+  m_Script: {fileID: 11500000, guid: dbe2eb98d68feef44b952737f33c51e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  promptText: Tahan [E] 2d Perbaiki Objek
-  holdTime: 2
   requiredItemName: Hammer
+  requiredHits: 3
   taskId: FIX_FALLEN_PAINTING
   disableObjectOnComplete: 0
-  changeColorOnComplete: 1
-  completedColor: {r: 0, g: 1, b: 0.047753334, a: 1}
-  OnHoldCompleted:
+  changeColorOnComplete: 0
+  completedColor: {r: 0, g: 1, b: 0, a: 1}
+  OnTaskCompleted:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 4748097313362521158}
-        m_TargetAssemblyTypeName: HoldInteraction, Assembly-CSharp
-        m_MethodName: ResetTransformToZero
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []

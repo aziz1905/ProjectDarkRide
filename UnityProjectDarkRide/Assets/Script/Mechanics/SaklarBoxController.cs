@@ -35,12 +35,6 @@ public class SaklarBoxController : MonoBehaviour
         if (powerSwitch == null)
             powerSwitch = GetComponentInChildren<PowerSwitchInteractable>();
 
-        if (fuseBox == null)
-            fuseBox = FindObjectOfType<FuseBoxController>();
-
-        if (wireTask == null)
-            wireTask = FindObjectOfType<WireTaskInteractable>();
-
         UpdateIndicators();
     }
 

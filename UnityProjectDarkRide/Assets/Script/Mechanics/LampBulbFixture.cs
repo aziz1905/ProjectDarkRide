@@ -21,7 +21,6 @@ public class LampBulbFixture : MonoBehaviour, IInteractable
     [SerializeField] private GameObject bolaPijarObject;   
 
     [Header("Flicker Light Settings")]
-    [SerializeField] private float flickerSpeed = 5.0f;
     [SerializeField] private float minIntensity = 0.1f;    // Intensitas saat redup/mati
     [SerializeField] private float maxIntensity = 3.0f;    // Intensitas saat terang maksimal
 
@@ -44,13 +43,27 @@ public class LampBulbFixture : MonoBehaviour, IInteractable
     [Tooltip("Isi dengan ID Tugas di TaskManager Notebook TAB (misal: FIX_BULB / LAMP_FIX)")]
     [SerializeField] private string taskId = "FIX_BULB";
 
-    // Cache Internal & Timer
+    [Header("Transition Glitch Flickers (Kedip Transisi)")]
+    [Tooltip("CENTANG (TRUE) agar lampu berkedip cepat 'cetek-cetek-bzzt' saat MAU NYALA dan saat MAU MATI")]
+    [SerializeField] private bool enableTransitionFlicker = true;
+    [Tooltip("Berapa detik kedipan transisi berlangsung (misal 0.25 detik)")]
+    [SerializeField] private float transitionFlickerDuration = 0.25f;
+
+    // Cache Internal & Enum State Machine
+    private enum LampCycleState
+    {
+        SolidOn,
+        FlickerBeforeOff,
+        SolidOff,
+        FlickerBeforeOn
+    }
+
     private Renderer bolaPijarRenderer;
     private Material bolaPijarMaterial;
     private static readonly int EmissionColorProp = Shader.PropertyToID("_EmissionColor");
     
     private float stateTimer = 0f;
-    private bool isInDimPause = false;
+    private LampCycleState currentState = LampCycleState.SolidOn;
 
     private void Start()
     {
@@ -125,51 +138,86 @@ public class LampBulbFixture : MonoBehaviour, IInteractable
         {
             stateTimer += Time.deltaTime;
 
-            if (isInDimPause)
+            switch (currentState)
             {
-                // 🌑 1. STATE JEDA DIAM REDUP / GELAP (Berlangsung selama dimPauseDuration detik)
-                SetLightAndGlow(minIntensity, minEmissionGlow);
+                // 💡 1. NYALA TERANG SOLID (Selama brightBurstDuration detik)
+                case LampCycleState.SolidOn:
+                    SetLightAndGlow(maxIntensity, maxEmissionGlow);
 
-                if (stateTimer >= dimPauseDuration)
-                {
-                    isInDimPause = false;
-                    stateTimer = 0f;
-                }
-            }
-            else
-            {
-                // 🟡 2. STATE TERANG BERKEDIP (FLICKER BURST)
-                float flicker = Mathf.PingPong(Time.time * flickerSpeed, 1.0f);
-                float currentLight = Mathf.Lerp(minIntensity, maxIntensity, flicker);
-                float currentGlow = Mathf.Lerp(minEmissionGlow, maxEmissionGlow, flicker);
+                    if (stateTimer >= brightBurstDuration)
+                    {
+                        stateTimer = 0f;
+                        currentState = enableTransitionFlicker ? LampCycleState.FlickerBeforeOff : LampCycleState.SolidOff;
+                    }
+                    break;
 
-                SetLightAndGlow(currentLight, currentGlow);
+                // ⚡ 2. KEDIPAN GLITCH SAAT MAU MATI (Selama transitionFlickerDuration detik)
+                case LampCycleState.FlickerBeforeOff:
+                    float jitterOff = (Random.value > 0.4f) ? maxIntensity * 0.7f : minIntensity;
+                    float glowOff = (Random.value > 0.4f) ? maxEmissionGlow * 0.7f : minEmissionGlow;
+                    SetLightAndGlow(jitterOff, glowOff);
 
-                if (stateTimer >= brightBurstDuration)
-                {
-                    isInDimPause = true;
-                    stateTimer = 0f;
-                }
+                    if (stateTimer >= transitionFlickerDuration)
+                    {
+                        stateTimer = 0f;
+                        currentState = LampCycleState.SolidOff;
+                    }
+                    break;
+
+                // 🌑 3. MATI PADAM TOTAL GELAP (Selama dimPauseDuration detik)
+                case LampCycleState.SolidOff:
+                    SetLightAndGlow(minIntensity, minEmissionGlow);
+
+                    if (stateTimer >= dimPauseDuration)
+                    {
+                        stateTimer = 0f;
+                        currentState = enableTransitionFlicker ? LampCycleState.FlickerBeforeOn : LampCycleState.SolidOn;
+                    }
+                    break;
+
+                // ⚡ 4. KEDIPAN GLITCH SAAT MAU NYALA (Selama transitionFlickerDuration detik)
+                case LampCycleState.FlickerBeforeOn:
+                    float jitterOn = (Random.value > 0.4f) ? maxIntensity : minIntensity;
+                    float glowOn = (Random.value > 0.4f) ? maxEmissionGlow : minEmissionGlow;
+                    SetLightAndGlow(jitterOn, glowOn);
+
+                    if (stateTimer >= transitionFlickerDuration)
+                    {
+                        stateTimer = 0f;
+                        currentState = LampCycleState.SolidOn;
+                    }
+                    break;
             }
         }
         else
         {
-            // 💡 3. STATE BOHLAM NORMAL (TERANG SOLID KONSTAN)
+            // 🟢 JIKA SUDAH DIGANTI DENGAN BOHLAM BARU: NYALA TERANG STABIL SOLID!
             SetLightAndGlow(maxIntensity, maxEmissionGlow);
         }
     }
 
-    private void SetLightAndGlow(float lightIntensity, float glowIntensity)
+    /// <summary>
+    /// Mengatur intensitas Sinar Lampu DENGAN Cahaya Pijar Kaca BolaPijar secara serentak
+    /// </summary>
+    private void SetLightAndGlow(float lightIntensity, float emissionMultiplier)
     {
         if (bulbLight != null)
         {
             bulbLight.intensity = lightIntensity;
-            bulbLight.enabled = lightIntensity > 0.05f;
+            bulbLight.enabled = lightIntensity > 0.001f;
         }
 
         if (bolaPijarMaterial != null)
         {
-            bolaPijarMaterial.SetColor(EmissionColorProp, baseEmissionColor * Mathf.LinearToGammaSpace(glowIntensity));
+            if (emissionMultiplier > 0.001f)
+            {
+                Color activeEmission = baseEmissionColor * Mathf.LinearToGammaSpace(emissionMultiplier);
+                bolaPijarMaterial.SetColor(EmissionColorProp, activeEmission);
+            }
+            else
+            {
+                bolaPijarMaterial.SetColor(EmissionColorProp, Color.black);
+            }
         }
     }
 

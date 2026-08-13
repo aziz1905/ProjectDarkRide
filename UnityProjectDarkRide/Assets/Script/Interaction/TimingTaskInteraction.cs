@@ -116,4 +116,14 @@ public class TimingTaskInteractable : MonoBehaviour, IInteractable
         transform.localRotation = Quaternion.Euler(Vector3.zero);
         Debug.Log($"[ROTATE RESET] Rotasi '{gameObject.name}' diluruskan ke (0,0,0) via Minigame!");
     }
+
+    /// <summary>
+    /// Mengembalikan posisi dan rotasi lukisan jatuh kembali ke (0,0,0) lokal dinding
+    /// </summary>
+    public void ResetTransformToZero()
+    {
+        transform.localPosition = Vector3.zero;
+        transform.localRotation = Quaternion.identity;
+        Debug.Log($"[TRANSFORM RESET] Posisi dan Rotasi '{gameObject.name}' di-reset ke dinding (0,0,0)!");
+    }
 }
