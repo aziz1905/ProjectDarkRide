@@ -32,8 +32,8 @@ public class ItemPickup : MonoBehaviour, IInteractable
             if (success)
             {
                 // Sembunyikan induk utama jika dipasang di InteractionArea
-                GameObject rootToDisable = transform.parent != null ? transform.parent.gameObject : gameObject;
-                rootToDisable.SetActive(false); 
+                GameObject rootObj = transform.parent != null ? transform.parent.gameObject : gameObject;
+                rootObj.SetActive(false); 
             }
         }
     }

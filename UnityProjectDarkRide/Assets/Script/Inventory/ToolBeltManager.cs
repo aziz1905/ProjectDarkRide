@@ -42,6 +42,19 @@ public class ToolBeltManager : MonoBehaviour
         UpdateHeldItemVisuals();
     }
 
+    // Status Heavy Carry (Mayat Animatronik)
+    private bool isCarryingHeavyObject = false;
+    public bool IsCarryingHeavyObject => isCarryingHeavyObject;
+
+    public void SetHeavyCarry(bool isCarrying)
+    {
+        isCarryingHeavyObject = isCarrying;
+        if (isCarrying)
+        {
+            UnequipToEmptyHands(); // Sembunyikan alat palu/obeng saat menggotong mayat
+        }
+    }
+
     private void Update()
     {
         HandleSlotSelectionInput();
@@ -50,6 +63,9 @@ public class ToolBeltManager : MonoBehaviour
 
     private void HandleSlotSelectionInput()
     {
+        // Kunci tombol 1-5 saat kedua tangan sedang menggotong mayat animatronik!
+        if (isCarryingHeavyObject) return;
+
         if (Input.GetKeyDown(KeyCode.Alpha1)) ToggleEquipSlot(0);
         else if (Input.GetKeyDown(KeyCode.Alpha2)) ToggleEquipSlot(1);
         else if (Input.GetKeyDown(KeyCode.Alpha3)) ToggleEquipSlot(2);
@@ -191,6 +207,38 @@ public class ToolBeltManager : MonoBehaviour
 
             // PUTARAN SPINNER LEMPARAN (TORQUE) AGAR TERLIHAT REALISTIS
             rb.AddTorque(Random.insideUnitSphere * 3.0f, ForceMode.Impulse);
+
+            // 💡 SINKRONISASI CAHAYA LAMPU SENTER (JIKA SENTER DILEMPAR/DROP KE LANTAI)
+            EquipableFlashlight heldFlashlight = FindObjectOfType<EquipableFlashlight>();
+            if (heldFlashlight != null)
+            {
+                bool wasLightOn = heldFlashlight.IsLightOn;
+                Light droppedLight = droppedObj.GetComponentInChildren<Light>(true);
+
+                // Jika Prefab di lantai belum ada Light component, buatkan otomatis!
+                if (droppedLight == null && wasLightOn)
+                {
+                    GameObject lightChild = new GameObject("DroppedFlashlightLight");
+                    lightChild.transform.SetParent(droppedObj.transform, false);
+                    lightChild.transform.localPosition = Vector3.zero;
+                    lightChild.transform.localRotation = Quaternion.identity;
+
+                    droppedLight = lightChild.AddComponent<Light>();
+                    droppedLight.type = LightType.Spot;
+                    droppedLight.range = 15f;
+                    droppedLight.spotAngle = 55f;
+                    droppedLight.intensity = 3.0f;
+                    droppedLight.color = new Color(1f, 0.95f, 0.85f);
+                }
+
+                if (droppedLight != null)
+                {
+                    droppedLight.enabled = wasLightOn;
+                    droppedLight.gameObject.SetActive(wasLightOn);
+                }
+
+                Debug.Log($"[DROP FLASHLIGHT] Status Lampu Senter di Lantai: {(wasLightOn ? "MENYALA (ON)" : "MATI (OFF)")}");
+            }
 
             Debug.Log($"[LEMPAR SUCCESS] Item '{cleanItemName}' dilempar ke depan!");
         }

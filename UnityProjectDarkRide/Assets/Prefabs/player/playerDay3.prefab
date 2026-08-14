@@ -1020,9 +1020,7 @@ MonoBehaviour:
   flashlightMesh: {fileID: 7714193475245751613}
   flashlightSpotLight: {fileID: 2165300153893541119}
   audioSource: {fileID: 0}
-  equipSFX: {fileID: 0}
   clickSFX: {fileID: 0}
-  equipKey: 102
 --- !u!114 &2970904010216468499
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1088,6 +1086,9 @@ MonoBehaviour:
     worldPrefab: {fileID: 0}
   - itemName: Key3
     heldMesh: {fileID: 6025269686604985164}
+    worldPrefab: {fileID: 0}
+  - itemName: Senter
+    heldMesh: {fileID: 7714193475245751613}
     worldPrefab: {fileID: 0}
 --- !u!114 &2498320528421032422
 MonoBehaviour:
@@ -1521,13 +1522,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7714193475245751613}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.7066052, y: 0.026628673, z: -0.026628694, w: 0.7066052}
-  m_LocalPosition: {x: -0.40800667, y: -0.36300004, z: 0.37533137}
+  m_LocalRotation: {x: 0.70667607, y: -0.02467767, z: 0.02467767, w: 0.70667607}
+  m_LocalPosition: {x: 0.418, y: -0.36300004, z: 0.432}
   m_LocalScale: {x: 0.09494043, y: 0.37187, z: 0.13167784}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 279055418056588608}
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: -4.316}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 4}
 --- !u!33 &3337176781253249339
 MeshFilter:
   m_ObjectHideFlags: 0

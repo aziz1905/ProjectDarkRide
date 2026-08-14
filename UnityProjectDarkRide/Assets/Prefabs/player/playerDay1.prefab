@@ -195,13 +195,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1798895813669081148}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.7066052, y: 0.026628673, z: -0.026628694, w: 0.7066052}
-  m_LocalPosition: {x: -0.40800667, y: -0.36300004, z: 0.37533137}
+  m_LocalRotation: {x: 0.70667607, y: -0.02467767, z: 0.02467767, w: 0.70667607}
+  m_LocalPosition: {x: 0.426, y: -0.36300004, z: 0.434}
   m_LocalScale: {x: 0.09494043, y: 0.37187, z: 0.13167784}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2746351230790220851}
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: -4.316}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 4}
 --- !u!33 &5099916668897234148
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -1452,9 +1452,7 @@ MonoBehaviour:
   flashlightMesh: {fileID: 1798895813669081148}
   flashlightSpotLight: {fileID: 3941591686772996683}
   audioSource: {fileID: 0}
-  equipSFX: {fileID: 0}
   clickSFX: {fileID: 0}
-  equipKey: 102
 --- !u!114 &6982661582508669312
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1520,6 +1518,9 @@ MonoBehaviour:
     worldPrefab: {fileID: 0}
   - itemName: Key3
     heldMesh: {fileID: 5933652807783617846}
+    worldPrefab: {fileID: 0}
+  - itemName: Senter
+    heldMesh: {fileID: 1798895813669081148}
     worldPrefab: {fileID: 0}
 --- !u!114 &1949026708985188783
 MonoBehaviour:
