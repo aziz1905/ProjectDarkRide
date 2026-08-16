@@ -19,6 +19,10 @@ public class PlayerInteraction : MonoBehaviour
     [SerializeField] private KeyCode interactKey = KeyCode.E;          // Tombol E untuk interaksi umum (Buka Pintu, dll)
     [SerializeField] private KeyCode toolUseKey = KeyCode.Mouse0;       // Klik Kiri untuk interaksi alat khusus (Buka Kunci, dll)
 
+    [Header("UI Prompt Integration")]
+    [Tooltip("Drag TextMeshProUGUI untuk teks petunjuk interaksi di Canvas ke sini")]
+    [SerializeField] private TMPro.TextMeshProUGUI promptTextUI;
+
     // Internal State
     private IInteractable currentInteractable;
     private InteractableOutline currentOutline;
@@ -34,6 +38,14 @@ public class PlayerInteraction : MonoBehaviour
 
     private void Update()
     {
+        // 🛑 JIKA SEDANG DALAM MINIGAME / MENU (INPUT TERKUNCI):
+        // Sembunyikan teks petunjuk interaksi & garis outline
+        if (GameInputLock.IsInputLocked)
+        {
+            ResetHold();
+            return;
+        }
+
         DetectInteractable();
         HandleInteraction();
     }
@@ -114,11 +126,17 @@ public class PlayerInteraction : MonoBehaviour
 
         string prompt = currentInteractable.GetInteractPrompt();
 
+        // 📝 UPDATE UI TEKS PETUNJUK DI LAYAR CANVAS
+        if (promptTextUI != null)
+        {
+            promptTextUI.text = prompt;
+            promptTextUI.gameObject.SetActive(!string.IsNullOrEmpty(prompt));
+        }
+
         // 🔴 PROTEKSI: Jika UI Prompt bertuliskan [BUTUH ALAT] atau [BAHAYA] atau [TERKUNCI],
         // BLOKIR TOTAL seluruh aksi!
         if (prompt.StartsWith("[BUTUH ALAT]") || prompt.StartsWith("[BAHAYA]") || prompt.StartsWith("[TERKUNCI]"))
         {
-            ResetHold();
             return;
         }
 
@@ -169,6 +187,13 @@ public class PlayerInteraction : MonoBehaviour
 
     private void ResetHold()
     {
+        // Matikan Teks Petunjuk UI saat Berpaling
+        if (promptTextUI != null)
+        {
+            promptTextUI.text = "";
+            promptTextUI.gameObject.SetActive(false);
+        }
+
         // Matikan Garis Luar Putih saat Berpaling
         if (currentOutline != null)
         {

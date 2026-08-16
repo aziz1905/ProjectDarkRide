@@ -1,5 +1,38 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &311945636873113783
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2720189676591941691}
+  m_Layer: 0
+  m_Name: MayatAnimatronikJatuh
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &2720189676591941691
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 311945636873113783}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.5, y: 0.5, z: -0.5, w: 0.5}
+  m_LocalPosition: {x: -0.91000366, y: -0.8599999, z: 3.96}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 6486024899254486371}
+  - {fileID: 7786248596621969397}
+  m_Father: {fileID: 5475864998498962149}
+  m_LocalEulerAnglesHint: {x: 90, y: 180, z: 90}
 --- !u!1 &497550460457922863
 GameObject:
   m_ObjectHideFlags: 0
@@ -228,6 +261,89 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: -2813467912831258332, guid: 94b9779fb53920249837c3f4d00176e5, type: 3}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &861647562440436348
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7786248596621969397}
+  - component: {fileID: 4909432459068327997}
+  - component: {fileID: 8495119423755972029}
+  m_Layer: 0
+  m_Name: Badan
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7786248596621969397
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 861647562440436348}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 3.0985756, y: 0.7807131, z: -0.10266495}
+  m_LocalScale: {x: 0.8684271, y: 1.806235, z: 0.68070954}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2720189676591941691}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!33 &4909432459068327997
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 861647562440436348}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!23 &8495119423755972029
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 861647562440436348}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 6a3370391fe2c264db88adda2822f53e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -487,13 +603,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3186890226726180707}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.7066052, y: 0.026628673, z: -0.026628694, w: 0.7066052}
-  m_LocalPosition: {x: -0.40800476, y: -0.36300015, z: 0.3753315}
+  m_LocalRotation: {x: 0.70667607, y: -0.02467767, z: 0.02467767, w: 0.70667607}
+  m_LocalPosition: {x: 0.436, y: -0.36300015, z: 0.326}
   m_LocalScale: {x: 0.09494043, y: 0.37187, z: 0.13167784}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5475864998498962149}
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: -4.316}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 4}
 --- !u!33 &2028855381289335632
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -688,6 +804,7 @@ Transform:
   - {fileID: 7265076170845838151}
   - {fileID: 2513016447043576514}
   - {fileID: 8460075233908881318}
+  - {fileID: 2720189676591941691}
   m_Father: {fileID: 2966099379705082635}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!20 &5429470307587533110
@@ -1251,9 +1368,7 @@ MonoBehaviour:
   flashlightMesh: {fileID: 3186890226726180707}
   flashlightSpotLight: {fileID: 8495844148842035553}
   audioSource: {fileID: 0}
-  equipSFX: {fileID: 0}
   clickSFX: {fileID: 0}
-  equipKey: 102
 --- !u!114 &140520076659442556
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1274,6 +1389,7 @@ MonoBehaviour:
     m_Bits: 4294967295
   interactKey: 101
   toolUseKey: 323
+  promptTextUI: {fileID: 0}
 --- !u!114 &8579505321100669947
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1320,6 +1436,9 @@ MonoBehaviour:
   - itemName: Key3
     heldMesh: {fileID: 5161857669186649147}
     worldPrefab: {fileID: 0}
+  - itemName: Senter
+    heldMesh: {fileID: 3186890226726180707}
+    worldPrefab: {fileID: 0}
 --- !u!114 &4359049043953730514
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1349,7 +1468,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e991a106c8e7d1b4d933a561ff255b84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dayTitle: CATATAN SHIFT HARI 3
+  dayTitle: CATATAN SHIFT HARI 4
   taskList:
   - taskId: FIX_FALLEN_PAINTING
     taskDescription: Perbaiki lukisan jatuh pakai Palu
@@ -1376,12 +1495,13 @@ MonoBehaviour:
     requiredCount: 4
     currentCount: 0
     isCompleted: 0
-  - taskId: LAMP_FIX
-    taskDescription: Salah satu lampu galeri mengalami korsleting bohlam dan berkedip-kedip
+  - taskId: PUT_ANIMATRONIC_GURNEY
+    taskDescription: Gotong mayat animatronik yang jatuh dan kembalikan ke Gurney
+      RS
     isSubTask: 0
     parentTaskId: 
     isRevealed: 1
-    requiredCount: 2
+    requiredCount: 1
     currentCount: 0
     isCompleted: 0
   - taskId: FIX_CROOKED_PAINTING
@@ -1400,24 +1520,24 @@ MonoBehaviour:
     requiredCount: 1
     currentCount: 0
     isCompleted: 0
-  - taskId: INSPECT_PANELS
-    taskDescription: periksa dan pastikan panel listrik aman
-    isSubTask: 0
-    parentTaskId: 
-    isRevealed: 1
-    requiredCount: 3
-    currentCount: 0
-    isCompleted: 0
-  - taskId: PULL_GURNEY
-    taskDescription: Gurney Jatuh dan menghalangi rel
+  - taskId: CLEAR_GURNEY
+    taskDescription: Dorong Gurney RS yang menghalangi jalan
     isSubTask: 0
     parentTaskId: 
     isRevealed: 0
     requiredCount: 1
     currentCount: 0
     isCompleted: 0
-  - taskId: FIX_RAIL
-    taskDescription: Betulkan rel yang rusak
+  - taskId: FIX_ANIMATRONIC_SCREW
+    taskDescription: Perbaiki komponen animatronik copot pakai Obeng
+    isSubTask: 0
+    parentTaskId: 
+    isRevealed: 0
+    requiredCount: 1
+    currentCount: 0
+    isCompleted: 0
+  - taskId: FIX_WHEEL_SCREW
+    taskDescription: Ganti roda Gurney pakai obeng
     isSubTask: 0
     parentTaskId: 
     isRevealed: 0
@@ -1431,6 +1551,89 @@ MonoBehaviour:
   mainTaskBullet: "\u2022 "
   subTaskBullet: '    > '
   addSpacingBetweenTasks: 1
+--- !u!1 &7207918823148065893
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6486024899254486371}
+  - component: {fileID: 6189678093793342731}
+  - component: {fileID: 6608172825927526436}
+  m_Layer: 0
+  m_Name: Kepala
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6486024899254486371
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7207918823148065893}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 3.0947762, y: 2.025713, z: -0.055976868}
+  m_LocalScale: {x: 0.81999993, y: 0.8200001, z: 0.82000005}
+  m_ConstrainProportionsScale: 1
+  m_Children: []
+  m_Father: {fileID: 2720189676591941691}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!33 &6189678093793342731
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7207918823148065893}
+  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!23 &6608172825927526436
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7207918823148065893}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 6a3370391fe2c264db88adda2822f53e, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &7924040122544773657
 GameObject:
   m_ObjectHideFlags: 0

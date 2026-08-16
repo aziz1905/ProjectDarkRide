@@ -24,6 +24,7 @@ public class EquipableFlashlight : MonoBehaviour
 
     public bool IsLightOn => isLightOn;
     public bool IsEquipped => flashlightMesh != null && flashlightMesh.activeInHierarchy;
+    public Light SpotLightComponent => flashlightSpotLight;
 
     public void SetLightState(bool state)
     {

@@ -185,9 +185,10 @@ public class ToolBeltManager : MonoBehaviour
         // Spawn Prefab jika di-drag di Inspector
         if (prefabToSpawn != null)
         {
-            // Spawn 0.8m di depan & 0.1m di BAWAH mata kamera (pas di posisi dada/tangan player)
+            // Spawn 0.8m di depan & 0.1m di BAWAH mata kamera menghadap ke arah pandangan pemain
             Vector3 spawnPos = Camera.main.transform.position + (Camera.main.transform.forward * 0.8f) - (Vector3.up * 0.1f);
-            GameObject droppedObj = Instantiate(prefabToSpawn, spawnPos, prefabToSpawn.transform.rotation);
+            Quaternion spawnRot = Camera.main.transform.rotation;
+            GameObject droppedObj = Instantiate(prefabToSpawn, spawnPos, spawnRot);
             
             droppedObj.name = cleanItemName; // Pastikan nama objek bersih agar bisa diambil lagi
             droppedObj.SetActive(true); // Pastikan aktif di scene
@@ -214,23 +215,6 @@ public class ToolBeltManager : MonoBehaviour
             {
                 bool wasLightOn = heldFlashlight.IsLightOn;
                 Light droppedLight = droppedObj.GetComponentInChildren<Light>(true);
-
-                // Jika Prefab di lantai belum ada Light component, buatkan otomatis!
-                if (droppedLight == null && wasLightOn)
-                {
-                    GameObject lightChild = new GameObject("DroppedFlashlightLight");
-                    lightChild.transform.SetParent(droppedObj.transform, false);
-                    lightChild.transform.localPosition = Vector3.zero;
-                    lightChild.transform.localRotation = Quaternion.identity;
-
-                    droppedLight = lightChild.AddComponent<Light>();
-                    droppedLight.type = LightType.Spot;
-                    droppedLight.range = 15f;
-                    droppedLight.spotAngle = 55f;
-                    droppedLight.intensity = 3.0f;
-                    droppedLight.color = new Color(1f, 0.95f, 0.85f);
-                }
-
                 if (droppedLight != null)
                 {
                     droppedLight.enabled = wasLightOn;
