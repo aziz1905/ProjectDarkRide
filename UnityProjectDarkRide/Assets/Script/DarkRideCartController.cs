@@ -2,110 +2,210 @@ using UnityEngine;
 using UnityEngine.Splines;
 
 /// <summary>
-/// Kontroler Kereta Wahana (Dark Ride Cart) Interaktif Mulus.
-/// ZERO TELEPORTASI saat Start: Posisi kereta 100% diam di tempat Anda ditaruh di Editor.
+/// Kontroler Kereta Wahana (Dark Ride Cart) Interaktif Mulus & Presisi.
+/// Mengunci penggunaan alat (ToolBelt 1-5) dan mengosongkan tangan player saat naik kereta wahana.
 /// </summary>
 public class DarkRideCartController : MonoBehaviour, IInteractable
 {
-    [Header("Spline Tracks (Rel Kereta)")]
-    [Tooltip("Drag Objek ST.Spline (Rel Stasiun Keberangkatan) ke sini")]
+    [Header("Spline Tracks (Rel Kereta Utama)")]
+    [Tooltip("Drag Objek ST.Spline ke sini")]
     [SerializeField] private SplineContainer stationSpline;
 
-    [Tooltip("Drag Objek MainSpline (Rel Utama Wahana) ke sini")]
+    [Tooltip("Drag Objek MainSpline ke sini")]
     [SerializeField] private SplineContainer mainSpline;
 
-    [Header("Rotation Offset Fix")]
-    [Tooltip("Sudut koreksi rotasi jika posisi kereta miring/melintang dari arah rel (misal Y = 90 atau -90)")]
-    [SerializeField] private Vector3 rotationOffset = Vector3.zero;
+    [Header("Position & Rotation Offset Fix")]
+    [Tooltip("Sudut koreksi rotasi jika posisi kereta miring/melintang dari arah rel (default: Y = -90)")]
+    [SerializeField] private Vector3 rotationOffset = new Vector3(0f, -90f, 0f);
+
+    [Tooltip("Ketinggian posisi Y kereta dari lantai rel agar tidak tenggelam (default: 0.25 meter)")]
+    [SerializeField] private float verticalHeightOffset = 0.25f;
+
+    [Header("Train Carriage Snake Mechanics")]
+    [Tooltip("Transform Gerbong Depan / Kepala (Cart_head)")]
+    [SerializeField] private Transform headCartTransform;
+
+    [Tooltip("Transform Gerbong Tengah (Cart_middle)")]
+    [SerializeField] private Transform middleCartTransform;
+
+    [Tooltip("Transform Gerbong Belakang / Ekor (Cart_tail)")]
+    [SerializeField] private Transform tailCartTransform;
+
+    [Tooltip("Jarak fisik antar gerbong kereta dalam meter (default: 1.8 meter)")]
+    [SerializeField] private float carriageSpacing = 1.8f;
 
     [Header("Cart Driver & Passenger Seat")]
     [Tooltip("Transform Posisi Kursi Penumpang/Driver di dalam Kereta")]
     [SerializeField] private Transform seatTransform;
 
+    [Tooltip("Ketinggian tambahan pandangan mata driver dari lantai kursi (default: 0.4 meter)")]
+    [SerializeField] private float seatEyeHeight = 0.4f;
+
     [Header("Cart Speed & Physics")]
     [Tooltip("Kecepatan maksimal kereta (m/s)")]
-    [SerializeField] private float maxSpeed = 3.5f;
-    [SerializeField] private float acceleration = 2.0f;
-    [SerializeField] private float deceleration = 3.0f;
+    [SerializeField] private float maxSpeed = 4.0f;
+    [SerializeField] private float acceleration = 3.0f;
+    [SerializeField] private float deceleration = 4.0f;
     [SerializeField] private float rotationSpeed = 6.0f;
 
     [Header("Cart Headlight")]
     [SerializeField] private Light frontHeadlight;
 
+    [Header("UI Control Prompt (Opsional)")]
+    [Tooltip("Drag TextMeshProUGUI untuk petunjuk berkendara di sini")]
+    [SerializeField] private TMPro.TextMeshProUGUI cartPromptUI;
+
+    // Public Property untuk PlayerInteraction System
+    public bool IsPlayerSeated => isPlayerSeated;
+
     // Internal State
     private bool isPlayerSeated = false;
     private float currentSpeed = 0f;
-    private float currentDistance = 0f;
+    private float currentNormalizedT = 0f;
     private SplineContainer activeContainer;
-    private bool isMainLoopActive = false;
+    private int activeSplineIndex = 0;
+    private float boardTimer = 0f;
 
     // Cached References
     private GameObject playerObj;
     private CharacterController playerController;
+    private InteractableOutline cartOutline;
+
+    private const string CONTROL_PROMPT_MULTILINE = "<b>[W]</b> Maju\n<b>[S]</b> Rem\n<b>[E]</b> Turun Kereta";
+
+    private void Awake()
+    {
+        SplineAnimate sa = GetComponent<SplineAnimate>();
+        if (sa != null) Destroy(sa);
+
+        cartOutline = GetComponent<InteractableOutline>();
+        if (cartOutline == null) cartOutline = GetComponentInChildren<InteractableOutline>();
+
+        AutoFindSplines();
+        AutoFindCarriages();
+        AutoFindPromptUI();
+    }
+
+    private void AutoFindSplines()
+    {
+        if (stationSpline == null)
+        {
+            GameObject stClean = GameObject.Find("ST.Spline_CleanWorld");
+            GameObject stObj = stClean != null ? stClean : GameObject.Find("ST.Spline");
+            if (stObj != null) stationSpline = stObj.GetComponent<SplineContainer>();
+        }
+
+        if (mainSpline == null)
+        {
+            GameObject mainClean = GameObject.Find("MainSpline_CleanWorld");
+            GameObject mainObj = mainClean != null ? mainClean : GameObject.Find("MainSpline");
+            if (mainObj != null) mainSpline = mainObj.GetComponent<SplineContainer>();
+        }
+    }
+
+    private void AutoFindCarriages()
+    {
+        if (headCartTransform == null) headCartTransform = transform.Find("Cart_head");
+        if (middleCartTransform == null) middleCartTransform = transform.Find("Cart_middle");
+        if (tailCartTransform == null) tailCartTransform = transform.Find("Cart_tail");
+    }
+
+    private void AutoFindPromptUI()
+    {
+        if (cartPromptUI == null)
+        {
+            TMPro.TextMeshProUGUI[] tmps = FindObjectsOfType<TMPro.TextMeshProUGUI>(true);
+            foreach (var tmp in tmps)
+            {
+                if (tmp.gameObject.name.ToLower().Contains("prompt") || tmp.gameObject.name.ToLower().Contains("interact") || tmp.gameObject.name.ToLower().Contains("text"))
+                {
+                    cartPromptUI = tmp;
+                    break;
+                }
+            }
+        }
+    }
 
     private void Start()
     {
-        activeContainer = stationSpline != null ? stationSpline : mainSpline;
         if (frontHeadlight != null) frontHeadlight.enabled = false;
-
-        // Nonaktifkan SplineAnimate jika ada agar tidak bentrok
-        SplineAnimate sa = GetComponent<SplineAnimate>();
-        if (sa != null) sa.enabled = false;
-
-        // 🛡️ SANGAT PENTING: DILARANG MEMINDAHKAN TRANSFORM SAAT START!
-        // Posisi kereta 100% DIJAMIN KUNCI DIAM di tempat Anda menaruhnya di Editor!
-        CalculateInitialSplineOffset();
+        InitializeOnStationSpline();
     }
 
-    private void CalculateInitialSplineOffset()
+    private void InitializeOnStationSpline()
     {
-        if (activeContainer == null) return;
+        activeContainer = stationSpline != null ? stationSpline : mainSpline;
+        if (activeContainer == null || activeContainer.Splines == null || activeContainer.Splines.Count == 0) return;
 
-        float totalSplineLength = activeContainer.CalculateLength();
-        if (totalSplineLength <= 0.1f) return;
+        activeSplineIndex = 0;
+        currentNormalizedT = 0f;
 
-        // Hitung jarak offset pada spline terdekat TANPA MEMINDAHKAN POSISI transform!
-        Unity.Mathematics.float3 nearestLocalPoint;
-        float normalizedT;
-        SplineUtility.GetNearestPoint(activeContainer.Spline, activeContainer.transform.InverseTransformPoint(transform.position), out nearestLocalPoint, out normalizedT);
+        UpdateCarriagePositions();
+    }
 
-        currentDistance = normalizedT * totalSplineLength;
-        Debug.Log($"<color=green>[CART INITIALIZED] Kereta terkunci di stasiun Editor! (Offset: {currentDistance:F1}m)</color>");
+    private float GetSplineLength(ISpline spline)
+    {
+        if (spline == null) return 10f;
+        float len = SplineUtility.CalculateLength(spline, activeContainer.transform.localToWorldMatrix);
+        return Mathf.Max(0.5f, len);
     }
 
     private void Update()
     {
+        if (isPlayerSeated)
+        {
+            DisableAllOutlines();
+
+            if (cartPromptUI != null)
+            {
+                if (!cartPromptUI.gameObject.activeSelf) cartPromptUI.gameObject.SetActive(true);
+                cartPromptUI.text = CONTROL_PROMPT_MULTILINE;
+            }
+        }
+
         HandlePlayerInput();
         UpdateCartMovement();
+    }
+
+    private void DisableAllOutlines()
+    {
+        InteractableOutline[] outlines = GetComponentsInChildren<InteractableOutline>(true);
+        foreach (var outline in outlines)
+        {
+            if (outline != null)
+            {
+                outline.SetOutlineActive(false);
+            }
+        }
     }
 
     private void HandlePlayerInput()
     {
         if (!isPlayerSeated) return;
 
-        // 1. INPUT KONTROL KERETA: W = Maju, S = Berhenti
-        float moveInput = 0f;
-        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
+        if (boardTimer > 0f) boardTimer -= Time.deltaTime;
+
+        float moveInput = Input.GetAxisRaw("Vertical");
+        if (Mathf.Abs(moveInput) < 0.1f)
         {
-            moveInput = 1f;
-        }
-        else if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
-        {
-            moveInput = -0.5f; // Rem / Mundur lambat
+            if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow)) moveInput = 1.0f;
+            else if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow)) moveInput = -0.5f;
         }
 
-        // Akselerasi & Deselerasi Mulus
-        if (moveInput > 0)
+        if (moveInput > 0.05f)
         {
             currentSpeed = Mathf.MoveTowards(currentSpeed, maxSpeed * moveInput, acceleration * Time.deltaTime);
+        }
+        else if (moveInput < -0.05f)
+        {
+            currentSpeed = Mathf.MoveTowards(currentSpeed, maxSpeed * moveInput, deceleration * Time.deltaTime);
         }
         else
         {
             currentSpeed = Mathf.MoveTowards(currentSpeed, 0f, deceleration * Time.deltaTime);
         }
 
-        // 2. TURUN DARI KERETA (Tekan E saat kereta hampir berhenti)
-        if (Input.GetKeyDown(KeyCode.E) && currentSpeed < 0.5f)
+        if (boardTimer <= 0f && Input.GetKeyDown(KeyCode.E))
         {
             UnboardPlayer();
         }
@@ -113,108 +213,219 @@ public class DarkRideCartController : MonoBehaviour, IInteractable
 
     private void UpdateCartMovement()
     {
-        if (activeContainer == null) return;
+        if (activeContainer == null || activeContainer.Splines == null || activeContainer.Splines.Count == 0) return;
 
-        // 🛡️ HANYA PINDAHKAN POSISI KERETA JIKA KECEPATAN > 0.01 (SAAT W DITEKAN / MAJU)
-        // Saat diam, posisi kereta 100% UNTOUCHED (NOL TELEPORTASI)!
-        if (currentSpeed > 0.01f)
+        if (Mathf.Abs(currentSpeed) > 0.001f)
         {
-            float totalSplineLength = activeContainer.CalculateLength();
-            if (totalSplineLength <= 0.1f) totalSplineLength = 10f;
+            if (activeSplineIndex >= activeContainer.Splines.Count) activeSplineIndex = 0;
 
-            // Tambah jarak tempuh di sepanjang seluruh rel
-            currentDistance += currentSpeed * Time.deltaTime;
+            ISpline currentSpline = activeContainer.Splines[activeSplineIndex];
+            float splineLength = GetSplineLength(currentSpline);
 
-            // 🔀 DUA TRACK TRANSITION: ST.Spline -> MainSpline
-            if (!isMainLoopActive && stationSpline != null && mainSpline != null)
+            float deltaT = (currentSpeed * Time.deltaTime) / splineLength;
+            currentNormalizedT += deltaT;
+
+            if (currentNormalizedT >= 1f)
             {
-                if (currentDistance >= totalSplineLength)
+                currentNormalizedT -= 1f;
+                activeSplineIndex++;
+
+                if (activeSplineIndex >= activeContainer.Splines.Count)
                 {
-                    isMainLoopActive = true;
-                    activeContainer = mainSpline;
-                    currentDistance = 0f;
-                    totalSplineLength = activeContainer.CalculateLength();
-                    Debug.Log("<color=green>[CART TRACK] Kereta berhasil berpindah dari Stasiun (ST.Spline) ke Rel Utama (MainSpline)!</color>");
+                    if (activeContainer == stationSpline && mainSpline != null)
+                    {
+                        activeContainer = mainSpline;
+                        activeSplineIndex = 0;
+                    }
+                    else if (activeContainer == mainSpline && stationSpline != null)
+                    {
+                        activeContainer = stationSpline;
+                        activeSplineIndex = 0;
+                    }
+                    else
+                    {
+                        activeSplineIndex = 0;
+                    }
                 }
             }
-            else if (isMainLoopActive)
+            else if (currentNormalizedT < 0f)
             {
-                // Looping di MainSpline
-                if (currentDistance >= totalSplineLength)
-                {
-                    currentDistance %= totalSplineLength;
-                }
-            }
-
-            // Hitung Posisi & Rotasi Mulus di SplineContainer
-            float normalizedTime = Mathf.Clamp01(currentDistance / totalSplineLength);
-            Vector3 localPos = activeContainer.EvaluatePosition(normalizedTime);
-            Vector3 localTangent = activeContainer.EvaluateTangent(normalizedTime);
-
-            Vector3 worldPos = activeContainer.transform.TransformPoint(localPos);
-            Vector3 worldTangent = activeContainer.transform.TransformDirection(localTangent);
-
-            transform.position = worldPos;
-
-            if (worldTangent != Vector3.zero)
-            {
-                Quaternion targetRotation = Quaternion.LookRotation(worldTangent) * Quaternion.Euler(rotationOffset);
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+                currentNormalizedT = 0f;
             }
         }
 
-        // Nyalakan lampu saat player naik & kereta jalan
-        if (frontHeadlight != null)
+        UpdateCarriagePositions();
+
+        if (frontHeadlight != null) frontHeadlight.enabled = isPlayerSeated;
+    }
+
+    private void UpdateCarriagePositions()
+    {
+        if (activeContainer == null || activeContainer.Splines == null || activeContainer.Splines.Count == 0) return;
+
+        ISpline currentSpline = activeContainer.Splines[activeSplineIndex];
+        float splineLength = GetSplineLength(currentSpline);
+
+        // 1. GERBONG DEPAN / KEPALA (Cart_head)
+        UpdateSingleCarriage(headCartTransform, activeSplineIndex, currentNormalizedT);
+        if (headCartTransform != null) transform.position = headCartTransform.position;
+
+        Vector3 headPos = headCartTransform != null ? headCartTransform.position : transform.position;
+        Vector3 headForward = headCartTransform != null ? headCartTransform.forward : transform.forward;
+
+        // 2. GERBONG TENGAH (Cart_middle) - PRESISI 1.8 METER DI BELAKANG KEPALA
+        float headDistInMeters = currentNormalizedT * splineLength;
+        float middleDistInMeters = headDistInMeters - carriageSpacing;
+
+        if (middleDistInMeters >= 0f)
         {
-            frontHeadlight.enabled = isPlayerSeated;
+            float middleT = middleDistInMeters / splineLength;
+            UpdateSingleCarriage(middleCartTransform, activeSplineIndex, middleT);
+        }
+        else if (activeSplineIndex > 0)
+        {
+            int middleIndex = activeSplineIndex - 1;
+            ISpline prevSpline = activeContainer.Splines[middleIndex];
+            float prevLen = GetSplineLength(prevSpline);
+            float middleT = Mathf.Clamp01(1.0f + (middleDistInMeters / prevLen));
+            UpdateSingleCarriage(middleCartTransform, middleIndex, middleT);
+        }
+        else
+        {
+            if (middleCartTransform != null)
+            {
+                middleCartTransform.position = headPos - (headForward * carriageSpacing);
+                middleCartTransform.rotation = headCartTransform != null ? headCartTransform.rotation : transform.rotation;
+            }
+        }
+
+        // 3. GERBONG BELAKANG / EKOR (Cart_tail) - PRESISI 3.6 METER DI BELAKANG KEPALA
+        float tailDistInMeters = headDistInMeters - (carriageSpacing * 2f);
+        int tailIndex = activeSplineIndex;
+
+        if (tailDistInMeters >= 0f)
+        {
+            float tailT = tailDistInMeters / splineLength;
+            UpdateSingleCarriage(tailCartTransform, tailIndex, tailT);
+        }
+        else if (activeSplineIndex > 0)
+        {
+            tailIndex = activeSplineIndex - 1;
+            ISpline prevSpline = activeContainer.Splines[tailIndex];
+            float prevLen = GetSplineLength(prevSpline);
+            float tailT = Mathf.Clamp01(1.0f + (tailDistInMeters / prevLen));
+            UpdateSingleCarriage(tailCartTransform, tailIndex, tailT);
+        }
+        else
+        {
+            if (tailCartTransform != null)
+            {
+                tailCartTransform.position = headPos - (headForward * (carriageSpacing * 2f));
+                tailCartTransform.rotation = headCartTransform != null ? headCartTransform.rotation : transform.rotation;
+            }
         }
     }
 
-    // --- IMPLEMENTASI INTERFACE IINTERACTABLE ---
+    private void UpdateSingleCarriage(Transform carriage, int splineIndex, float normalizedT)
+    {
+        if (carriage == null || activeContainer == null || activeContainer.Splines == null || splineIndex >= activeContainer.Splines.Count) return;
+
+        normalizedT = Mathf.Clamp01(normalizedT);
+        Vector3 worldPos = (Vector3)activeContainer.EvaluatePosition(splineIndex, normalizedT);
+        Vector3 worldTangent = (Vector3)activeContainer.EvaluateTangent(splineIndex, normalizedT);
+
+        if (!float.IsNaN(worldPos.x) && !float.IsInfinity(worldPos.x))
+        {
+            worldPos += Vector3.up * verticalHeightOffset;
+            carriage.position = worldPos;
+        }
+
+        if (worldTangent.sqrMagnitude > 0.001f && !float.IsNaN(worldTangent.x))
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(worldTangent) * Quaternion.Euler(rotationOffset);
+            carriage.rotation = Quaternion.Slerp(carriage.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+        }
+    }
+
+    private void LateUpdate()
+    {
+        if (isPlayerSeated && playerObj != null)
+        {
+            Transform seat = seatTransform != null ? seatTransform : (headCartTransform != null ? headCartTransform : transform);
+            Vector3 targetPos = seat.position + Vector3.up * seatEyeHeight;
+            playerObj.transform.position = targetPos;
+        }
+    }
 
     public string GetInteractPrompt()
     {
-        if (!isPlayerSeated)
-            return "Tekan [E] Naik Kereta Wahana";
-
-        return "<b>[W]</b> Maju | <b>[S]</b> Rem | <b>[E]</b> Turun Kereta";
+        if (!isPlayerSeated) return "Tekan [E] Naik Kereta Wahana";
+        return CONTROL_PROMPT_MULTILINE;
     }
 
-    public float HoldDuration => 0f; // Tap [E] Instan
+    public float HoldDuration => 0f;
 
     public void OnInteract()
     {
-        if (!isPlayerSeated)
-        {
-            BoardPlayer();
-        }
+        if (!isPlayerSeated) BoardPlayer();
     }
 
     private void BoardPlayer()
     {
         playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj == null) playerObj = FindObjectOfType<PlayerMovement>()?.gameObject;
-
+        if (playerObj == null) playerObj = GameObject.Find("playerDay3");
         if (playerObj == null) return;
 
         isPlayerSeated = true;
-        Debug.Log("[CART BOARDED] Player naik ke Kereta Wahana!");
+        boardTimer = 0.5f;
 
-        // Matikan kontrol pergerakan WASD biasa
-        GameInputLock.LockInput();
-
-        // Pindahkan player tepat ke kursi kereta
-        if (seatTransform != null)
+        // 🎯 KUNCI PENGGUNAAN ALAT (TOOLBELT 1-5) SAAT DRIVER NAIK KERETA
+        ToolBeltManager toolBelt = playerObj.GetComponent<ToolBeltManager>();
+        if (toolBelt == null) toolBelt = FindObjectOfType<ToolBeltManager>();
+        if (toolBelt != null)
         {
-            playerController = playerObj.GetComponent<CharacterController>();
-            if (playerController != null) playerController.enabled = false;
+            toolBelt.SetCartSeated(true);
+        }
 
-            playerObj.transform.SetParent(seatTransform);
-            playerObj.transform.localPosition = Vector3.zero;
-            playerObj.transform.localRotation = Quaternion.identity;
+        AutoFindPromptUI();
+        DisableAllOutlines();
+
+        playerController = playerObj.GetComponent<CharacterController>();
+        if (playerController != null) playerController.enabled = false;
+
+        PlayerMovement pm = playerObj.GetComponent<PlayerMovement>();
+        if (pm != null) pm.enabled = false;
+
+        Rigidbody rb = playerObj.GetComponent<Rigidbody>();
+        if (rb != null) rb.isKinematic = true;
+
+        playerObj.transform.SetParent(null);
+
+        Transform seat = seatTransform != null ? seatTransform : (headCartTransform != null ? headCartTransform : transform);
+        Vector3 eyePos = seat.position + Vector3.up * seatEyeHeight;
+        playerObj.transform.position = eyePos;
+
+        Quaternion targetForwardRotation = headCartTransform != null ? headCartTransform.rotation : transform.rotation;
+        FirstPersonCamera fpc = playerObj.GetComponentInChildren<FirstPersonCamera>();
+        if (fpc != null)
+        {
+            fpc.ResetRotation(targetForwardRotation);
+        }
+        else
+        {
+            playerObj.transform.rotation = targetForwardRotation;
+            Camera mainCam = playerObj.GetComponentInChildren<Camera>();
+            if (mainCam != null) mainCam.transform.localRotation = Quaternion.identity;
         }
 
         if (frontHeadlight != null) frontHeadlight.enabled = true;
+
+        if (cartPromptUI != null)
+        {
+            cartPromptUI.gameObject.SetActive(true);
+            cartPromptUI.text = CONTROL_PROMPT_MULTILINE;
+        }
     }
 
     private void UnboardPlayer()
@@ -223,21 +434,34 @@ public class DarkRideCartController : MonoBehaviour, IInteractable
 
         isPlayerSeated = false;
         currentSpeed = 0f;
-        Debug.Log("[CART UNBOARDED] Player turun dari Kereta Wahana.");
+
+        // 🔓 BUKA KEMBALI KUNCI PENGGUNAAN ALAT (TOOLBELT 1-5) SAAT PLAYER TURUN
+        if (playerObj != null)
+        {
+            ToolBeltManager toolBelt = playerObj.GetComponent<ToolBeltManager>();
+            if (toolBelt == null) toolBelt = FindObjectOfType<ToolBeltManager>();
+            if (toolBelt != null)
+            {
+                toolBelt.SetCartSeated(false);
+            }
+        }
+
+        if (cartPromptUI != null)
+        {
+            cartPromptUI.text = "";
+            cartPromptUI.gameObject.SetActive(false);
+        }
 
         if (playerObj != null)
         {
-            playerObj.transform.SetParent(null);
+            playerObj.transform.position = transform.position + (transform.right * 1.5f) + (Vector3.up * 0.2f);
 
-            // Geser sedikit ke samping kereta agar tidak tersangkut
-            playerObj.transform.position = transform.position + (transform.right * 1.5f);
+            PlayerMovement pm = playerObj.GetComponent<PlayerMovement>();
+            if (pm != null) pm.enabled = true;
 
             if (playerController != null) playerController.enabled = true;
         }
 
         if (frontHeadlight != null) frontHeadlight.enabled = false;
-
-        // Kembalikan kontrol player
-        GameInputLock.UnlockInput();
     }
 }

@@ -46,6 +46,19 @@ public class PlayerInteraction : MonoBehaviour
             return;
         }
 
+        // 🎯 BILA PLAYER SEDANG NAIK KERETA (SEATED):
+        // Tampilkan teks instruksi berkendara [W] [S] [E] secara konsisten di Canvas UI!
+        DarkRideCartController activeCart = FindObjectOfType<DarkRideCartController>();
+        if (activeCart != null && activeCart.IsPlayerSeated)
+        {
+            if (promptTextUI != null)
+            {
+                if (!promptTextUI.gameObject.activeSelf) promptTextUI.gameObject.SetActive(true);
+                promptTextUI.text = activeCart.GetInteractPrompt();
+            }
+            return;
+        }
+
         DetectInteractable();
         HandleInteraction();
     }
@@ -89,6 +102,13 @@ public class PlayerInteraction : MonoBehaviour
                 currentInteractable = foundInteractable;
 
                 // 🌟 AKTIFKAN OUTLINE GARIS LUAR PUTIH OTOMATIS PADA OBJEK BER-RENDERER!
+                DarkRideCartController cart = foundInteractable as DarkRideCartController;
+                if (cart != null && cart.IsPlayerSeated)
+                {
+                    ResetHold();
+                    return;
+                }
+
                 MonoBehaviour mb = foundInteractable as MonoBehaviour;
                 if (mb != null)
                 {
