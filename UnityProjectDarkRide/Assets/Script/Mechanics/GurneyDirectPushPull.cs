@@ -7,9 +7,9 @@ using UnityEngine;
 /// 1. Wajib Tangan Kosong (ToolBelt Active Item == Empty).
 /// 2. SEKALI KLIK KIRI (1x Tap LMB) -> Gurney terdorong maju 1 langkah halus.
 /// 3. SEKALI KLIK KANAN (1x Tap RMB) -> Gurney ditarik mundur 1 langkah halus.
-/// 4. Rotasi 100% DIKUNCI MATI (tidak berputar-putar).
-/// 5. Menempel rata di lantai (Floor Snap).
-/// 6. Begitu mencapai area target parkir -> Task Manager langsung tercoret [X]!
+/// 4. Otomatis mengikuti naik/turun permukaan lantai & trotoar (Floor Alignment Raycast).
+/// 5. Saat parkir selesai: Klik di-LOCK total (tidak bisa didorong lagi) dan Y TETAP MENEMPEL DI LANTAI.
+/// 6. Task Manager Notebook TAB langsung tercoret [X]!
 /// </summary>
 [RequireComponent(typeof(Collider))]
 public class GurneyDirectPushPull : MonoBehaviour, IInteractable
@@ -52,22 +52,22 @@ public class GurneyDirectPushPull : MonoBehaviour, IInteractable
     private bool isPlayerAimingAtThis = false;
     private float lastClickTime = -999f;
     private float groundYOffset = 0f;
-    private Collider selfCollider;
 
     private void Start()
     {
         if (audioSource == null)
             audioSource = GetComponent<AudioSource>();
 
-        selfCollider = GetComponent<Collider>();
+        // 🛡️ Hitung tinggi pivot gurney dari lantai (matikan SEMUA collider internal)
+        Collider[] allCols = GetComponentsInChildren<Collider>();
+        foreach (var c in allCols) c.enabled = false;
 
-        // Hitung tinggi pivot gurney dari lantai di awal game
-        if (selfCollider != null) selfCollider.enabled = false;
-        if (Physics.Raycast(transform.position + Vector3.up * 2.0f, Vector3.down, out RaycastHit hit, 10.0f, groundLayer))
+        if (Physics.Raycast(transform.position + Vector3.up * 3.0f, Vector3.down, out RaycastHit hit, 15.0f, groundLayer))
         {
             groundYOffset = transform.position.y - hit.point.y;
         }
-        if (selfCollider != null) selfCollider.enabled = true;
+
+        foreach (var c in allCols) c.enabled = true;
     }
 
     private void Update()
@@ -88,12 +88,15 @@ public class GurneyDirectPushPull : MonoBehaviour, IInteractable
 
     private void HandleClickInput()
     {
+        // 🛑 1. JIKA SUDAH SELESAI DIPARKIR RAPI -> LOCK KLIK TOTAL! (TIDAK BISA DIDORONG/DITARIK LAGI)
+        if (isCleared) return;
+
         if (Camera.main == null) return;
         
-        // 🛑 JEDA ANTI-SPAM (Mencegah pemain menekan klik terlalu cepat beruntun)
+        // 🛑 2. JEDA ANTI-SPAM
         if (Time.time - lastClickTime < clickCooldown) return;
 
-        // Ambil arah horizontal dari kamera pemain (tanpa kemiringan atas/bawah)
+        // Ambil arah horizontal dari kamera pemain
         Vector3 camForward = Camera.main.transform.forward;
         Vector3 horizontalForward = Vector3.ProjectOnPlane(camForward, Vector3.up).normalized;
 
@@ -115,7 +118,7 @@ public class GurneyDirectPushPull : MonoBehaviour, IInteractable
     {
         if (direction == Vector3.zero) yield break;
 
-        // Mainkan SFX per dorongan klik
+        // SFX per dorongan klik
         if (audioSource != null && wheelStepSFX != null)
         {
             audioSource.PlayOneShot(wheelStepSFX);
@@ -124,13 +127,9 @@ public class GurneyDirectPushPull : MonoBehaviour, IInteractable
         Vector3 startPos = transform.position;
         Vector3 targetPos = startPos + (direction * stepDistance);
 
-        // Kunci Ketinggian Lantai
-        if (selfCollider != null) selfCollider.enabled = false;
-        if (Physics.Raycast(targetPos + Vector3.up * 2.0f, Vector3.down, out RaycastHit hit, 10.0f, groundLayer))
-        {
-            targetPos.y = hit.point.y + groundYOffset;
-        }
-        if (selfCollider != null) selfCollider.enabled = true;
+        // 🛡️ Deteksi Ketinggian Lantai Baru (Tanpa Menembak Objek Sendiri)
+        float targetY = GetGroundYAt(targetPos);
+        targetPos.y = targetY;
 
         float elapsed = 0f;
         while (elapsed < stepDuration)
@@ -146,6 +145,21 @@ public class GurneyDirectPushPull : MonoBehaviour, IInteractable
         transform.position = targetPos;
     }
 
+    private float GetGroundYAt(Vector3 point)
+    {
+        Collider[] allCols = GetComponentsInChildren<Collider>();
+        foreach (var c in allCols) c.enabled = false;
+
+        float resultY = point.y;
+        if (Physics.Raycast(point + Vector3.up * 3.0f, Vector3.down, out RaycastHit hit, 15.0f, groundLayer))
+        {
+            resultY = hit.point.y + groundYOffset;
+        }
+
+        foreach (var c in allCols) c.enabled = true;
+        return resultY;
+    }
+
     private void CheckTrackClearance()
     {
         if (isCleared) return;
@@ -157,10 +171,17 @@ public class GurneyDirectPushPull : MonoBehaviour, IInteractable
             {
                 isCleared = true;
 
-                // Rapikan posisi dan rotasi persis ke target spot parkir
+                // 🎯 RAPIKAN KE KOORDINAT PARKIR XZ TARGET, TETAPI Y TETAP MENEMPEL PRESISI DI ATAS LANTAI!
                 if (autoSnapToPark)
                 {
-                    transform.position = targetParkingSpot.position;
+                    float currentGroundY = transform.position.y;
+                    Vector3 finalParkPos = new Vector3(targetParkingSpot.position.x, currentGroundY, targetParkingSpot.position.z);
+                    
+                    // Double check raycast lantai pada koordinat parkir akhir
+                    float floorY = GetGroundYAt(finalParkPos);
+                    finalParkPos.y = floorY;
+
+                    transform.position = finalParkPos;
                     transform.rotation = targetParkingSpot.rotation;
                 }
 
@@ -169,7 +190,7 @@ public class GurneyDirectPushPull : MonoBehaviour, IInteractable
                     audioSource.PlayOneShot(parkSuccessSFX);
                 }
 
-                Debug.Log($"<color=green>Gurney berhasil diparkir rapi di titik semula ({distToParking:F2}m)!</color>");
+                Debug.Log($"<color=green>Gurney berhasil diparkir rapi & terkunci di titik semula ({distToParking:F2}m)!</color>");
 
                 // Laporkan ke Task Manager Notebook TAB
                 if (!string.IsNullOrEmpty(taskId))
@@ -189,7 +210,6 @@ public class GurneyDirectPushPull : MonoBehaviour, IInteractable
         ToolBeltManager toolBelt = FindObjectOfType<ToolBeltManager>();
         if (toolBelt == null) return true;
 
-        // Tangan dianggap kosong jika slot aktif == "Empty" / "Kosong"
         return toolBelt.ActiveItemName.Trim().Equals("Empty", System.StringComparison.OrdinalIgnoreCase) ||
                toolBelt.ActiveItemName.Trim().Equals("Kosong", System.StringComparison.OrdinalIgnoreCase);
     }
@@ -198,7 +218,6 @@ public class GurneyDirectPushPull : MonoBehaviour, IInteractable
 
     public string GetInteractPrompt()
     {
-        // Tandai bahwa raycast mata pemain sedang menatap gurney ini di frame ini
         isPlayerAimingAtThis = true;
 
         if (isCleared)
@@ -214,10 +233,9 @@ public class GurneyDirectPushPull : MonoBehaviour, IInteractable
         return "[Klik Kiri] Dorong Maju\n[Klik Kanan] Tarik Mundur";
     }
 
-    public float HoldDuration => 0f; // Single Click (Tap)
+    public float HoldDuration => 0f;
 
     public void OnInteract()
     {
-        // Direct click handled in Update via GetMouseButtonDown
     }
 }

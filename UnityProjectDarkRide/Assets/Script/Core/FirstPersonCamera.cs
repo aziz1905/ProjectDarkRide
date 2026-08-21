@@ -69,4 +69,21 @@ public class FirstPersonCamera : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }
+
+    /// <summary>
+    /// Resets camera pitch to 0 and aligns player body to the specified target rotation.
+    /// </summary>
+    public void ResetRotation(Quaternion targetRotation)
+    {
+        xRotation = 0f;
+        transform.localRotation = Quaternion.identity;
+        if (playerBody != null)
+        {
+            playerBody.rotation = targetRotation;
+        }
+        else
+        {
+            transform.rotation = targetRotation;
+        }
+    }
 }

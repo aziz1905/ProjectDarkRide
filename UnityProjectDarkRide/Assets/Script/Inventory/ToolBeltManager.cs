@@ -42,9 +42,11 @@ public class ToolBeltManager : MonoBehaviour
         UpdateHeldItemVisuals();
     }
 
-    // Status Heavy Carry (Mayat Animatronik)
+    // Status Heavy Carry (Mayat Animatronik) & Cart Seated
     private bool isCarryingHeavyObject = false;
+    private bool isSeatedInCart = false;
     public bool IsCarryingHeavyObject => isCarryingHeavyObject;
+    public bool IsSeatedInCart => isSeatedInCart;
 
     public void SetHeavyCarry(bool isCarrying)
     {
@@ -52,6 +54,15 @@ public class ToolBeltManager : MonoBehaviour
         if (isCarrying)
         {
             UnequipToEmptyHands(); // Sembunyikan alat palu/obeng saat menggotong mayat
+        }
+    }
+
+    public void SetCartSeated(bool isSeated)
+    {
+        isSeatedInCart = isSeated;
+        if (isSeated)
+        {
+            UnequipToEmptyHands(); // 🎯 Sembunyikan alat 3D di tangan saat naik kereta wahana
         }
     }
 
@@ -63,26 +74,14 @@ public class ToolBeltManager : MonoBehaviour
 
     private void HandleSlotSelectionInput()
     {
-        // Kunci tombol 1-5 saat kedua tangan sedang menggotong mayat animatronik!
-        if (isCarryingHeavyObject) return;
+        // Kunci tombol 1-5 saat sedang menggotong mayat ATAU sedang mengemudi kereta!
+        if (isCarryingHeavyObject || isSeatedInCart) return;
 
         if (Input.GetKeyDown(KeyCode.Alpha1)) ToggleEquipSlot(0);
         else if (Input.GetKeyDown(KeyCode.Alpha2)) ToggleEquipSlot(1);
         else if (Input.GetKeyDown(KeyCode.Alpha3)) ToggleEquipSlot(2);
         else if (Input.GetKeyDown(KeyCode.Alpha4)) ToggleEquipSlot(3);
         else if (Input.GetKeyDown(KeyCode.Alpha5)) ToggleEquipSlot(4);
-
-        float scroll = Input.GetAxis("Mouse ScrollWheel");
-        if (scroll > 0f)
-        {
-            int nextSlot = activeEquippedSlotIndex < 0 ? 0 : (activeEquippedSlotIndex - 1 + maxSlots) % maxSlots;
-            EquipSlot(nextSlot);
-        }
-        else if (scroll < 0f)
-        {
-            int nextSlot = activeEquippedSlotIndex < 0 ? 0 : (activeEquippedSlotIndex + 1) % maxSlots;
-            EquipSlot(nextSlot);
-        }
     }
 
     private void HandleDropInput()
