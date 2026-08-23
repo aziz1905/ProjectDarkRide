@@ -327,7 +327,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3807446819027405446}
-  - component: {fileID: 8752870072404990739}
+  - component: {fileID: 862195754516936338}
   m_Layer: 0
   m_Name: Cart
   m_TagString: Untagged
@@ -353,7 +353,7 @@ Transform:
   - {fileID: 8554296560918883525}
   m_Father: {fileID: 7500846378735558159}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8752870072404990739
+--- !u!114 &862195754516936338
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -362,7 +362,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 3812304431614272371}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9ea8d27ee1a3c3b459c40b7a89623b10, type: 3}
+  m_Script: {fileID: 11500000, guid: a1d76f783ed7e9e438ec850c2f2181c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   stationSpline: {fileID: 3442789820654092535}
@@ -375,9 +375,9 @@ MonoBehaviour:
   carriageSpacing: 4
   seatTransform: {fileID: 2982831061692327684}
   seatEyeHeight: 0.4
-  maxSpeed: 3.5
-  acceleration: 2
-  deceleration: 3
+  maxSpeed: 4
+  acceleration: 3
+  deceleration: 4
   rotationSpeed: 6
   frontHeadlight: {fileID: 5139913806206700669}
   cartPromptUI: {fileID: 0}

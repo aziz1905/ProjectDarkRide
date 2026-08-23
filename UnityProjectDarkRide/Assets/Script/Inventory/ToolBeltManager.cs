@@ -33,12 +33,21 @@ public class ToolBeltManager : MonoBehaviour
 
     private void Start()
     {
+        ResetToolBelt();
+    }
+
+    /// <summary>
+    /// Mereset seluruh isi sabuk perkakas kembali ke kondisi kosong (Awal Shift)
+    /// </summary>
+    public void ResetToolBelt()
+    {
         for (int i = 0; i < maxSlots; i++)
         {
             slotItemNames[i] = "Empty";
         }
-
-        activeEquippedSlotIndex = -1; // Tangan Kosong di awal game
+        activeEquippedSlotIndex = -1;
+        isCarryingHeavyObject = false;
+        isSeatedInCart = false;
         UpdateHeldItemVisuals();
     }
 
@@ -53,7 +62,7 @@ public class ToolBeltManager : MonoBehaviour
         isCarryingHeavyObject = isCarrying;
         if (isCarrying)
         {
-            UnequipToEmptyHands(); // Sembunyikan alat palu/obeng saat menggotong mayat
+            UnequipToEmptyHands();
         }
     }
 
@@ -62,7 +71,7 @@ public class ToolBeltManager : MonoBehaviour
         isSeatedInCart = isSeated;
         if (isSeated)
         {
-            UnequipToEmptyHands(); // 🎯 Sembunyikan alat 3D di tangan saat naik kereta wahana
+            UnequipToEmptyHands();
         }
     }
 
@@ -74,7 +83,6 @@ public class ToolBeltManager : MonoBehaviour
 
     private void HandleSlotSelectionInput()
     {
-        // Kunci tombol 1-5 saat sedang menggotong mayat ATAU sedang mengemudi kereta!
         if (isCarryingHeavyObject || isSeatedInCart) return;
 
         if (Input.GetKeyDown(KeyCode.Alpha1)) ToggleEquipSlot(0);
@@ -109,16 +117,12 @@ public class ToolBeltManager : MonoBehaviour
         if (slotIndex < 0 || slotIndex >= maxSlots) return;
 
         activeEquippedSlotIndex = slotIndex;
-        string itemInSlot = slotItemNames[activeEquippedSlotIndex];
-        
-        Debug.Log($"[Tool Belt] Mengeluarkan Slot {activeEquippedSlotIndex + 1} ke Tangan. (Isi Item: '{itemInSlot}')");
         UpdateHeldItemVisuals();
     }
 
     public void UnequipToEmptyHands()
     {
         activeEquippedSlotIndex = -1;
-        Debug.Log("[Tool Belt] Barang Disimpan ke Sabuk. Tangan Player KOSONG.");
         UpdateHeldItemVisuals();
     }
 
@@ -129,11 +133,8 @@ public class ToolBeltManager : MonoBehaviour
             if (slotItemNames[i] == "Empty")
             {
                 slotItemNames[i] = itemName;
-                Debug.Log($"[Tool Belt] Item '{itemName}' Disimpan di Sabuk (Slot {i + 1}).");
-                
                 UpdateHeldItemVisuals();
 
-                // 🌟 CEK TUTORIAL TASK: Jika sudah mengambil jumlah alat yang ditentukan, selesaikan task!
                 if (!string.IsNullOrEmpty(tutorialTaskId) && TaskManager.Instance != null)
                 {
                     int filledSlots = 0;
@@ -152,13 +153,12 @@ public class ToolBeltManager : MonoBehaviour
             }
         }
 
-        Debug.LogWarning("[Tool Belt Penuh] Sabuk Tool Belt Anda sudah penuh (5/5)!");
         return false;
     }
 
     public void DropActiveItem()
     {
-        if (activeEquippedSlotIndex < 0) return; // Jika tangan kosong, abaikan
+        if (activeEquippedSlotIndex < 0) return;
         
         string itemToDrop = slotItemNames[activeEquippedSlotIndex];
         if (itemToDrop == "Empty") return;
@@ -167,7 +167,6 @@ public class ToolBeltManager : MonoBehaviour
         int spaceIdx = cleanItemName.IndexOf(' ');
         if (spaceIdx > 0) cleanItemName = cleanItemName.Substring(0, spaceIdx);
 
-        // Cari Prefab fisik dari Inspector itemMeshList
         GameObject prefabToSpawn = null;
         if (itemMeshList != null)
         {
@@ -181,34 +180,28 @@ public class ToolBeltManager : MonoBehaviour
             }
         }
 
-        // Spawn Prefab jika di-drag di Inspector
         if (prefabToSpawn != null)
         {
-            // Spawn 0.8m di depan & 0.1m di BAWAH mata kamera menghadap ke arah pandangan pemain
             Vector3 spawnPos = Camera.main.transform.position + (Camera.main.transform.forward * 0.8f) - (Vector3.up * 0.1f);
             Quaternion spawnRot = Camera.main.transform.rotation;
             GameObject droppedObj = Instantiate(prefabToSpawn, spawnPos, spawnRot);
             
-            droppedObj.name = cleanItemName; // Pastikan nama objek bersih agar bisa diambil lagi
-            droppedObj.SetActive(true); // Pastikan aktif di scene
+            droppedObj.name = cleanItemName;
+            droppedObj.SetActive(true);
 
             Rigidbody rb = droppedObj.GetComponent<Rigidbody>();
             if (rb == null) rb = droppedObj.AddComponent<Rigidbody>();
             
-            // RESET KECEPATAN FISIKA & AKTIFKAN TABRAKAN FISIK CONTINUOUS
             rb.isKinematic = false;
             rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
             rb.velocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
 
-            // DORONGAN LEMPARAN KE DEPAN + LENGKUNGAN KE ATAS (PARABOLA LEMPARAN)
             Vector3 throwForce = (Camera.main.transform.forward * dropForwardForce) + (Vector3.up * 2.0f);
             rb.AddForce(throwForce, ForceMode.Impulse);
 
-            // PUTARAN SPINNER LEMPARAN (TORQUE) AGAR TERLIHAT REALISTIS
             rb.AddTorque(Random.insideUnitSphere * 3.0f, ForceMode.Impulse);
 
-            // 💡 SINKRONISASI CAHAYA LAMPU SENTER (JIKA SENTER DILEMPAR/DROP KE LANTAI)
             EquipableFlashlight heldFlashlight = FindObjectOfType<EquipableFlashlight>();
             if (heldFlashlight != null)
             {
@@ -219,18 +212,9 @@ public class ToolBeltManager : MonoBehaviour
                     droppedLight.enabled = wasLightOn;
                     droppedLight.gameObject.SetActive(wasLightOn);
                 }
-
-                Debug.Log($"[DROP FLASHLIGHT] Status Lampu Senter di Lantai: {(wasLightOn ? "MENYALA (ON)" : "MATI (OFF)")}");
             }
-
-            Debug.Log($"[LEMPAR SUCCESS] Item '{cleanItemName}' dilempar ke depan!");
-        }
-        else
-        {
-            Debug.LogWarning($"[DROP WARNING] Prefab untuk '{cleanItemName}' belum di-drag ke slot World Prefab di Inspector ToolBeltManager!");
         }
 
-        // Reset slot di sabuk dan set tangan jadi kosong
         slotItemNames[activeEquippedSlotIndex] = "Empty";
         UnequipToEmptyHands();
     }
@@ -255,19 +239,12 @@ public class ToolBeltManager : MonoBehaviour
         }
     }
 
-    // Getters
     public int ActiveSlotIndex => activeEquippedSlotIndex;
     public string ActiveItemName => (activeEquippedSlotIndex >= 0 && activeEquippedSlotIndex < maxSlots) ? slotItemNames[activeEquippedSlotIndex] : "Empty";
 
-    /// <summary>
-    /// Menghapus / mengonsumsi item yang sedang dipegang di tangan saat ini (misal: Bulb / FusePack yang selesai dipakai).
-    /// </summary>
     public void ConsumeActiveItem()
     {
         if (activeEquippedSlotIndex < 0) return;
-        string consumedItem = slotItemNames[activeEquippedSlotIndex];
-        Debug.Log($"[TOOL BELT] Item '{consumedItem}' di Slot {activeEquippedSlotIndex + 1} telah HABIS DIPAKAI!");
-        // Kosongkan slot di sabuk dan kembalikan tangan ke kondisi kosong
         slotItemNames[activeEquippedSlotIndex] = "Empty";
         UnequipToEmptyHands();
     }

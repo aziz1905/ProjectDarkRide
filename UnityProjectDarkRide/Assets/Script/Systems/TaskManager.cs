@@ -4,9 +4,7 @@ using TMPro;
 
 /// <summary>
 /// Task Manager Terpusat (Dark Ride Maintenance).
-/// Mendukung Format Checklist Bersih: Simbol [✓] di Kanan & Coret Selesai.
-/// Mendukung Dynamic Sub-Task (Tugas Tambahan Kabel Rusak Dinamis).
-/// 0% Beban CPU & Zero Garbage Collection.
+/// Production-Ready: Clean & 0% Spam Log.
 /// </summary>
 public class TaskManager : MonoBehaviour
 {
@@ -51,9 +49,6 @@ public class TaskManager : MonoBehaviour
         UpdateNotebookUI();
     }
 
-    /// <summary>
-    /// Memunculkan Sub-Task kabel rusak secara dinamis tepat di bawah tugas inspeksi
-    /// </summary>
     public void RevealSubTask(string subTaskId)
     {
         foreach (var task in taskList)
@@ -63,7 +58,6 @@ public class TaskManager : MonoBehaviour
                 if (!task.isRevealed)
                 {
                     task.isRevealed = true;
-                    Debug.Log($"<color=yellow>[SUB-TASK REVEALED] Tugas Tambahan Ditemukan: '{task.taskDescription}'</color>");
                     UpdateNotebookUI();
                 }
                 return;
@@ -71,9 +65,6 @@ public class TaskManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Memanggil fungsi ini setiap kali 1 tugas/interaksi selesai
-    /// </summary>
     public void CompleteTask(string taskId)
     {
         foreach (var task in taskList)
@@ -87,11 +78,6 @@ public class TaskManager : MonoBehaviour
                     {
                         task.currentCount = task.requiredCount;
                         task.isCompleted = true;
-                        Debug.Log($"[TASK COMPLETED] Tugas '{task.taskDescription}' SELESAI [✓]!");
-                    }
-                    else
-                    {
-                        Debug.Log($"[TASK PROGRESS] Tugas '{task.taskDescription}' Progress: {task.currentCount}/{task.requiredCount}");
                     }
 
                     UpdateNotebookUI();
@@ -100,6 +86,21 @@ public class TaskManager : MonoBehaviour
                 return;
             }
         }
+    }
+
+    public void ResetAllTasks()
+    {
+        foreach (var task in taskList)
+        {
+            task.currentCount = 0;
+            task.isCompleted = false;
+            if (task.isSubTask)
+            {
+                task.isRevealed = false;
+            }
+        }
+
+        UpdateNotebookUI();
     }
 
     [Header("Task Completion Mark")]
@@ -116,9 +117,6 @@ public class TaskManager : MonoBehaviour
     [Tooltip("CENTANG agar ada jeda/jarak spasi vertikal antar tugas agar tulisan tidak berdempetan")]
     [SerializeField] private bool addSpacingBetweenTasks = true;
 
-    /// <summary>
-    /// Meng-update Teks Checklist di Notebook [TAB] secara Real-Time dengan Format Minimalis Elegan
-    /// </summary>
     public void UpdateNotebookUI()
     {
         if (notebookTitleText != null)
@@ -132,23 +130,19 @@ public class TaskManager : MonoBehaviour
 
             foreach (var task in taskList)
             {
-                // Jika tugas adalah Sub-Task tersembunyi, lewati jangan ditampilkan dulu
                 if (task.isSubTask && !task.isRevealed) continue;
 
                 string prefix = task.isSubTask ? subTaskBullet : mainTaskBullet;
 
                 if (task.isCompleted)
                 {
-                    // Teks Dicoret Cokelat/Abu-Abu + Simbol [X] Hijau di Sebelah KANAN
                     sb.AppendLine($"{prefix}<s color=#888888>{task.taskDescription}</s>   <color={completionMarkColor}><b>{completionMark}</b></color>");
                 }
                 else
                 {
-                    // Teks Bersih dengan Bullet
                     sb.AppendLine($"{prefix}{task.taskDescription}");
                 }
 
-                // Beri jarak spasi antar tugas agar rapi dan tidak berdempetan
                 if (addSpacingBetweenTasks)
                 {
                     sb.AppendLine();
@@ -164,7 +158,6 @@ public class TaskManager : MonoBehaviour
         bool allDone = true;
         foreach (var task in taskList)
         {
-            // Abaikan sub-task yang memang tidak pernah terpicu
             if (task.isSubTask && !task.isRevealed) continue;
 
             if (!task.isCompleted)
@@ -172,11 +165,6 @@ public class TaskManager : MonoBehaviour
                 allDone = false;
                 break;
             }
-        }
-
-        if (allDone)
-        {
-            Debug.Log("<color=green>[PROBATION SHIFT COMPLETE] Seluruh tugas Hari ini telah selesai 100%! Silakan Absen di Walkie-Talkie.</color>");
         }
     }
 
