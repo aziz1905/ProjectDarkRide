@@ -1,10 +1,10 @@
 using UnityEngine;
-using TMPro;
 using System;
 
 /// <summary>
 /// Pengelola Sanksi Laporan & Retry System (Dark Ride Maintenance).
-/// Production-Ready: Clean & 0% Spam Log.
+/// Menampilkan Teks Penyebab Kematian (Death Reason Murni Tanpa Angka 1/5) Saat Layar Hitam.
+/// Durasi tahan layar hitam dikendalikan penuh oleh ScreenFader Inspector.
 /// </summary>
 public class SanctionAndRetryManager : MonoBehaviour
 {
@@ -19,10 +19,6 @@ public class SanctionAndRetryManager : MonoBehaviour
     [Header("Scene Respawn References")]
     [Tooltip("Drag GameObject RespawnPoint di Scene (Titik tempat player berdiri di awal game & saat retry)")]
     [SerializeField] private Transform stationRespawnPoint;
-
-    [Header("UI Sanction Display (Opsional)")]
-    [Tooltip("Teks UI jumlah sanksi (Opsional)")]
-    [SerializeField] private TextMeshProUGUI sanctionCountText;
 
     [Header("SFX (Opsional)")]
     [SerializeField] private AudioSource audioSource;
@@ -44,9 +40,7 @@ public class SanctionAndRetryManager : MonoBehaviour
 
     private void Start()
     {
-        UpdateSanctionUI();
         UpdateBloodOverlay();
-
         RespawnPlayerAndCartPreserveInventory();
 
         if (ShiftTimerManager.Instance != null)
@@ -68,14 +62,11 @@ public class SanctionAndRetryManager : MonoBehaviour
         IssueSanction("Shift Malam Habis (06:00 AM) - Tugas Maintenance Belum Selesai");
     }
 
-    public void IssueSanction(string reasonMessage = "Pelanggaran Laporan Anomali / Kematian")
+    public void IssueSanction(string reasonMessage = "Pelanggaran Insiden Anomali / Area Bahaya")
     {
         if (IsMaxSanctionReached) return;
 
         currentRetryCount++;
-
-        UpdateSanctionUI();
-        UpdateBloodOverlay();
 
         OnSanctionAdded?.Invoke(currentRetryCount, maxRetries);
 
@@ -90,7 +81,7 @@ public class SanctionAndRetryManager : MonoBehaviour
         }
         else
         {
-            TriggerRetryFadeSequence();
+            TriggerRetryFadeSequence(reasonMessage);
         }
     }
 
@@ -102,7 +93,7 @@ public class SanctionAndRetryManager : MonoBehaviour
         }
     }
 
-    private void TriggerRetryFadeSequence()
+    private void TriggerRetryFadeSequence(string reasonMessage)
     {
         GameInputLock.LockInput();
 
@@ -113,10 +104,11 @@ public class SanctionAndRetryManager : MonoBehaviour
 
         if (ScreenFader.Instance != null)
         {
+            // 🎯 Menggunakan nilai durasi tahan layar hitam otomatis dari Inspector ScreenFader (-1f)
             ScreenFader.Instance.FadeToBlackAndExecute(() =>
             {
                 ExecuteFullShiftRetryReset();
-            }, 0.8f, 0.8f, 0.5f);
+            }, reasonMessage, -1f, -1f, -1f);
         }
         else
         {
@@ -144,6 +136,10 @@ public class SanctionAndRetryManager : MonoBehaviour
         }
 
         RespawnPlayerAndCartPreserveInventory();
+
+        // Update bercak darah baru saat layar sedang hitam pekat sebelum Fade In
+        UpdateBloodOverlay();
+
         GameInputLock.UnlockInput();
     }
 
@@ -167,6 +163,7 @@ public class SanctionAndRetryManager : MonoBehaviour
             CharacterController cc = playerObj.GetComponent<CharacterController>();
             if (cc != null) cc.enabled = false;
 
+            playerObj.transform.SetParent(null);
             playerObj.transform.position = targetPos;
             playerObj.transform.rotation = targetRot;
 
@@ -200,18 +197,9 @@ public class SanctionAndRetryManager : MonoBehaviour
         }
     }
 
-    private void UpdateSanctionUI()
-    {
-        if (sanctionCountText != null)
-        {
-            sanctionCountText.text = $"Sanksi: <b>{currentRetryCount}</b> / {maxRetries}";
-        }
-    }
-
     public void ResetSanctions()
     {
         currentRetryCount = 0;
-        UpdateSanctionUI();
         UpdateBloodOverlay();
     }
 }

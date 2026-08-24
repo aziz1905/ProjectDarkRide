@@ -437809,7 +437809,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1540557777999675366, guid: 1284e23b9d7e2c041920cda140db2fb1, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -15.9
+      value: 82
       objectReference: {fileID: 0}
     - target: {fileID: 1540557777999675366, guid: 1284e23b9d7e2c041920cda140db2fb1, type: 3}
       propertyPath: m_LocalRotation.w
@@ -437887,10 +437887,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: playerDay1
       objectReference: {fileID: 0}
-    - target: {fileID: 9099200492187267734, guid: 1284e23b9d7e2c041920cda140db2fb1, type: 3}
-      propertyPath: notebookTitleText
-      value: 
-      objectReference: {fileID: 8306801413221392971}
     - target: {fileID: 9099200492187267734, guid: 1284e23b9d7e2c041920cda140db2fb1, type: 3}
       propertyPath: taskChecklistText
       value: 

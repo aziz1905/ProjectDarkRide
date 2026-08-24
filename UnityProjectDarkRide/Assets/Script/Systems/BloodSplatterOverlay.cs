@@ -2,10 +2,10 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Pengelola Visual Bercak Darah Layar (Blood Splatter Overlay - Granny Style).
-/// Auto-Setup Fullscreen: Otomatis meretangkan RectTransform bercak darah menjadi 100% Fullscreen tanpa kotak kecil.
-/// Semakin tinggi Sanksi / Retry (1/5 -> 4/5), semakin merah & pekat bercak darah di layar HUD.
-/// 0% CPU Overhead & Fleksibel.
+/// Pengelola Visual Bercak Darah Layar (Blood Splatter Overlay - Subtle Corner Granny Style).
+/// Skala diperbesar (1.75x - 2.2x) agar bercak darah HANYA MENEMPEL DI UJUNG SUDUT LAYAR TERLUAR,
+/// sehingga area tengah layar 90% TETAP LUAS, BENING, DAN BEBAS PANDANGAN.
+/// Production-Ready: 0% Log Spam & Ultra Lightweight.
 /// </summary>
 public class BloodSplatterOverlay : MonoBehaviour
 {
@@ -16,67 +16,55 @@ public class BloodSplatterOverlay : MonoBehaviour
     [Tooltip("Drag UI Image Bercak Darah (Blood Splatter Texture) di Canvas HUD ke sini")]
     [SerializeField] private Image bloodImage;
 
-    [Header("Blood Intensity Settings")]
-    [Tooltip("Warna dasar bercak darah (Default: Merah Pekat Darah)")]
+    [Header("Blood Color Settings")]
+    [Tooltip("Warna dasar bercak darah (Default: Merah Darah Sinematik)")]
     [SerializeField] private Color bloodColor = new Color(0.85f, 0.05f, 0.05f, 1f);
 
-    [Tooltip("Tingkat kepekatan alpha bercak darah per tingkat sanksi (0/5 = 0, 1/5 = 0.25, 2/5 = 0.45, 3/5 = 0.65, 4/5 = 0.85)")]
-    [SerializeField] private float[] sanctionAlphas = new float[] { 0f, 0.25f, 0.45f, 0.65f, 0.85f, 1.0f };
+    [Header("Blood Scale Progression (Besarkan Skala Agar Darah Terdorong ke Ujung Sudut)")]
+    [Tooltip("Skala diperbesar agar bercak darah terdorong jauh ke sudut terluar layar (0/5 = 2.2x, 1/5 = 1.95x, 2/5 = 1.75x, 3/5 = 1.55x, 4/5 = 1.35x, 5/5 = 1.1x)")]
+    [SerializeField] private float[] sanctionScales = new float[] { 2.2f, 1.95f, 1.75f, 1.55f, 1.35f, 1.10f };
+
+    [Header("Blood Opacity Progression (Kepekatan Darah)")]
+    [Tooltip("Kepekatan alpha bercak darah per tingkat sanksi kematian")]
+    [SerializeField] private float[] sanctionAlphas = new float[] { 0f, 0.20f, 0.35f, 0.50f, 0.70f, 0.90f };
 
     private void Awake()
     {
         if (_instance == null) _instance = this;
-        AutoSetupBloodImage();
-    }
 
-    private void AutoSetupBloodImage()
-    {
         if (bloodImage == null)
         {
             bloodImage = GetComponent<Image>();
             if (bloodImage == null) bloodImage = GetComponentInChildren<Image>(true);
         }
 
-        // 🎯 OTOMATIS MERETANGKAN RECTTRANSFORM PARENT JADI 100% FULLSCREEN
-        RectTransform parentRt = GetComponent<RectTransform>();
-        if (parentRt != null)
-        {
-            parentRt.anchorMin = Vector2.zero;
-            parentRt.anchorMax = Vector2.one;
-            parentRt.offsetMin = Vector2.zero;
-            parentRt.offsetMax = Vector2.one;
-        }
-
         if (bloodImage != null)
         {
-            bloodImage.raycastTarget = false; // Bebas klik tidak menghalangi interaksi
-            Color c = bloodColor;
-            c.a = 0f; // Transparan di awal game (0 sanksi)
-            bloodImage.color = c;
-
-            // 🎯 OTOMATIS MERETANGKAN RECTTRANSFORM IMAGE JADI 100% FULLSCREEN
-            RectTransform rt = bloodImage.rectTransform;
-            rt.anchorMin = Vector2.zero;
-            rt.anchorMax = Vector2.one;
-            rt.offsetMin = Vector2.zero;
-            rt.offsetMax = Vector2.one;
+            bloodImage.raycastTarget = false; // Bebas klik
         }
+
+        ResetBlood();
     }
 
     /// <summary>
-    /// Update intensitas kepekatan bercak darah berdasarkan hitungan sanksi (0 s/d 5)
+    /// Update Kelebaran (Scale) & Kepekatan (Alpha) bercak darah berdasarkan sanksi kematian (0 s/d 5)
     /// </summary>
     public void UpdateBloodIntensity(int currentSanctionCount, int maxSanctions = 5)
     {
-        if (bloodImage == null) AutoSetupBloodImage();
         if (bloodImage == null) return;
 
         int index = Mathf.Clamp(currentSanctionCount, 0, sanctionAlphas.Length - 1);
+        
         float targetAlpha = sanctionAlphas[index];
+        float targetScale = sanctionScales[index];
 
+        // 1. Ubah Kepekatan Warna
         Color c = bloodColor;
         c.a = targetAlpha;
         bloodImage.color = c;
+
+        // 2. Ubah Kelebaran Skala (Terdorong Jauh ke Ujung Sudut Layar)
+        bloodImage.rectTransform.localScale = new Vector3(targetScale, targetScale, 1f);
     }
 
     public void ResetBlood()

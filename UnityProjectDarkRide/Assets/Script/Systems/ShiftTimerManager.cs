@@ -97,7 +97,7 @@ public class ShiftTimerManager : MonoBehaviour
 
         // 🎯 TAMPILKAN JAM DI POJOK KIRI BAWAH LAYAR CANVAS HUD SAAT LAYAR TERANG
         if (!hudClockText.gameObject.activeSelf) hudClockText.gameObject.SetActive(true);
-        hudClockText.text = $"<b>JAM:</b> {GetFormattedGameTime()}";
+        hudClockText.text = $"{GetFormattedGameTime()}";
     }
 
     private void TriggerShiftEnd()

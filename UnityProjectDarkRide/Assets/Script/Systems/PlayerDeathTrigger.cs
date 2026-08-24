@@ -7,8 +7,8 @@ using UnityEngine;
 public class PlayerDeathTrigger : MonoBehaviour
 {
     [Header("Death / Sanction Reason")]
-    [Tooltip("Alasan Kematian / Sanksi yang tampil di layar saat Game Over (misal: 'Tersengat Listrik Tegangan Tinggi' atau 'Diserang Animatronik')")]
-    [SerializeField] private string deathReason = "Diserang Animatronik / Area Bahaya Terlarang";
+    [Tooltip("Alasan Sanksi Resmi Korporat yang tampil di Surat Pemecatan")]
+    [SerializeField] private string deathReason = "Gagal menyelesaikan prosedur perawatan wahana secara memadai, lalai dalam tugas shift malam, serta mengabaikan protokol keselamatan standar fasilitas.";
 
     [Header("Trigger Mode")]
     [Tooltip("Jika CENTANG, trigger ini hanya bisa memicu kematian 1x")]

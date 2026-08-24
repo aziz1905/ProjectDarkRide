@@ -1473,6 +1473,7 @@ MonoBehaviour:
     m_Bits: 4294967295
   interactKey: 101
   toolUseKey: 323
+  promptTextUI: {fileID: 0}
 --- !u!114 &5108144431016268311
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1551,64 +1552,50 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e991a106c8e7d1b4d933a561ff255b84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dayTitle: CATATAN SHIFT HARI 1
-  taskList:
-  - taskId: TOOLS
-    taskDescription: Ambil 4 Tools di workshop
-    isSubTask: 0
-    parentTaskId: 
-    isRevealed: 1
-    requiredCount: 1
-    currentCount: 0
-    isCompleted: 0
-  - taskId: CLEAN_TRASH
-    taskDescription: Puing-puing sampah berserakan di sepanjang jalur rel dan lantai
-      wahana
-    isSubTask: 0
-    parentTaskId: 
-    isRevealed: 1
-    requiredCount: 9
-    currentCount: 0
-    isCompleted: 0
-  - taskId: WIPE_DIRT
-    taskDescription: Lap cermin/lukisan dan animatronik yang ada di zona
-    isSubTask: 0
-    parentTaskId: 
-    isRevealed: 1
-    requiredCount: 4
-    currentCount: 0
-    isCompleted: 0
-  - taskId: LAMP_FIX
-    taskDescription: Salah satu lampu galeri mengalami korsleting bohlam dan berkedip-kedip
-    isSubTask: 0
-    parentTaskId: 
-    isRevealed: 1
-    requiredCount: 1
-    currentCount: 0
-    isCompleted: 0
-  - taskId: FIX_CROOKED_PAINTING
-    taskDescription: lukisan di lorong galeri posisinya miring
-    isSubTask: 0
-    parentTaskId: 
-    isRevealed: 1
-    requiredCount: 2
-    currentCount: 0
-    isCompleted: 0
-  - taskId: INSPECT_PANELS
-    taskDescription: periksa dan pastikan panel listrik aman
-    isSubTask: 0
-    parentTaskId: 
-    isRevealed: 1
-    requiredCount: 3
-    currentCount: 0
-    isCompleted: 0
-  notebookTitleText: {fileID: 0}
   taskChecklistText: {fileID: 0}
-  completionMark: '[X]'
-  completionMarkColor: '#44FF44'
-  mainTaskBullet: "\u2022 "
-  subTaskBullet: '    > '
-  addSpacingBetweenTasks: 1
+  taskList:
+  - id: Tools
+    title: Ambil 4 tool di workshop
+    parentId: 
+    isCompleted: 0
+    isSubTask: 0
+    isRevealed: 1
+    currentProgress: 1
+  - id: FIX_CROOKED_PAINTING
+    title: Betulkan lukisan yang miring
+    parentId: 
+    isCompleted: 0
+    isSubTask: 0
+    isRevealed: 1
+    currentProgress: 2
+  - id: WIPE_DIRT
+    title: Lap cermin/lukisan dan animatronik
+    parentId: 
+    isCompleted: 0
+    isSubTask: 0
+    isRevealed: 1
+    currentProgress: 4
+  - id: LAMP_FIX
+    title: Ganti lampu yang berkedip
+    parentId: 
+    isCompleted: 0
+    isSubTask: 0
+    isRevealed: 1
+    currentProgress: 1
+  - id: CLEAN_TRASH
+    title: bersihkan sampah di zona
+    parentId: 
+    isCompleted: 0
+    isSubTask: 0
+    isRevealed: 1
+    currentProgress: 9
+  - id: INSPECT_PANELS
+    title: Inspeksi seluruh panel pastikan aman
+    parentId: 
+    isCompleted: 0
+    isSubTask: 0
+    isRevealed: 1
+    currentProgress: 3
 --- !u!1 &8857129059615471167
 GameObject:
   m_ObjectHideFlags: 0

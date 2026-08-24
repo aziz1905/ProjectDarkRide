@@ -865,89 +865,64 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e991a106c8e7d1b4d933a561ff255b84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dayTitle: CATATAN SHIFT HARI 4
-  taskList:
-  - taskId: FIX_FALLEN_PAINTING
-    taskDescription: Perbaiki lukisan jatuh pakai Palu
-    isSubTask: 0
-    parentTaskId: 
-    isRevealed: 1
-    requiredCount: 1
-    currentCount: 0
-    isCompleted: 0
-  - taskId: CLEAN_TRASH
-    taskDescription: Puing-puing sampah berserakan di sepanjang jalur rel dan lantai
-      wahana
-    isSubTask: 0
-    parentTaskId: 
-    isRevealed: 1
-    requiredCount: 9
-    currentCount: 0
-    isCompleted: 0
-  - taskId: WIPE_DIRT
-    taskDescription: Lap cermin/lukisan dan animatronik yang ada di zona
-    isSubTask: 0
-    parentTaskId: 
-    isRevealed: 1
-    requiredCount: 4
-    currentCount: 0
-    isCompleted: 0
-  - taskId: PUT_ANIMATRONIC_GURNEY
-    taskDescription: Gotong mayat animatronik yang jatuh dan kembalikan ke Gurney
-      RS
-    isSubTask: 0
-    parentTaskId: 
-    isRevealed: 1
-    requiredCount: 1
-    currentCount: 0
-    isCompleted: 0
-  - taskId: FIX_CROOKED_PAINTING
-    taskDescription: lukisan di lorong galeri posisinya miring
-    isSubTask: 0
-    parentTaskId: 
-    isRevealed: 1
-    requiredCount: 2
-    currentCount: 0
-    isCompleted: 0
-  - taskId: FIX_FUSE
-    taskDescription: Ganti Fuse di room panel
-    isSubTask: 0
-    parentTaskId: 
-    isRevealed: 1
-    requiredCount: 1
-    currentCount: 0
-    isCompleted: 0
-  - taskId: CLEAR_GURNEY
-    taskDescription: Dorong Gurney RS yang menghalangi jalan
-    isSubTask: 0
-    parentTaskId: 
-    isRevealed: 0
-    requiredCount: 1
-    currentCount: 0
-    isCompleted: 0
-  - taskId: FIX_ANIMATRONIC_SCREW
-    taskDescription: Perbaiki komponen animatronik copot pakai Obeng
-    isSubTask: 0
-    parentTaskId: 
-    isRevealed: 0
-    requiredCount: 1
-    currentCount: 0
-    isCompleted: 0
-  - taskId: FIX_WHEEL_SCREW
-    taskDescription: Ganti roda Gurney pakai obeng
-    isSubTask: 0
-    parentTaskId: 
-    isRevealed: 0
-    requiredCount: 1
-    currentCount: 0
-    isCompleted: 0
-  notebookTitleText: {fileID: 0}
   taskChecklistText: {fileID: 0}
-  completionMark: '[X]'
-  completionMarkColor: '#44FF44'
-  mainTaskBullet: "\u2022 "
-  subTaskBullet: '    > '
-  addSpacingBetweenTasks: 1
+  taskList:
+  - id: FIX_FALLEN_PAINTING
+    title: Perbaiki lukisan yang jatuh menggunakan palu
+    parentId: 
+    isCompleted: 0
+    isSubTask: 0
+    isRevealed: 1
+    currentProgress: 1
+  - id: WIPE_DIRT
+    title: Lap cermin/lukisan dan animatronik
+    parentId: 
+    isCompleted: 0
+    isSubTask: 0
+    isRevealed: 1
+    currentProgress: 4
+  - id: FIX_CROOKED_PAINTING
+    title: betulkan lukisan yang miring
+    parentId: 
+    isCompleted: 0
+    isSubTask: 0
+    isRevealed: 1
+    currentProgress: 1
+  - id: CLEAN_TRASH
+    title: Bersihkan sampah yang ada di zona
+    parentId: 
+    isCompleted: 0
+    isSubTask: 0
+    isRevealed: 1
+    currentProgress: 9
+  - id: FIX_WHEEL_SCREW
+    title: perbaiki roda gurney yang copot menggunakan obeng
+    parentId: 
+    isCompleted: 0
+    isSubTask: 0
+    isRevealed: 1
+    currentProgress: 1
+  - id: FIX_ANIMATRONIC_SCREW
+    title: Perbaiki komponen animatronik copot pakai Obeng + Test Ride
+    parentId: 
+    isCompleted: 0
+    isSubTask: 0
+    isRevealed: 0
+    currentProgress: 1
+  - id: FIX_RAIL
+    title: Betulkan rel yang rusakdi  zona 1 dan 3
+    parentId: 
+    isCompleted: 0
+    isSubTask: 0
+    isRevealed: 0
+    currentProgress: 2
+  - id: FIX_FUSE
+    title: ganti fuse yang rusak di ruang panel
+    parentId: 
+    isCompleted: 0
+    isSubTask: 0
+    isRevealed: 0
+    currentProgress: 2
 --- !u!1 &2237313448316262174
 GameObject:
   m_ObjectHideFlags: 0

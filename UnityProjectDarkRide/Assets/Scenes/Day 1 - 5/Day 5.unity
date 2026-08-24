@@ -116697,7 +116697,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8204479750148752427, guid: 0a795000e000e254186e88e3564b35de, type: 3}
       propertyPath: taskId
-      value: 
+      value: FIX_FUSE
       objectReference: {fileID: 0}
     - target: {fileID: 8204479750148752427, guid: 0a795000e000e254186e88e3564b35de, type: 3}
       propertyPath: powerSwitch
@@ -116705,7 +116705,7 @@ PrefabInstance:
       objectReference: {fileID: 1873683160}
     - target: {fileID: 8204479750148752427, guid: 0a795000e000e254186e88e3564b35de, type: 3}
       propertyPath: isFuseBroken
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8864666520232956716, guid: 0a795000e000e254186e88e3564b35de, type: 3}
       propertyPath: m_LocalPosition.x
@@ -453347,77 +453347,9 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5044230030151155181, guid: 06c5a4da16104064380456bafe2a025d, type: 3}
-      propertyPath: dayTitle
-      value: CATATAN SHIFT HARI 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 5044230030151155181, guid: 06c5a4da16104064380456bafe2a025d, type: 3}
-      propertyPath: notebookTitleText
-      value: 
-      objectReference: {fileID: 8306801413221392971}
-    - target: {fileID: 5044230030151155181, guid: 06c5a4da16104064380456bafe2a025d, type: 3}
       propertyPath: taskChecklistText
       value: 
       objectReference: {fileID: 1024254507525235939}
-    - target: {fileID: 5044230030151155181, guid: 06c5a4da16104064380456bafe2a025d, type: 3}
-      propertyPath: taskList.Array.size
-      value: 8
-      objectReference: {fileID: 0}
-    - target: {fileID: 5044230030151155181, guid: 06c5a4da16104064380456bafe2a025d, type: 3}
-      propertyPath: taskList.Array.data[3].taskId
-      value: FIX_CROOKED_PAINTING
-      objectReference: {fileID: 0}
-    - target: {fileID: 5044230030151155181, guid: 06c5a4da16104064380456bafe2a025d, type: 3}
-      propertyPath: taskList.Array.data[4].taskId
-      value: FIX_FUSE
-      objectReference: {fileID: 0}
-    - target: {fileID: 5044230030151155181, guid: 06c5a4da16104064380456bafe2a025d, type: 3}
-      propertyPath: taskList.Array.data[5].taskId
-      value: FIX_ANIMATRONIC_SCREW
-      objectReference: {fileID: 0}
-    - target: {fileID: 5044230030151155181, guid: 06c5a4da16104064380456bafe2a025d, type: 3}
-      propertyPath: taskList.Array.data[6].taskId
-      value: FIX_WHEEL_SCREW
-      objectReference: {fileID: 0}
-    - target: {fileID: 5044230030151155181, guid: 06c5a4da16104064380456bafe2a025d, type: 3}
-      propertyPath: taskList.Array.data[7].taskId
-      value: FIX_RAIL
-      objectReference: {fileID: 0}
-    - target: {fileID: 5044230030151155181, guid: 06c5a4da16104064380456bafe2a025d, type: 3}
-      propertyPath: taskList.Array.data[5].isRevealed
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5044230030151155181, guid: 06c5a4da16104064380456bafe2a025d, type: 3}
-      propertyPath: taskList.Array.data[3].requiredCount
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5044230030151155181, guid: 06c5a4da16104064380456bafe2a025d, type: 3}
-      propertyPath: taskList.Array.data[4].requiredCount
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5044230030151155181, guid: 06c5a4da16104064380456bafe2a025d, type: 3}
-      propertyPath: taskList.Array.data[7].requiredCount
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5044230030151155181, guid: 06c5a4da16104064380456bafe2a025d, type: 3}
-      propertyPath: taskList.Array.data[3].taskDescription
-      value: lukisan di lorong galeri posisinya miring
-      objectReference: {fileID: 0}
-    - target: {fileID: 5044230030151155181, guid: 06c5a4da16104064380456bafe2a025d, type: 3}
-      propertyPath: taskList.Array.data[4].taskDescription
-      value: Ganti Fuse di room panel
-      objectReference: {fileID: 0}
-    - target: {fileID: 5044230030151155181, guid: 06c5a4da16104064380456bafe2a025d, type: 3}
-      propertyPath: taskList.Array.data[5].taskDescription
-      value: Perbaiki komponen animatronik copot pakai Obeng
-      objectReference: {fileID: 0}
-    - target: {fileID: 5044230030151155181, guid: 06c5a4da16104064380456bafe2a025d, type: 3}
-      propertyPath: taskList.Array.data[6].taskDescription
-      value: Ganti roda Gurney pakai obeng
-      objectReference: {fileID: 0}
-    - target: {fileID: 5044230030151155181, guid: 06c5a4da16104064380456bafe2a025d, type: 3}
-      propertyPath: taskList.Array.data[7].taskDescription
-      value: Betulkan rel di zona 1 dan 3
-      objectReference: {fileID: 0}
     - target: {fileID: 5786525618488572922, guid: 06c5a4da16104064380456bafe2a025d, type: 3}
       propertyPath: itemMeshList.Array.data[0].worldPrefab
       value: 
@@ -453655,17 +453587,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &8306801413221392971 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8354648724069709958, guid: c7a656ebb37b7fa40acb1761059e0859, type: 3}
-  m_PrefabInstance: {fileID: 9182863764707925428}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &8375058761715810348
 Transform:
   m_ObjectHideFlags: 0
