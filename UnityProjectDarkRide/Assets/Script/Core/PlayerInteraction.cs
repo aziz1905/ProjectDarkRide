@@ -30,10 +30,14 @@ public class PlayerInteraction : MonoBehaviour
     private bool isHolding = false;
     private bool hasTriggered = false;
 
+    private DarkRideCartController cachedCart;
+
     private void Start()
     {
         if (cameraTransform == null)
             cameraTransform = Camera.main != null ? Camera.main.transform : transform;
+
+        cachedCart = FindObjectOfType<DarkRideCartController>();
     }
 
     private void Update()
@@ -47,14 +51,13 @@ public class PlayerInteraction : MonoBehaviour
         }
 
         // 🎯 BILA PLAYER SEDANG NAIK KERETA (SEATED):
-        // Tampilkan teks instruksi berkendara [W] [S] [E] secara konsisten di Canvas UI!
-        DarkRideCartController activeCart = FindObjectOfType<DarkRideCartController>();
-        if (activeCart != null && activeCart.IsPlayerSeated)
+        if (cachedCart == null) cachedCart = FindObjectOfType<DarkRideCartController>();
+        if (cachedCart != null && cachedCart.IsPlayerSeated)
         {
             if (promptTextUI != null)
             {
                 if (!promptTextUI.gameObject.activeSelf) promptTextUI.gameObject.SetActive(true);
-                promptTextUI.text = activeCart.GetInteractPrompt();
+                promptTextUI.text = cachedCart.GetInteractPrompt();
             }
             return;
         }

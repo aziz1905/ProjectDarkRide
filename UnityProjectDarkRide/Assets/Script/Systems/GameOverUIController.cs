@@ -56,11 +56,6 @@ public class GameOverUIController : MonoBehaviour
         // 🎯 OTOMATIS MENGUMPULKAN DAFTAR TUGAS DI NOTEBOOK TAB YANG BELUM SELESAI
         StringBuilder taskFailuresSB = new StringBuilder();
 
-        // 1. Jika ada alasan khusus insiden (misal: Diserang Animatronik / Tersetrum)
-        if (!string.IsNullOrEmpty(customReason))
-        {
-            taskFailuresSB.AppendLine($"• <color=#B22222><b>Insiden:</b> {customReason}</color>");
-        }
 
         // 2. Kumpulkan daftar tugas di TaskManager yang belum selesai
         if (TaskManager.Instance != null && TaskManager.Instance.TaskList != null)
@@ -83,7 +78,7 @@ public class GameOverUIController : MonoBehaviour
 
             if (uncompletedCount == 0 && string.IsNullOrEmpty(customReason))
             {
-                taskFailuresSB.AppendLine("• <color=#B22222>Kelalaian Protokol Insiden Kelistrikan & Anomali Wahana</color>");
+                taskFailuresSB.AppendLine("• <color=#B22222> </color>");
             }
         }
         else if (string.IsNullOrEmpty(customReason))
@@ -100,7 +95,7 @@ public class GameOverUIController : MonoBehaviour
                 "Dengan ini manajemen mengumumkan bahwa kontrak kerja Anda resmi <b>DIBATALKAN SEKETIKA</b>.\n\n" +
                 "<b>Alasan Pelanggaran Resmi & Tugas Terbengkalai:</b>\n" +
                 $"{taskFailuresSB}\n" +
-                "Manajemen menilai Anda tidak kompeten dan telah melampaui batas akumulasi 5 sanksi insiden keselamatan. " +
+                "Manajemen menilai Anda tidak kompeten atas tugas-tugas yang sudah diberikan kepada anda. " +
                 "Silakan kembalikan ID Card & kunci wahana, serta segera tinggalkan area fasilitas.";
         }
 

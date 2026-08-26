@@ -55,7 +55,7 @@ public class TaskManager : MonoBehaviour
     [Header("UI Reference")]
     [SerializeField] private TextMeshProUGUI taskChecklistText;
 
-    [Header("Task List (100% Mengikuti Settingan Inspector Anda)")]
+    [Header("Task List")]
     [SerializeField] private List<TaskData> taskList = new List<TaskData>();
 
     private void Awake()
