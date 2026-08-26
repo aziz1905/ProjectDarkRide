@@ -1,5 +1,10 @@
+using System.Collections;
 using UnityEngine;
 
+/// <summary>
+/// First Person Camera Controller.
+/// Mendukung Transisi Rotasi Kamera Slerp Mulus Tanpa Wobble / Tanpa Berputar Salah Arah.
+/// </summary>
 public class FirstPersonCamera : MonoBehaviour
 {
     [Header("Target & Sensitivity")]
@@ -11,6 +16,7 @@ public class FirstPersonCamera : MonoBehaviour
     [SerializeField] private float maxPitch = 85f;  // Batas maksimal lihat ke atas
 
     private float xRotation = 0f;
+    private Coroutine smoothRotateRoutine;
 
     private void Start()
     {
@@ -85,5 +91,54 @@ public class FirstPersonCamera : MonoBehaviour
         {
             transform.rotation = targetRotation;
         }
+    }
+
+    /// <summary>
+    /// Smoothly rotates camera pitch to level (0) and player body to face target rotation over time.
+    /// Eliminates combined pitch/yaw wobble so camera rotates directly towards target.
+    /// </summary>
+    public void SmoothRotateToTarget(Quaternion targetWorldRotation, float duration = 0.8f)
+    {
+        if (smoothRotateRoutine != null) StopCoroutine(smoothRotateRoutine);
+        smoothRotateRoutine = StartCoroutine(SmoothRotateRoutine(targetWorldRotation, duration));
+    }
+
+    private IEnumerator SmoothRotateRoutine(Quaternion targetWorldRotation, float duration)
+    {
+        float timer = 0f;
+
+        // 🎯 LURUSKAN DULU ALIGNMENT BADAN & MATA SEMENTARA KE ARAH PANDANGAN REAL-TIME
+        Vector3 camForward = transform.forward;
+        camForward.y = 0f;
+        if (camForward.sqrMagnitude > 0.001f)
+        {
+            Quaternion targetYaw = Quaternion.LookRotation(camForward);
+            if (playerBody != null) playerBody.rotation = targetYaw;
+            xRotation = transform.localEulerAngles.x;
+            if (xRotation > 180f) xRotation -= 360f;
+        }
+
+        Quaternion startPlayerRot = playerBody != null ? playerBody.rotation : transform.rotation;
+        float startXRot = xRotation;
+
+        while (timer < duration)
+        {
+            timer += Time.deltaTime;
+            float t = Mathf.SmoothStep(0f, 1f, timer / duration);
+
+            // Level pitch secara mulus ke 0
+            xRotation = Mathf.Lerp(startXRot, 0f, t);
+            transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+
+            // Rotasikan badan player secara langsung & lurus ke rotasi target kereta (Slerp Mulus)
+            if (playerBody != null)
+            {
+                playerBody.rotation = Quaternion.Slerp(startPlayerRot, targetWorldRotation, t);
+            }
+            yield return null;
+        }
+
+        ResetRotation(targetWorldRotation);
+        smoothRotateRoutine = null;
     }
 }

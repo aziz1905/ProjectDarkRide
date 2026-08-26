@@ -3,7 +3,7 @@ using UnityEngine.Splines;
 
 /// <summary>
 /// Kontroler Kereta Wahana (Dark Ride Cart) Interaktif Mulus & Presisi.
-/// Mengunci penggunaan alat (ToolBelt 1-5) dan mengosongkan tangan player saat naik kereta wahana.
+/// Menyediakan ForwardRotation property (seat.rotation) agar rotasi cutscene 100% menghadap lurus ke depan terowongan tanpa belok ke kiri dulu!
 /// </summary>
 public class DarkRideCartController : MonoBehaviour, IInteractable
 {
@@ -55,8 +55,9 @@ public class DarkRideCartController : MonoBehaviour, IInteractable
     [Tooltip("Drag TextMeshProUGUI untuk petunjuk berkendara di sini")]
     [SerializeField] private TMPro.TextMeshProUGUI cartPromptUI;
 
-    // Public Property untuk PlayerInteraction System
+    // Public Property untuk PlayerInteraction System & Cutscene Triggers
     public bool IsPlayerSeated => isPlayerSeated;
+    public Quaternion ForwardRotation => seatTransform != null ? seatTransform.rotation : (headCartTransform != null ? headCartTransform.rotation : transform.rotation);
 
     // Internal State
     private bool isPlayerSeated = false;
@@ -65,6 +66,10 @@ public class DarkRideCartController : MonoBehaviour, IInteractable
     private SplineContainer activeContainer;
     private int activeSplineIndex = 0;
     private float boardTimer = 0f;
+
+    // Dynamic Cutscene Speed Override
+    private float defaultMaxSpeed = 4.0f;
+    private bool isSpeedOverridden = false;
 
     // Cached References
     private GameObject playerObj;
@@ -185,6 +190,8 @@ public class DarkRideCartController : MonoBehaviour, IInteractable
 
         if (boardTimer > 0f) boardTimer -= Time.deltaTime;
 
+        if (isSpeedOverridden) return;
+
         float moveInput = Input.GetAxisRaw("Vertical");
         if (Mathf.Abs(moveInput) < 0.1f)
         {
@@ -208,6 +215,23 @@ public class DarkRideCartController : MonoBehaviour, IInteractable
         if (boardTimer <= 0f && Input.GetKeyDown(KeyCode.E))
         {
             UnboardPlayer();
+        }
+    }
+
+    public void SetTemporarySpeed(float targetSpeed)
+    {
+        if (!isSpeedOverridden) defaultMaxSpeed = maxSpeed;
+        isSpeedOverridden = true;
+        maxSpeed = targetSpeed;
+        currentSpeed = targetSpeed;
+    }
+
+    public void ResetSpeedToDefault()
+    {
+        if (isSpeedOverridden)
+        {
+            maxSpeed = defaultMaxSpeed;
+            isSpeedOverridden = false;
         }
     }
 
@@ -352,8 +376,16 @@ public class DarkRideCartController : MonoBehaviour, IInteractable
         if (isPlayerSeated && playerObj != null)
         {
             Transform seat = seatTransform != null ? seatTransform : (headCartTransform != null ? headCartTransform : transform);
+            
+            // 🎯 POSISI MATA DRIVER SELALU DUDUK DI KURSI KERETA
             Vector3 targetPos = seat.position + Vector3.up * seatEyeHeight;
             playerObj.transform.position = targetPos;
+
+            // 🎬 SAAT CUTSCENE AKTIF (GameInputLock.IsInputLocked), SINKRONKAN ROTASI BODI MULUS TANPA OVERRIDE RESET
+            if (GameInputLock.IsInputLocked)
+            {
+                playerObj.transform.rotation = Quaternion.Slerp(playerObj.transform.rotation, seat.rotation, 5.0f * Time.deltaTime);
+            }
         }
     }
 
@@ -380,7 +412,6 @@ public class DarkRideCartController : MonoBehaviour, IInteractable
         isPlayerSeated = true;
         boardTimer = 0.5f;
 
-        // 🎯 KUNCI PENGGUNAAN ALAT (TOOLBELT 1-5) SAAT DRIVER NAIK KERETA
         ToolBeltManager toolBelt = playerObj.GetComponent<ToolBeltManager>();
         if (toolBelt == null) toolBelt = FindObjectOfType<ToolBeltManager>();
         if (toolBelt != null)
@@ -406,11 +437,11 @@ public class DarkRideCartController : MonoBehaviour, IInteractable
         Vector3 eyePos = seat.position + Vector3.up * seatEyeHeight;
         playerObj.transform.position = eyePos;
 
-        Quaternion targetForwardRotation = headCartTransform != null ? headCartTransform.rotation : transform.rotation;
+        Quaternion targetForwardRotation = ForwardRotation;
         FirstPersonCamera fpc = playerObj.GetComponentInChildren<FirstPersonCamera>();
         if (fpc != null)
         {
-            fpc.ResetRotation(targetForwardRotation);
+            fpc.SmoothRotateToTarget(targetForwardRotation, 0.6f);
         }
         else
         {
@@ -434,8 +465,8 @@ public class DarkRideCartController : MonoBehaviour, IInteractable
 
         isPlayerSeated = false;
         currentSpeed = 0f;
+        ResetSpeedToDefault();
 
-        // 🔓 BUKA KEMBALI KUNCI PENGGUNAAN ALAT (TOOLBELT 1-5) SAAT PLAYER TURUN
         if (playerObj != null)
         {
             ToolBeltManager toolBelt = playerObj.GetComponent<ToolBeltManager>();
