@@ -3,7 +3,7 @@ using UnityEngine.Splines;
 
 /// <summary>
 /// Kontroler Kereta Wahana (Dark Ride Cart) Interaktif Mulus & Presisi.
-/// Menyediakan ForwardRotation property (seat.rotation) agar rotasi cutscene 100% menghadap lurus ke depan terowongan tanpa belok ke kiri dulu!
+/// Menghilangkan pemaksaan rotasi di LateUpdate agar animasi tatapan mata bebas melihat sekitar saat cutscene!
 /// </summary>
 public class DarkRideCartController : MonoBehaviour, IInteractable
 {
@@ -377,15 +377,9 @@ public class DarkRideCartController : MonoBehaviour, IInteractable
         {
             Transform seat = seatTransform != null ? seatTransform : (headCartTransform != null ? headCartTransform : transform);
             
-            // 🎯 POSISI MATA DRIVER SELALU DUDUK DI KURSI KERETA
+            // 🎯 POSISI MATA DRIVER SELALU DUDUK DI KURSI KERETA (BEBAS DARI PEMAKSAAN ROTASI SETIAP FRAME)
             Vector3 targetPos = seat.position + Vector3.up * seatEyeHeight;
             playerObj.transform.position = targetPos;
-
-            // 🎬 SAAT CUTSCENE AKTIF (GameInputLock.IsInputLocked), SINKRONKAN ROTASI BODI MULUS TANPA OVERRIDE RESET
-            if (GameInputLock.IsInputLocked)
-            {
-                playerObj.transform.rotation = Quaternion.Slerp(playerObj.transform.rotation, seat.rotation, 5.0f * Time.deltaTime);
-            }
         }
     }
 
