@@ -15,12 +15,12 @@ public class CartDropHillTrigger : MonoBehaviour
     [Tooltip("Kecepatan meluncur tajam saat turun tebing (m/s). Default: 8.0 m/s")]
     [SerializeField] private float dropSpeed = 8.0f;
 
-    [Tooltip("Durasi meluncur turun tebing dalam detik (descent). Default: 10.0 detik")]
-    [SerializeField] private float dropDurationInSeconds = 10.0f;
+    [Tooltip("Durasi meluncur turun tebing dalam detik (descent). Default: 8.0 detik (Total cutscene 13 detik = 8s drop + 5s flat)")]
+    [SerializeField] private float dropDurationInSeconds = 8.0f;
 
     [Header("Flat Section Settings (Datar)")]
-    [Tooltip("Durasi flat setelah descent sebelum kembali normal. Default: 5.0 detik")]
-    [SerializeField] private float flatDurationInSeconds = 5.0f;
+    [Tooltip("Durasi flat setelah descent sebelum kembali normal. Default: 3.0 detik")]
+    [SerializeField] private float flatDurationInSeconds = 3.0f;
 
     [Header("Trigger Mode")]
     [Tooltip("Jika CENTANG, trigger ini hanya terpicu 1x per shift")]
@@ -42,8 +42,11 @@ public class CartDropHillTrigger : MonoBehaviour
         rb.useGravity = false;
     }
 
+    private bool isRoutineRunning = false;
+
     private void OnTriggerEnter(Collider other)
     {
+        if (isRoutineRunning) return;
         if (triggerOnce && hasTriggered) return;
 
         DarkRideCartController cart = other.GetComponentInParent<DarkRideCartController>();
@@ -64,6 +67,18 @@ public class CartDropHillTrigger : MonoBehaviour
 
         if (cart == null || !cart.IsPlayerSeated) return;
 
+        // Hanya izinkan pemicuan jika objek yang menyentuh collider trigger adalah Kepala Kereta (Head Cart) / Player
+        bool isHeadOrPlayer = other.CompareTag("Player") ||
+                             other.name.ToLower().Contains("head") ||
+                             other.name.ToLower().Contains("player") ||
+                             (cart.HeadCartTransform != null && (other.transform == cart.HeadCartTransform || other.transform.IsChildOf(cart.HeadCartTransform)));
+
+        if (!isHeadOrPlayer) return;
+
+        // KUNCI MULTIPLE SAFETY
+        hasTriggered = true;
+        isRoutineRunning = true;
+
         StartCoroutine(DropHillRoutine(cart));
     }
 
@@ -72,6 +87,7 @@ public class CartDropHillTrigger : MonoBehaviour
         hasTriggered = true;
 
         GameInputLock.LockInput();
+        CutsceneLetterboxUI.Show();
 
         FirstPersonCamera fpc = cart.GetComponentInChildren<FirstPersonCamera>();
         if (fpc == null) fpc = FindObjectOfType<FirstPersonCamera>();
@@ -95,27 +111,50 @@ public class CartDropHillTrigger : MonoBehaviour
         cart.SetTemporarySpeed(0f); // Hold at summit
 
         // 2. ⏸️ Pause at summit (suspense)
-        yield return new WaitForSeconds(summitPauseDuration);
+        float pauseSummitTimer = 0f;
+        while (pauseSummitTimer < summitPauseDuration)
+        {
+            if (Time.timeScale > 0f) pauseSummitTimer += Time.deltaTime;
+            yield return null;
+        }
 
-        // 3. 🎢 Steep descent for 10 seconds
+        // 3. 🎢 Steep descent
         if (dropWindSFX != null && audioSource != null)
         {
             audioSource.PlayOneShot(dropWindSFX);
         }
         cart.SetTemporarySpeed(dropSpeed);
-        yield return new WaitForSeconds(dropDurationInSeconds); // now 10s
+        float dropTimer = 0f;
+        while (dropTimer < dropDurationInSeconds)
+        {
+            if (Time.timeScale > 0f) dropTimer += Time.deltaTime;
+            yield return null;
+        }
 
-        // 4. 🛤️ Flat section for 5 seconds (speed reduced to 0)
-        cart.SetTemporarySpeed(0f);
-        yield return new WaitForSeconds(flatDurationInSeconds);
+        // 4. 🛤️ Flat section for 5 seconds (decelerate smoothly to normal speed 4.0 m/s)
+        float flatTimer = 0f;
+        float flatDuration = flatDurationInSeconds;
+        float startFlatSpeed = dropSpeed;
+
+        while (flatTimer < flatDuration)
+        {
+            flatTimer += Time.deltaTime;
+            float t = flatTimer / flatDuration;
+            float currentFlatSpeed = Mathf.Lerp(startFlatSpeed, 4.0f, Mathf.SmoothStep(0f, 1f, t));
+            cart.SetTemporarySpeed(currentFlatSpeed);
+            yield return null;
+        }
 
         // 5. 🏁 Return to normal on flat track
         cart.ResetSpeedToDefault();
+        CutsceneLetterboxUI.Hide();
         GameInputLock.UnlockInput();
+        isRoutineRunning = false;
     }
 
     public void ResetTrigger()
     {
         hasTriggered = false;
+        isRoutineRunning = false;
     }
 }

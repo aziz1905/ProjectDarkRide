@@ -35,8 +35,11 @@ public class CartClimbHillTrigger : MonoBehaviour
         rb.useGravity = false;
     }
 
+    private bool isRoutineRunning = false;
+
     private void OnTriggerEnter(Collider other)
     {
+        if (isRoutineRunning) return;
         if (triggerOnce && hasTriggered) return;
 
         DarkRideCartController cart = other.GetComponentInParent<DarkRideCartController>();
@@ -57,6 +60,18 @@ public class CartClimbHillTrigger : MonoBehaviour
 
         if (cart == null || !cart.IsPlayerSeated) return;
 
+        // Hanya izinkan pemicuan jika objek yang menyentuh collider trigger adalah Kepala Kereta (Head Cart) / Player
+        bool isHeadOrPlayer = other.CompareTag("Player") ||
+                             other.name.ToLower().Contains("head") ||
+                             other.name.ToLower().Contains("player") ||
+                             (cart.HeadCartTransform != null && (other.transform == cart.HeadCartTransform || other.transform.IsChildOf(cart.HeadCartTransform)));
+
+        if (!isHeadOrPlayer) return;
+
+        // KUNCI MULTIPLE SAFETY
+        hasTriggered = true;
+        isRoutineRunning = true;
+
         StartCoroutine(ClimbHillRoutine(cart));
     }
 
@@ -65,6 +80,7 @@ public class CartClimbHillTrigger : MonoBehaviour
         hasTriggered = true;
 
         GameInputLock.LockInput();
+        CutsceneLetterboxUI.Show();
 
         // 🎥 PLAY KOREOGRAFI TIMELINE 14 DETIK (9s NANJAK + 5s REL DATAR, SNAP PITCH UP DETIK 0.8s)
         FirstPersonCamera fpc = cart.GetComponentInChildren<FirstPersonCamera>();
@@ -81,9 +97,14 @@ public class CartClimbHillTrigger : MonoBehaviour
             audioSource.Play();
         }
 
-// 1. 🧗 FASE 9 DETIK AWAL: NANJAK DENGAN KECEPATAN 5 M/S
+        // 1. 🧗 FASE 9 DETIK AWAL: NANJAK DENGAN KECEPATAN 5 M/S
         cart.SetTemporarySpeed(climbSpeed);
-        yield return new WaitForSeconds(9.0f);
+        float climbTimer = 0f;
+        while (climbTimer < 9.0f)
+        {
+            if (Time.timeScale > 0f) climbTimer += Time.deltaTime;
+            yield return null;
+        }
 
         // 2. 🛤️ FASE 5 DETIK TERAKHIR: SUDAH DATAR DI LINTASAN ATAS & PERLAMBATAN MULUS
         float decelTimer = 0f;
@@ -106,11 +127,14 @@ public class CartClimbHillTrigger : MonoBehaviour
 
         // 3. 🏁 SELESAI CUTSCENE DATAR, KEMBALI KE KONTROL NORMAL
         cart.ResetSpeedToDefault();
+        CutsceneLetterboxUI.Hide();
         GameInputLock.UnlockInput();
+        isRoutineRunning = false;
     }
 
     public void ResetTrigger()
     {
         hasTriggered = false;
+        isRoutineRunning = false;
     }
 }

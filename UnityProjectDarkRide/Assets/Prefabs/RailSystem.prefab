@@ -374,11 +374,11 @@ MonoBehaviour:
   tailCartTransform: {fileID: 8554296560918883525}
   carriageSpacing: 4
   seatTransform: {fileID: 2982831061692327684}
-  seatEyeHeight: 0.4
-  maxSpeed: 4
-  acceleration: 3
+  seatEyeHeight: 0.2
+  maxSpeed: 6
+  acceleration: 4
   deceleration: 4
-  rotationSpeed: 6
+  rotationSpeed: 4
   frontHeadlight: {fileID: 5139913806206700669}
   cartPromptUI: {fileID: 0}
 --- !u!1 &3989939723601999788

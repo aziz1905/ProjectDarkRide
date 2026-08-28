@@ -57,6 +57,7 @@ public class DarkRideCartController : MonoBehaviour, IInteractable
 
     // Public Property untuk PlayerInteraction System & Cutscene Triggers
     public bool IsPlayerSeated => isPlayerSeated;
+    public Transform HeadCartTransform => headCartTransform;
     public Quaternion ForwardRotation => seatTransform != null ? seatTransform.rotation : (headCartTransform != null ? headCartTransform.rotation : transform.rotation);
 
     // Internal State
@@ -117,18 +118,7 @@ public class DarkRideCartController : MonoBehaviour, IInteractable
 
     private void AutoFindPromptUI()
     {
-        if (cartPromptUI == null)
-        {
-            TMPro.TextMeshProUGUI[] tmps = FindObjectsOfType<TMPro.TextMeshProUGUI>(true);
-            foreach (var tmp in tmps)
-            {
-                if (tmp.gameObject.name.ToLower().Contains("prompt") || tmp.gameObject.name.ToLower().Contains("interact") || tmp.gameObject.name.ToLower().Contains("text"))
-                {
-                    cartPromptUI = tmp;
-                    break;
-                }
-            }
-        }
+        // Hanya pakai yang ditaruh manual di Inspector jika ada
     }
 
     private void Start()
@@ -205,12 +195,16 @@ public class DarkRideCartController : MonoBehaviour, IInteractable
         }
         else if (moveInput < -0.05f)
         {
-            currentSpeed = Mathf.MoveTowards(currentSpeed, maxSpeed * moveInput, deceleration * Time.deltaTime);
+            // 🛑 REM [S]: Menurunkan kecepatan dengan kuat sampai BERHENTI DIAM (0 m/s), tidak boleh mundur!
+            currentSpeed = Mathf.MoveTowards(currentSpeed, 0f, deceleration * 2.5f * Time.deltaTime);
         }
         else
         {
             currentSpeed = Mathf.MoveTowards(currentSpeed, 0f, deceleration * Time.deltaTime);
         }
+
+        // Kecepatan kereta tidak pernah boleh bernilai negatif (tidak boleh mundur)
+        currentSpeed = Mathf.Max(0f, currentSpeed);
 
         if (boardTimer <= 0f && Input.GetKeyDown(KeyCode.E))
         {

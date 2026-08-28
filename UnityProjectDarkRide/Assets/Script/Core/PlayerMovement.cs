@@ -24,9 +24,11 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        // 🛑 SISTEM KUNCI UNIVERSAL: Jika ada Minigame/Menu yang aktif, tahan WASD!
+        // 🛑 SISTEM KUNCI UNIVERSAL: Jika ada Pause Menu / Minigame yang aktif, tahan WASD!
         if (GameInputLock.IsInputLocked)
         {
+            velocity.x = 0f;
+            velocity.z = 0f;
             return;
         }
 

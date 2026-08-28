@@ -201,11 +201,11 @@ public class FirstPersonCamera : MonoBehaviour
                 gazePitch = 0f;
                 gazeYaw = 0f;
             }
-            // 2. Detik 0.3s - 0.8s: Fast Snap Pitch Up (Ngadap keatas ke -25° di Detik 0.8s)
+            // 2. Detik 0.3s - 0.8s: Fast Snap Pitch Up (Menengadah sedikit ke -12° di Detik 0.8s)
             else if (elapsed < 0.8f)
             {
                 float t = (elapsed - 0.3f) / 0.5f;
-                gazePitch = Mathf.Lerp(0f, -20f, Mathf.SmoothStep(0f, 1f, t));
+                gazePitch = Mathf.Lerp(0f, -12f, Mathf.SmoothStep(0f, 1f, t));
                 gazeYaw = 0f;
                 // Strong front/back bounce with vertical jitter during snap (0.3‑0.8s)
                 float snapT = (elapsed - 0.3f) / 0.5f;
@@ -215,30 +215,29 @@ public class FirstPersonCamera : MonoBehaviour
                 float bounceOffsetY = Mathf.Sin(snapT * Mathf.PI * 6.0f) * Mathf.Lerp(0.04f, 0f, snapT);
                 transform.localPosition = initialLocalPos + new Vector3(0f, bounceOffsetY, bounceOffsetZ);
             }
-            // 2b. Detik 0.8s - 1.5s: REALISTIC HUMAN HEAD BOUNCE (Efek Membal/Mantul Kepala saat Snap -25°, lebih lama)
+            // 2b. Detik 0.8s - 1.5s: REALISTIC HUMAN HEAD BOUNCE (Efek Membal/Mantul Kepala saat Snap -12°)
             else if (elapsed < 1.5f)
             {
                 // Forward/back bounce during snap (0.8‑1.5s) with stronger amplitude
                 float bounceT = (elapsed - 0.8f) / 0.7f;
                 float bounceOffsetZ = Mathf.Sin(bounceT * Mathf.PI * 3.0f) * Mathf.Lerp(0.08f, 0f, bounceT);
                 transform.localPosition = initialLocalPos + new Vector3(0f, 0f, bounceOffsetZ);
-                gazePitch = -20f; // keep pitch stable after snap
+                gazePitch = -12f; // keep pitch stable after snap
                 gazeYaw = 0f;
             }
-            // 3. Detik 1.5s - 2.5s: Hold Pitch Up -25° Lurus Depan
-            // 3. Detik 1.1s - 2.5s: Hold Pitch Up -25° Lurus Depan
+            // 3. Detik 1.5s - 2.5s: Hold Pitch Up -12° Lurus Depan
             else if (elapsed < 2.5f)
             {
-                gazePitch = -20f;
+                gazePitch = -12f;
                 gazeYaw = 0f;
             }
-            // 4. Detik 2.5s - 5.5s: Melihat KIRI BAWAH (+30° Pitch Down, -20° Yaw) & Balik ke Depan (-20° Pitch Up, 0° Yaw)
+            // 4. Detik 2.5s - 5.5s: Melihat KIRI BAWAH (+30° Pitch Down, -20° Yaw) & Balik ke Depan (-12° Pitch Up, 0° Yaw)
             else if (elapsed < 5.5f)
             {
                 // Added forward/back bounce during this descent
                 float t = (elapsed - 2.5f) / 3.0f;
                 float gazeSin = Mathf.Sin(t * Mathf.PI);
-                gazePitch = Mathf.Lerp(-20f, 30f, gazeSin);
+                gazePitch = Mathf.Lerp(-12f, 30f, gazeSin);
                 gazeYaw = -20.0f * gazeSin;
                 // Bounce with stronger forward/back movement and slight vertical jitter
                 float bounceT = (elapsed - 2.5f) / 3.0f;
@@ -246,33 +245,51 @@ public class FirstPersonCamera : MonoBehaviour
                 float bounceOffsetY = Mathf.Sin(bounceT * Mathf.PI * 6.0f) * Mathf.Lerp(0.04f, 0f, bounceT);
                 transform.localPosition = initialLocalPos + new Vector3(0f, bounceOffsetY, bounceOffsetZ);
             }
-            // 5. Detik 5.5s - 8.5s: Tahan Lurus ke Depan (-25° Pitch Up)
-            else if (elapsed < 8.5f)
+            // 5. Detik 5.5s - 7.5s: Tahan Lurus ke Depan (-12° Pitch Up)
+            else if (elapsed < 7.5f)
             {
-                gazePitch = -20f;
+                gazePitch = -12f;
                 gazeYaw = 0f;
             }
-            // 6. Detik 8.5s - 11.0s: Melirik LEBIH KE KANAN (+35° Yaw Right) & Balik ke Depan Lurus Pas Detik 11
-            else if (elapsed < 11.0f)
+            // 7.5s - 8.5s: Kembalikan Pitch Up -12° ke 0° Pitch di detik 8.5. Terjadi EFEK BOUNCE DI DETIK 7.5 (7.5s - 8.0s)
+            else if (elapsed < 8.5f)
             {
-                float t = (elapsed - 8.5f) / 2.5f;
-                float gazeSin = Mathf.Sin(t * Mathf.PI);
-                float basePitch = Mathf.Lerp(-20f, 0f, (elapsed - 8.5f) / 2.5f);
-                                // Additional forward/back bounce between 9.5s‑10.0s
-                if (elapsed >= 9.5f && elapsed < 10.0f)
+                float t = (elapsed - 7.5f) / 1.0f;
+                gazePitch = Mathf.Lerp(-12f, 0f, Mathf.SmoothStep(0f, 1f, t));
+                gazeYaw = 0f;
+
+                // Efek bounce mulai di detik 7.5 (7.5s - 8.0s)
+                if (elapsed < 8.0f)
                 {
-                    float bounceT = (elapsed - 9.5f) / 0.5f;
+                    float bounceT = (elapsed - 7.5f) / 0.5f;
                     float bounceOffsetZ = Mathf.Sin(bounceT * Mathf.PI * 3.0f) * Mathf.Lerp(0.08f, 0f, bounceT);
                     transform.localPosition = initialLocalPos + new Vector3(0f, 0f, bounceOffsetZ);
-                    // keep pitch unchanged
                 }
-                gazePitch = basePitch;
-                gazeYaw = 35.0f * gazeSin;
             }
-            // 7. Detik 11.0s - 14.0s (5 Detik Rel Datar): Normalisasi Mulus Perlin Rattle & Pitch/Yaw ke 0°
+            // 8.5s - 9.5s: Menoleh cepat ke kanan (40° Yaw Right) & menengadah sedikit (-10° Pitch Up - lebih keatas)
+            else if (elapsed < 9.5f)
+            {
+                float t = (elapsed - 8.5f) / 1.0f;
+                gazePitch = Mathf.Lerp(0f, -10f, Mathf.SmoothStep(0f, 1f, t));
+                gazeYaw = Mathf.Lerp(0f, 40.0f, Mathf.SmoothStep(0f, 1f, t));
+            }
+            // 9.5s - 11.0s: Tahan POV puncak (40° Yaw Right, -10° Pitch Up) hingga detik 11.0s
+            else if (elapsed < 11.0f)
+            {
+                gazePitch = -10f;
+                gazeYaw = 40.0f;
+            }
+            // 11.0s - 12.0s: Pandangan KEMBALI LURUS KE DEPAN (0° Pitch, 0° Yaw) di detik 12.0s
+            else if (elapsed < 12.0f)
+            {
+                float t = (elapsed - 11.0f) / 1.0f;
+                gazePitch = Mathf.Lerp(-10f, 0f, Mathf.SmoothStep(0f, 1f, t));
+                gazeYaw = Mathf.Lerp(40.0f, 0f, Mathf.SmoothStep(0f, 1f, t));
+            }
+            // 12.0s - 14.0s (Rel Datar): Normalisasi Mulus Perlin Rattle ke 0
             else
             {
-                float normT = (elapsed - 11.0f) / 3.0f;
+                float normT = (elapsed - 12.0f) / 2.0f;
                 gazePitch = 0f;
                 gazeYaw = 0f;
                 rattleMultiplier = Mathf.Lerp(1.0f, 0f, normT);
@@ -323,97 +340,206 @@ public class FirstPersonCamera : MonoBehaviour
 
     private IEnumerator DropGazeRoutine(DarkRideCartController cart, float pauseDuration, float dropDuration)
     {
-        // Phase 0: Pause at summit, looking down gradually (pitch from 0 to +25)
+        // 1. Pause at summit phase (0 -> pauseDuration)
         float pauseTimer = 0f;
         while (pauseTimer < pauseDuration)
         {
             pauseTimer += Time.deltaTime;
             float t = pauseTimer / pauseDuration;
-            xRotation = Mathf.Lerp(0f, 25f, t); // look down
+            Quaternion cartRot = cart != null ? cart.ForwardRotation : transform.rotation;
+
+            // Looking downward slightly into the drop precipice (+20° Pitch Down)
+            xRotation = Mathf.Lerp(0f, 20f, t);
             transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
-            if (playerBody != null) playerBody.rotation = cart != null ? cart.ForwardRotation : transform.rotation;
+
+            if (playerBody != null) playerBody.rotation = cartRot;
             yield return null;
         }
 
-        // Scale original 14‑second climb timeline to actual drop duration
-        float scale = dropDuration / 14f;
+        // 2. Main Drop Gaze Sequence (Total 14 Seconds: 11s Gaze Choreography + 3s Flat Rattle Normalization)
+        float totalDropTime = 14.0f;
         float elapsed = 0f;
-        while (elapsed < dropDuration)
+
+        while (elapsed < totalDropTime)
         {
             elapsed += Time.deltaTime;
             Quaternion cartRot = cart != null ? cart.ForwardRotation : transform.rotation;
 
-            // 0‑0.3s (scaled): Hold straight (pitch 0)
-            if (elapsed < 0.3f * scale)
+            float gazePitch = 0f;
+            float gazeYaw = 0f;
+            float rattleMultiplier = 1.0f;
+
+            // 🎥 CHOREOGRAPHY TIMELINE (MIRRORED FOR DESCENT/DROP):
+            // Baseline pitch for drop is DOWN (+20° Pitch Down instead of Up -20°)
+
+            // 0.0s - 0.8s: Instant Start Pitch Down (+20°) with strong front/back bounce & vertical shake from SECOND 0!
+            if (elapsed < 0.8f)
             {
-                xRotation = 0f;
-                transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+                float t = elapsed / 0.8f;
+                gazePitch = Mathf.Lerp(0f, 20f, Mathf.SmoothStep(0f, 1f, t));
+                gazeYaw = 0f;
+
+                float snapT = elapsed / 0.8f;
+                float bounceOffsetZ = Mathf.Sin(snapT * Mathf.PI * 4.0f) * Mathf.Lerp(0.12f, 0f, snapT);
+                float bounceOffsetY = Mathf.Sin(snapT * Mathf.PI * 6.0f) * Mathf.Lerp(0.04f, 0f, snapT);
+                transform.localPosition = initialLocalPos + new Vector3(0f, bounceOffsetY, bounceOffsetZ);
             }
-            // 0.3‑0.8s: Snap pitch down (+20) with forward/back bounce
-            else if (elapsed < 0.8f * scale)
+            // 0.8s - 1.5s: Front/back head bounce continuation
+            else if (elapsed < 1.5f)
             {
-                float t = (elapsed - 0.3f * scale) / (0.5f * scale);
-                xRotation = Mathf.Lerp(0f, 20f, Mathf.SmoothStep(0f, 1f, t));
-                // Bounce during snap
-                float snapT = t;
-                float bounceZ = Mathf.Sin(snapT * Mathf.PI * 4f) * Mathf.Lerp(0.12f, 0f, snapT);
-                float bounceY = Mathf.Sin(snapT * Mathf.PI * 6f) * Mathf.Lerp(0.04f, 0f, snapT);
-                transform.localPosition = initialLocalPos + new Vector3(0f, bounceY, bounceZ);
-                transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+                float bounceT = (elapsed - 0.8f) / 0.7f;
+                float bounceOffsetZ = Mathf.Sin(bounceT * Mathf.PI * 3.0f) * Mathf.Lerp(0.08f, 0f, bounceT);
+                transform.localPosition = initialLocalPos + new Vector3(0f, 0f, bounceOffsetZ);
+                gazePitch = 20f; // Hold pitch down (+20°)
+                gazeYaw = 0f;
             }
-            // 0.8‑1.5s: Head bounce, keep pitch at +20
-            else if (elapsed < 1.5f * scale)
+            // 1.5s - 2.5s: Hold Pitch Down +20° straight ahead
+            else if (elapsed < 2.5f)
             {
-                float bounceT = (elapsed - 0.8f * scale) / (0.7f * scale);
-                float bounceZ = Mathf.Sin(bounceT * Mathf.PI * 3f) * Mathf.Lerp(0.08f, 0f, bounceT);
-                transform.localPosition = initialLocalPos + new Vector3(0f, 0f, bounceZ);
-                xRotation = 20f;
-                transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+                gazePitch = 20f;
+                gazeYaw = 0f;
             }
-            // 1.5‑2.5s: Hold pitch +20 straight ahead
-            else if (elapsed < 2.5f * scale)
+            // 2.5s - 5.5s: Look DOWN RIGHT (+10° Pitch Down - dinaikkan lagi agar tidak terlalu bawah, +20° Yaw Right)
+            else if (elapsed < 5.5f)
             {
-                xRotation = 20f;
-                transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+                float t = (elapsed - 2.5f) / 3.0f;
+                float gazeSin = Mathf.Sin(t * Mathf.PI);
+                gazePitch = Mathf.Lerp(20f, 10f, gazeSin); // Dinaikkan lagi (dari 30 ke 10)
+                gazeYaw = 20.0f * gazeSin;
+
+                float bounceT = (elapsed - 2.5f) / 3.0f;
+                float bounceOffsetZ = Mathf.Sin(bounceT * Mathf.PI * 4.0f) * Mathf.Lerp(0.12f, 0f, bounceT);
+                float bounceOffsetY = Mathf.Sin(bounceT * Mathf.PI * 6.0f) * Mathf.Lerp(0.04f, 0f, bounceT);
+                transform.localPosition = initialLocalPos + new Vector3(0f, bounceOffsetY, bounceOffsetZ);
             }
-            // 2.5‑5.5s: Look right‑down (+30 pitch, +20 yaw) then back to straight (mirrored from left‑down)
-            else if (elapsed < 5.5f * scale)
+            // 5.5s - 7.5s: Hold Pitch Down (+20°) lurus ke depan
+            else if (elapsed < 7.5f)
             {
-                float t = (elapsed - 2.5f * scale) / (3f * scale);
-                float pitchSin = Mathf.Sin(t * Mathf.PI);
-                xRotation = Mathf.Lerp(20f, -30f, pitchSin); // down then up
-                float yaw = 20f * pitchSin; // look right
-                // Bounce
-                float bounceZ = Mathf.Sin(t * Mathf.PI * 4f) * Mathf.Lerp(0.12f, 0f, t);
-                float bounceY = Mathf.Sin(t * Mathf.PI * 6f) * Mathf.Lerp(0.04f, 0f, t);
-                transform.localPosition = initialLocalPos + new Vector3(0f, bounceY, bounceZ);
-                transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
-                if (playerBody != null) playerBody.rotation = cartRot * Quaternion.Euler(0f, yaw, 0f);
+                gazePitch = 20f;
+                gazeYaw = 0f;
             }
-            // 5.5‑8.5s: Hold straight (pitch 0)
-            else if (elapsed < 8.5f * scale)
+            // 7.5s - 8.5s: Kembalikan Pitch Down +20° ke 0° Pitch di detik 8.5. Terjadi EFEK BOUNCE DI DETIK 7.5 (7.5s - 8.0s)
+            else if (elapsed < 8.5f)
             {
-                xRotation = 0f;
-                transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+                float t = (elapsed - 7.5f) / 1.0f;
+                gazePitch = Mathf.Lerp(20f, 0f, Mathf.SmoothStep(0f, 1f, t));
+                gazeYaw = 0f;
+
+                // Efek bounce mulai di detik 7.5 (7.5s - 8.0s)
+                if (elapsed < 8.0f)
+                {
+                    float bounceT = (elapsed - 7.5f) / 0.5f;
+                    float bounceOffsetZ = Mathf.Sin(bounceT * Mathf.PI * 3.0f) * Mathf.Lerp(0.08f, 0f, bounceT);
+                    transform.localPosition = initialLocalPos + new Vector3(0f, 0f, bounceOffsetZ);
+                }
             }
-            // 8.5‑10s (or until end): Quick yaw left while returning to level pitch
+            // 8.5s - 9.5s: Menoleh cepat ke kanan (90° Yaw Right) & menengadah ke atas (-20° Pitch Up) dari detik 8.5 sampai detik 9.5
+            else if (elapsed < 9.5f)
+            {
+                float t = (elapsed - 8.5f) / 1.0f;
+                gazePitch = Mathf.Lerp(0f, -20f, Mathf.SmoothStep(0f, 1f, t));
+                gazeYaw = Mathf.Lerp(0f, 90.0f, Mathf.SmoothStep(0f, 1f, t));
+            }
+            // 9.5s - 10.5s: Tahan POV puncak (90° Yaw Right, -20° Pitch Up) hingga detik 10.5s
+            else if (elapsed < 10.5f)
+            {
+                gazePitch = -20f;
+                gazeYaw = 90.0f;
+            }
+            // 10.5s - 11.5s: Pandangan KEMBALI LURUS KE DEPAN (0° Pitch, 0° Yaw) di detik 11.5s
+            else if (elapsed < 11.5f)
+            {
+                float t = (elapsed - 10.5f) / 1.0f;
+                gazePitch = Mathf.Lerp(-20f, 0f, Mathf.SmoothStep(0f, 1f, t));
+                gazeYaw = Mathf.Lerp(90.0f, 0f, Mathf.SmoothStep(0f, 1f, t));
+            }
+            // 11.5s - 14.0s (Rel Datar): Normalisasi Mulus Perlin Rattle ke 0
             else
             {
-                float t = (elapsed - 8.5f * scale) / (dropDuration - 8.5f * scale);
-                float yaw = Mathf.Lerp(0f, -35f, Mathf.Sin(t * Mathf.PI));
-                xRotation = Mathf.Lerp(0f, -25f, t); // slight upward look as we finish
-                if (playerBody != null) playerBody.rotation = cartRot * Quaternion.Euler(0f, yaw, 0f);
-                transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+                float normT = (elapsed - 11.5f) / 2.5f;
+                gazePitch = 0f;
+                gazeYaw = 0f;
+                rattleMultiplier = Mathf.Lerp(1.0f, 0f, normT);
             }
 
-            // Subtle rattle during drop
-            float rattle = (Mathf.PerlinNoise(Time.time * 25f, 0f) - 0.5f) * 0.4f;
-            transform.localRotation *= Quaternion.Euler(rattle, 0f, 0f);
+            // Wind/drop rattle vibration
+            float baseRattle = (Mathf.PerlinNoise(Time.time * 22f, 0f) - 0.5f) * 0.5f;
+            float extraVibe = 0f;
+            if (elapsed < 10.0f && Random.value < 0.15f)
+            {
+                extraVibe = (Mathf.PerlinNoise(Time.time * 35f, 0f) - 0.5f) * 0.7f;
+            }
+            float dropRattle = (baseRattle + extraVibe) * rattleMultiplier;
+
+            xRotation = gazePitch + dropRattle;
+            transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+
+            if (playerBody != null)
+            {
+                playerBody.rotation = cartRot * Quaternion.Euler(0f, gazeYaw, 0f);
+            }
+
             yield return null;
         }
 
-        // After descent, keep camera steady (flat section handled by trigger)
-        if (cart != null) ResetRotation(cart.ForwardRotation);
+        xRotation = 0f;
+        transform.localRotation = Quaternion.identity;
+        transform.localPosition = initialLocalPos;
+
+        if (cart != null && playerBody != null)
+        {
+            playerBody.rotation = cart.ForwardRotation;
+        }
+
+        cutsceneGazeRoutine = null;
+    }
+
+    /// <summary>
+    /// 🚪 CUTSCENE PERPINDAHAN ZONA (ZONE TRANSITION GAZE SEQUENCE)
+    /// </summary>
+    public void PlayZoneTransitionGazeSequence(DarkRideCartController cart, float duration, float targetPitch, float targetYaw)
+    {
+        if (cutsceneGazeRoutine != null) StopCoroutine(cutsceneGazeRoutine);
+        cutsceneGazeRoutine = StartCoroutine(ZoneTransitionGazeRoutine(cart, duration, targetPitch, targetYaw));
+    }
+
+    private IEnumerator ZoneTransitionGazeRoutine(DarkRideCartController cart, float duration, float targetPitch, float targetYaw)
+    {
+        float timer = 0f;
+        while (timer < duration)
+        {
+            timer += Time.deltaTime;
+            float t = timer / duration;
+            Quaternion cartRot = cart != null ? cart.ForwardRotation : transform.rotation;
+
+            // Kurva gerakan tatapan: menoleh mulus ke arah sudut (targetPitch, targetYaw) lalu kembali ke (0, 0)
+            float gazeSin = Mathf.Sin(t * Mathf.PI);
+            float gazePitch = targetPitch * gazeSin;
+            float gazeYaw = targetYaw * gazeSin;
+
+            // Sinar getaran ringan rel kereta
+            float rattle = (Mathf.PerlinNoise(Time.time * 15f, 0f) - 0.5f) * 0.2f;
+
+            xRotation = gazePitch + rattle;
+            transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+
+            if (playerBody != null)
+            {
+                playerBody.rotation = cartRot * Quaternion.Euler(0f, gazeYaw, 0f);
+            }
+
+            yield return null;
+        }
+
+        xRotation = 0f;
+        transform.localRotation = Quaternion.identity;
+        transform.localPosition = initialLocalPos;
+
+        if (cart != null && playerBody != null)
+        {
+            playerBody.rotation = cart.ForwardRotation;
+        }
+
         cutsceneGazeRoutine = null;
     }
 }
