@@ -1,19 +1,18 @@
 using UnityEngine;
 
 /// <summary>
-/// Trigger Area di Lantai Lorong untuk MENYALAKAN KEMBALI Lampu-lampu yang sedang mati (1x Eksekusi).
-/// Sangat cocok dipasang di ujung lorong / pintu keluar zona agar lampu mati dalam durasi sangat lama (1-2 jam)
-/// dan baru menyala kembali saat pemain mencapai titik ini.
+/// Trigger Area di Lantai Lorong untuk MENYALAKAN KEMBALI Lampu Ruangan yang sedang mengalami anomali.
+/// Cukup drag 1 atau lebih objek Ruangan target.
 /// </summary>
 [RequireComponent(typeof(Collider))]
 public class LampRestoreTrigger : MonoBehaviour
 {
-    [Header("Target Lamps to Restore")]
-    [Tooltip("Drag 1 atau lebih lampu lorong yang akan dinyalakan kembali saat pemain lewat")]
-    [SerializeField] private AmbientLampAnomaly[] targetLamps;
+    [Header("Target Rooms to Restore")]
+    [Tooltip("Drag 1 atau lebih Parent Ruangan yang akan dipulihkan lampunya saat pemain lewat")]
+    [SerializeField] private GameObject[] targetRooms;
 
     [Header("Restore Settings")]
-    [Tooltip("CENTANG jika ingin ada efek percikan listrik (spark) saat lampu menyala kembali")]
+    [Tooltip("CENTANG jika ingin ada efek percikan kedip listrik saat lampu dinyalakan kembali")]
     [SerializeField] private bool withSparkEffect = true;
 
     [Tooltip("CENTANG agar trigger pemulih ini hanya berfungsi 1x saja saat dilewati")]
@@ -21,28 +20,44 @@ public class LampRestoreTrigger : MonoBehaviour
 
     [Header("Audio (Opsional)")]
     [SerializeField] private AudioSource audioSource;
-    [SerializeField] private AudioClip powerRestoredSFX; // Suara daya pulih / saklar menyala
+    [SerializeField] private AudioClip powerRestoredSFX;
 
     private bool hasTriggered = false;
+
+    private void Awake()
+    {
+        Collider col = GetComponent<Collider>();
+        if (col != null) col.isTrigger = true;
+    }
 
     private void OnTriggerEnter(Collider other)
     {
         if (hasTriggered && onlyTriggerOnce) return;
 
-        // Periksa apakah yang melangkah adalah Player
         if (other.CompareTag("Player") || other.GetComponent<CharacterController>() != null || other.name.ToLower().Contains("player"))
         {
             hasTriggered = true;
-            Debug.Log($"<color=green>[LAMP RESTORE TRIGGER] Pemain melewati trigger '{gameObject.name}'! Menyalakan seluruh lampu target kembali!</color>");
 
-            // Nyalakan kembali seluruh lampu target secara serentak
-            if (targetLamps != null)
+            if (targetRooms != null)
             {
-                foreach (AmbientLampAnomaly lamp in targetLamps)
+                foreach (GameObject room in targetRooms)
                 {
-                    if (lamp != null)
+                    if (room == null) continue;
+
+                    // 1. Pulihkan via AmbientLampAnomaly jika ada
+                    AmbientLampAnomaly anomaly = room.GetComponent<AmbientLampAnomaly>();
+                    if (anomaly != null)
                     {
-                        lamp.RestoreLights(withSparkEffect);
+                        anomaly.RestoreAllLights(withSparkEffect);
+                    }
+                    else
+                    {
+                        // Fallback jika tidak ada script anomali
+                        Light[] lights = room.GetComponentsInChildren<Light>(true);
+                        foreach (Light l in lights)
+                        {
+                            if (l != null) l.enabled = true;
+                        }
                     }
                 }
             }
@@ -52,7 +67,6 @@ public class LampRestoreTrigger : MonoBehaviour
                 audioSource.PlayOneShot(powerRestoredSFX);
             }
 
-            // Jika hanya 1x seumur hidup, nonaktifkan collider trigger ini
             if (onlyTriggerOnce)
             {
                 Collider col = GetComponent<Collider>();

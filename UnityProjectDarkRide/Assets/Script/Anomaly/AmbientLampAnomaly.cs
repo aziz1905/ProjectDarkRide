@@ -1,185 +1,307 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Script Pengatur Lampu Lorong & Efek Anomali Horor (Mati Mendadak & Menyala Kembali).
-/// Sinkron 100% antara Sinar Lampu (Light) DENGAN Pijar Kaca 3D (BolaPijar Emission).
-/// TIDAK mengganggu sistem interaksi (Murni Lampu Lingkungan & Atmosfer).
-/// 0% Beban CPU & 0 B/frame GC Alloc.
+/// Kontroler Anomali Lampu Ruangan (AmbientLampAnomaly).
+/// Mode Kedip Acak Murni 2 State (Terang Penuh 100% & Mati Total 0% Secara Acak Asinkron).
+/// Menghasilkan kontras pencahayaan horor yang tajam, dramatis, dan sangat bersih dilihat!
 /// </summary>
 public class AmbientLampAnomaly : MonoBehaviour
 {
-    [Header("Visual & Light Components")]
-    [Tooltip("Drag komponen Spot Light / Point Light lampu di sini")]
-    [SerializeField] private Light lampLight;
+    public enum AnomalyType
+    {
+        [Tooltip("Lampu berganti Terang Penuh & Mati Total secara acak tidak serempak")]
+        AsynchronousFlicker,
 
-    [Tooltip("Drag Objek 3D 'BolaPijar' dari Hierarchy ke sini")]
-    [SerializeField] private GameObject bolaPijarObject;
+        [Tooltip("Semua lampu padam mati total gelap gulita")]
+        BlackoutMatiTotal
+    }
 
-    [Header("Normal Lighting Settings")]
-    [SerializeField] private float normalIntensity = 3.0f;
-    [SerializeField] private Color emissionColor = new Color(1f, 0.85f, 0.5f); // Warna kuning warm
-    [SerializeField] private float normalEmissionGlow = 2.0f;
+    [Header("Pilihan Mode Anomali")]
+    [Tooltip("Pilih tipe anomali yang diinginkan untuk ruangan ini")]
+    [SerializeField] private AnomalyType anomalyMode = AnomalyType.AsynchronousFlicker;
 
-    [Header("Auto Anomaly Blackout (Opsional)")]
-    [Tooltip("CENTANG jika ingin lampu ini sesekali mati mendadak secara otomatis")]
-    [SerializeField] private bool enableAutoAnomaly = true;
+    [Tooltip("CENTANG jika ingin lampu KEDIP TERUS / MATI TERUS sampai pemain menginjak LampRestoreTrigger untuk memulihkannya!")]
+    [SerializeField] private bool stayUntilRestored = false;
 
-    [Tooltip("Berapa detik lampu MATI TOTAL saat anomali terjadi")]
-    [SerializeField] private float blackoutDuration = 2.0f;
+    [Header("Pengatur Kecepatan Kedip (Khusus Mode Asynchronous Flicker)")]
+    [Tooltip("Kecepatan kedipan tercepat (Detik).")]
+    [Range(0.01f, 0.5f)]
+    [SerializeField] private float minFlickerSpeed = 0.20f;
 
-    [Tooltip("Jeda waktu acak (detik) antar kejadian anomali (Min - Max)")]
-    [SerializeField] private float minIntervalSeconds = 15.0f;
-    [SerializeField] private float maxIntervalSeconds = 35.0f;
+    [Tooltip("Kecepatan kedipan terlambat (Detik).")]
+    [Range(0.01f, 1.0f)]
+    [SerializeField] private float maxFlickerSpeed = 0.45f;
 
-    [Tooltip("CENTANG jika ingin ada kedipan cepat (glitch) sebelum lampu mati total")]
+    [Header("Glitch Effect (Khusus Mode Blackout Mati Total)")]
+    [Tooltip("CENTANG jika ingin ada kedipan glitch cepat 3x sesaat sebelum lampu mati total")]
     [SerializeField] private bool flickerBeforeBlackout = true;
+
+    [Header("Visual & Emission Glow Settings")]
+    [Tooltip("Warna pijar emisi kaca bola lampu 3D")]
+    [SerializeField] private Color emissionColor = new Color(1f, 0.85f, 0.5f); // Kuning Warm
+    [SerializeField] private float normalEmissionGlow = 2.5f;
 
     [Header("Audio SFX (Opsional)")]
     [SerializeField] private AudioSource audioSource;
-    [SerializeField] private AudioClip glitchSound; // Suara listrik mati / cetek
+    [SerializeField] private AudioClip glitchSound;
+    [SerializeField] private AudioClip restoreSound;
 
-    // Internal State
-    private Renderer bolaPijarRenderer;
-    private Material bolaPijarMaterial;
+    private class LampPair
+    {
+        public Light lightComponent;
+        public float originalIntensity;
+        public Material bulbMaterial;
+    }
+
+    private List<LampPair> lampPairs = new List<LampPair>();
     private static readonly int EmissionColorProp = Shader.PropertyToID("_EmissionColor");
-    private bool isBlackout = false;
-    private float nextAnomalyTimer = 0f;
+    private bool isAnomalyActive = false;
+    private List<Coroutine> activeFlickerCoroutines = new List<Coroutine>();
 
-    private void Start()
+    public bool IsAnomalyActive => isAnomalyActive;
+
+    private void Awake()
     {
-        // Cache Komponen & Material Instance BolaPijar
-        if (bolaPijarObject != null)
+        PairLampsAndBulbs();
+    }
+
+    public void PairLampsAndBulbs()
+    {
+        lampPairs.Clear();
+
+        Light[] allLights = GetComponentsInChildren<Light>(true);
+
+        foreach (Light l in allLights)
         {
-            bolaPijarRenderer = bolaPijarObject.GetComponent<Renderer>();
-            if (bolaPijarRenderer != null)
+            if (l == null) continue;
+
+            LampPair pair = new LampPair();
+            pair.lightComponent = l;
+            pair.originalIntensity = l.intensity;
+
+            Transform bulbFolder = l.transform.parent != null ? l.transform.parent : l.transform;
+            Renderer bulbRend = null;
+
+            Transform bpChild = bulbFolder.Find("BolaPijar");
+            if (bpChild != null)
             {
-                bolaPijarMaterial = bolaPijarRenderer.material;
-                bolaPijarMaterial.EnableKeyword("_EMISSION");
+                bulbRend = bpChild.GetComponent<Renderer>();
+            }
+
+            if (bulbRend == null)
+            {
+                Renderer[] rends = bulbFolder.GetComponentsInChildren<Renderer>(true);
+                foreach (var r in rends)
+                {
+                    if (r != null && r.gameObject.name.ToLower().Contains("bolapijar"))
+                    {
+                        bulbRend = r;
+                        break;
+                    }
+                }
+            }
+
+            if (bulbRend != null)
+            {
+                pair.bulbMaterial = bulbRend.material;
+                pair.bulbMaterial.EnableKeyword("_EMISSION");
+                pair.bulbMaterial.globalIlluminationFlags = MaterialGlobalIlluminationFlags.RealtimeEmissive;
+            }
+
+            lampPairs.Add(pair);
+        }
+
+        SetAllPairsNormal();
+    }
+
+    private void SetAllPairsNormal()
+    {
+        foreach (var pair in lampPairs)
+        {
+            if (pair != null)
+            {
+                SetPairState(pair, true, pair.originalIntensity, normalEmissionGlow);
             }
         }
-
-        // Set Kondisi Awal: Lampu & BolaPijar Menyala Normal
-        SetLampState(true, normalIntensity, normalEmissionGlow);
-
-        // Atur timer acak untuk anomali berikutnya
-        ResetAnomalyTimer();
     }
 
-    private void Update()
-    {
-        if (!enableAutoAnomaly || isBlackout) return;
-
-        nextAnomalyTimer -= Time.deltaTime;
-        if (nextAnomalyTimer <= 0f)
-        {
-            StartCoroutine(PerformBlackoutRoutine(blackoutDuration));
-            ResetAnomalyTimer();
-        }
-    }
-
-    private Coroutine blackoutCoroutine;
-
-    /// <summary>
-    /// Fungsi Publik untuk mematikan lampu dari Trigger / Event Horor luar (misal saat monster lewat)
-    /// </summary>
-    public void TriggerBlackout(float duration = 2.0f)
+    public void TriggerAnomaly(float duration = 3.5f)
     {
         if (!gameObject.activeInHierarchy) return;
-        if (blackoutCoroutine != null) StopCoroutine(blackoutCoroutine);
-        blackoutCoroutine = StartCoroutine(PerformBlackoutRoutine(duration));
+
+        if (lampPairs.Count == 0) PairLampsAndBulbs();
+
+        StopAllActiveFlickers();
+
+        if (anomalyMode == AnomalyType.AsynchronousFlicker)
+        {
+            StartCoroutine(ExecuteFlickerRoutine(duration));
+        }
+        else
+        {
+            StartCoroutine(ExecuteBlackoutRoutine(duration));
+        }
+    }
+
+    private IEnumerator ExecuteFlickerRoutine(float duration)
+    {
+        isAnomalyActive = true;
+
+        if (audioSource != null && glitchSound != null)
+        {
+            audioSource.PlayOneShot(glitchSound);
+        }
+
+        foreach (LampPair pair in lampPairs)
+        {
+            if (pair == null || pair.lightComponent == null) continue;
+
+            Coroutine r = StartCoroutine(IndividualLampFlicker(pair, duration, stayUntilRestored));
+            activeFlickerCoroutines.Add(r);
+        }
+
+        if (!stayUntilRestored)
+        {
+            yield return new WaitForSeconds(duration);
+            RestoreAllLights(true);
+        }
     }
 
     /// <summary>
-    /// Fungsi Publik untuk MENYALAKAN KEMBALI semua lampu seketika saat pemain melewati trigger pemulih (Restore Trigger)
+    /// Kedip Acak Murni 2 State (TERANG 100% atau MATI TOTAL 0%)
     /// </summary>
-    public void RestoreLights(bool withSparkEffect = true)
+    private IEnumerator IndividualLampFlicker(LampPair pair, float duration, bool loopForever)
     {
-        if (!gameObject.activeInHierarchy) return;
-        if (blackoutCoroutine != null) StopCoroutine(blackoutCoroutine);
-        StartCoroutine(PerformRestoreRoutine(withSparkEffect));
-    }
+        float timer = 0f;
+        yield return new WaitForSeconds(Random.Range(0.01f, 0.15f));
 
-    private IEnumerator PerformBlackoutRoutine(float duration)
-    {
-        isBlackout = true;
+        bool isCurrentlyOn = true;
 
-        // ⚡ 1. Efek Kedipan Glitch Sebelum Mati (0.3 detik)
-        if (flickerBeforeBlackout)
+        while (loopForever || timer < duration)
         {
-            if (audioSource != null && glitchSound != null)
+            if (pair == null || pair.lightComponent == null || !isAnomalyActive) yield break;
+
+            // ⚡ GANTI STATE: 50% Peluang Nyala Terang 100%, 50% Peluang Mati Total 0%
+            isCurrentlyOn = !isCurrentlyOn;
+
+            if (isCurrentlyOn)
             {
-                audioSource.PlayOneShot(glitchSound);
-            }
-
-            for (int i = 0; i < 3; i++)
-            {
-                SetLampState(false, 0f, 0f);
-                yield return new WaitForSeconds(0.05f);
-                SetLampState(true, normalIntensity * 0.4f, normalEmissionGlow * 0.4f);
-                yield return new WaitForSeconds(0.05f);
-            }
-        }
-
-        // 🌑 2. LAMPU & BOLA PIJAR MATI TOTAL (Gelap Gulita)
-        SetLampState(false, 0f, 0f);
-
-        // Tunggu selama durasi blackout (bisa sangat lama / 9999 detik)
-        yield return new WaitForSeconds(duration);
-
-        // 💡 3. LAMPU & BOLA PIJAR MENYALA NORMAL KEMBALI (Jika durasi habis sebelum trigger pemulih)
-        SetLampState(true, normalIntensity, normalEmissionGlow);
-        isBlackout = false;
-    }
-
-    private IEnumerator PerformRestoreRoutine(bool withSparkEffect)
-    {
-        // ⚡ Efek Percikan Listrik saat Menyala Kembali
-        if (withSparkEffect)
-        {
-            for (int i = 0; i < 2; i++)
-            {
-                SetLampState(true, normalIntensity * 0.5f, normalEmissionGlow * 0.5f);
-                yield return new WaitForSeconds(0.06f);
-                SetLampState(false, 0f, 0f);
-                yield return new WaitForSeconds(0.06f);
-            }
-        }
-
-        // 💡 MENYALA TERANG STABIL NORMAL KEMBALI
-        SetLampState(true, normalIntensity, normalEmissionGlow);
-        isBlackout = false;
-        Debug.Log($"<color=green>[LIGHTS RESTORED] Lampu '{gameObject.name}' berhasil dinyalakan normal kembali!</color>");
-    }
-
-    /// <summary>
-    /// Mengatur intensitas Sinar Lampu dan Cahaya Pijar Kaca BolaPijar secara serentak
-    /// </summary>
-    private void SetLampState(bool isLightOn, float intensity, float emissionMultiplier)
-    {
-        if (lampLight != null)
-        {
-            lampLight.enabled = isLightOn;
-            lampLight.intensity = intensity;
-        }
-
-        if (bolaPijarMaterial != null)
-        {
-            if (isLightOn && emissionMultiplier > 0f)
-            {
-                Color activeColor = emissionColor * Mathf.LinearToGammaSpace(emissionMultiplier);
-                bolaPijarMaterial.SetColor(EmissionColorProp, activeColor);
+                // 💡 TERANG PENUH 100%
+                SetPairState(pair, true, pair.originalIntensity, normalEmissionGlow);
             }
             else
             {
-                // Padam total (Hitam gelap)
-                bolaPijarMaterial.SetColor(EmissionColorProp, Color.black);
+                // 🌑 MATI TOTAL GELAP 0%
+                SetPairState(pair, false, 0f, 0f);
+            }
+
+            // Durasi acak tiap step (Min - Max speed)
+            float speedMin = Mathf.Min(minFlickerSpeed, maxFlickerSpeed);
+            float speedMax = Mathf.Max(minFlickerSpeed, maxFlickerSpeed);
+            float stepTime = Random.Range(speedMin, speedMax);
+
+            timer += stepTime;
+            yield return new WaitForSeconds(stepTime);
+        }
+
+        if (!loopForever)
+        {
+            SetPairState(pair, true, pair.originalIntensity, normalEmissionGlow);
+        }
+    }
+
+    private IEnumerator ExecuteBlackoutRoutine(float duration)
+    {
+        isAnomalyActive = true;
+
+        if (audioSource != null && glitchSound != null)
+        {
+            audioSource.PlayOneShot(glitchSound);
+        }
+
+        if (flickerBeforeBlackout)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                foreach (var pair in lampPairs) if (pair != null) SetPairState(pair, false, 0f, 0f);
+                yield return new WaitForSeconds(minFlickerSpeed * 0.7f);
+
+                foreach (var pair in lampPairs) if (pair != null) SetPairState(pair, true, pair.originalIntensity, normalEmissionGlow);
+                yield return new WaitForSeconds(minFlickerSpeed * 0.7f);
+            }
+        }
+
+        foreach (LampPair pair in lampPairs)
+        {
+            if (pair != null) SetPairState(pair, false, 0f, 0f);
+        }
+
+        if (!stayUntilRestored)
+        {
+            yield return new WaitForSeconds(duration);
+            RestoreAllLights(true);
+        }
+    }
+
+    public void RestoreAllLights(bool withSparkFlicker = true)
+    {
+        isAnomalyActive = false;
+        StopAllActiveFlickers();
+        StartCoroutine(PerformRestoreSequence(withSparkFlicker));
+    }
+
+    private IEnumerator PerformRestoreSequence(bool withSparkFlicker)
+    {
+        if (audioSource != null && restoreSound != null)
+        {
+            audioSource.PlayOneShot(restoreSound);
+        }
+
+        if (withSparkFlicker)
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                foreach (var pair in lampPairs) if (pair != null) SetPairState(pair, true, pair.originalIntensity, normalEmissionGlow);
+                yield return new WaitForSeconds(0.08f);
+
+                foreach (var pair in lampPairs) if (pair != null) SetPairState(pair, false, 0f, 0f);
+                yield return new WaitForSeconds(0.08f);
+            }
+        }
+
+        SetAllPairsNormal();
+    }
+
+    private void SetPairState(LampPair pair, bool isLightOn, float intensity, float emissionMultiplier)
+    {
+        if (pair.lightComponent != null)
+        {
+            pair.lightComponent.enabled = isLightOn;
+            pair.lightComponent.intensity = intensity;
+        }
+
+        if (pair.bulbMaterial != null)
+        {
+            if (isLightOn && emissionMultiplier > 0.01f)
+            {
+                Color activeColor = emissionColor * Mathf.LinearToGammaSpace(emissionMultiplier);
+                pair.bulbMaterial.SetColor(EmissionColorProp, activeColor);
+            }
+            else
+            {
+                pair.bulbMaterial.SetColor(EmissionColorProp, Color.black);
             }
         }
     }
 
-    private void ResetAnomalyTimer()
+    private void StopAllActiveFlickers()
     {
-        nextAnomalyTimer = Random.Range(minIntervalSeconds, maxIntervalSeconds);
+        foreach (var r in activeFlickerCoroutines)
+        {
+            if (r != null) StopCoroutine(r);
+        }
+        activeFlickerCoroutines.Clear();
     }
 }
