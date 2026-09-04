@@ -3,7 +3,7 @@ using UnityEngine;
 
 /// <summary>
 /// Kontroler Kelistrikan & Lampu Ruangan (1 Ruangan 1 Panel & Fuse).
-/// 100% Pasangan 1-to-1 antara Spot Light dengan BolaPijar milik lampu itu sendiri.
+/// 100% Event-Driven & 0% Beban CPU di Update().
 /// </summary>
 public class RoomPowerMaintenanceController : MonoBehaviour
 {
@@ -54,9 +54,6 @@ public class RoomPowerMaintenanceController : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Memasangkan setiap Spot Light dengan objek 3D 'BolaPijar' pasangannya secara presisi
-    /// </summary>
     public void PairLampsAndBulbs()
     {
         lampPairs.Clear();
@@ -73,14 +70,12 @@ public class RoomPowerMaintenanceController : MonoBehaviour
             Transform bulbFolder = l.transform.parent != null ? l.transform.parent : l.transform;
             Renderer bulbRend = null;
 
-            // 1. Cek langsung anak folder Bulb yang bernama BolaPijar
             Transform bpChild = bulbFolder.Find("BolaPijar");
             if (bpChild != null)
             {
                 bulbRend = bpChild.GetComponent<Renderer>();
             }
 
-            // 2. Jika tidak ada di Find langsung, cari di seluruh sub-objek Bulb
             if (bulbRend == null)
             {
                 Renderer[] rends = bulbFolder.GetComponentsInChildren<Renderer>(true);
@@ -110,12 +105,10 @@ public class RoomPowerMaintenanceController : MonoBehaviour
         UpdateRoomPowerState(false);
     }
 
-    private void Update()
-    {
-        UpdateRoomPowerState(false);
-    }
-
-    private void UpdateRoomPowerState(bool forceUpdate)
+    /// <summary>
+    /// Update status kelistrikan ruangan (Hanya berjalan saat ada event switch / fuse berubah, 0% CPU di Update).
+    /// </summary>
+    public void UpdateRoomPowerState(bool forceUpdate)
     {
         bool switchOn = roomPowerSwitch != null ? roomPowerSwitch.IsPowerOn : true;
         bool fuseNormal = roomFuseBox != null ? !roomFuseBox.IsFuseBroken : true;

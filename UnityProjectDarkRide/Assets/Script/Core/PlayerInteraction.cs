@@ -51,7 +51,6 @@ public class PlayerInteraction : MonoBehaviour
         }
 
         // 🎯 BILA PLAYER SEDANG NAIK KERETA (SEATED):
-        if (cachedCart == null) cachedCart = FindObjectOfType<DarkRideCartController>();
         if (cachedCart != null && cachedCart.IsPlayerSeated)
         {
             if (promptTextUI != null)
