@@ -77,7 +77,7 @@ public class TaskManager : MonoBehaviour
             task.currentProgress++;
             task.isCompleted = true;
             UpdateNotebookUI();
-            CheckAllTasksCompleted();
+            IsAllTasksCompleted();
         }
     }
 
@@ -148,9 +148,9 @@ public class TaskManager : MonoBehaviour
         }
     }
 
-    private void CheckAllTasksCompleted()
+    public bool IsAllTasksCompleted()
     {
-        if (taskList == null) return;
+        if (taskList == null || taskList.Count == 0) return false;
 
         foreach (var task in taskList)
         {
@@ -159,9 +159,10 @@ public class TaskManager : MonoBehaviour
 
             if (!task.isCompleted)
             {
-                return;
+                return false;
             }
         }
+        return true;
     }
 
     public List<TaskData> TaskList => taskList;
