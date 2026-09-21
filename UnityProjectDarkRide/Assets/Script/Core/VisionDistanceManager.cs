@@ -22,24 +22,32 @@ public class VisionDistanceManager : MonoBehaviour
     }
 
     [Header("=== VISION DISTANCE (JARAK PANDANG) ===")]
-    [Tooltip("Gaya Kabut: ExponentialSquared sangat disarankan untuk game horor karena menutup semua permukaan secara merata!")]
-    [SerializeField] private FogStyle fogType = FogStyle.ExponentialSquared;
+    [Tooltip("Gaya Kabut: Linear memberikan transisi gradien halus yang jelas dari titik dekat ke batas akhir.")]
+    [SerializeField] private FogStyle fogType = FogStyle.Linear;
 
-    [Tooltip("Batas maksimal jarak pandang pemain dalam meter. Di atas jarak ini, pandangan menjadi hitam pekat.")]
+    [Tooltip("Batas maksimal jarak pandang pemain dalam meter. Di atas jarak ini, pandangan menjadi kabut pekat.")]
     [Range(3.0f, 40.0f)]
     [SerializeField] private float maxVisionDistance = 12.0f;
 
-    [Tooltip("Ketebalan kabut (Hanya untuk mode ExponentialSquared). Makin besar makin gelap & dekat (Default: 0.12 - 0.18).")]
-    [Range(0.01f, 0.5f)]
-    [SerializeField] private float fogDensity = 0.15f;
-
-    [Tooltip("Titik awal kabut kegelapan (Hanya untuk mode Linear).")]
+    [Tooltip("Titik awal kabut kegelapan (Untuk mode Linear). Objek lebih dekat dari ini terlihat 100% jernih.")]
     [Range(0.0f, 15.0f)]
     [SerializeField] private float fogStartDistance = 2.0f;
 
+    [Tooltip("Ketebalan kabut (Hanya untuk mode ExponentialSquared).")]
+    [Range(0.01f, 0.5f)]
+    [SerializeField] private float fogDensity = 0.15f;
+
     [Header("=== WARNA KEGELAPAN / FOG ===")]
-    [Tooltip("Warna kabut kegelapan (Default: Hitam Pekat untuk atmosfer horor murni).")]
-    [SerializeField] private Color darknessColor = Color.black;
+    [Tooltip("Warna kabut atmosfer horor (Gunakan abu-abu arang malam gelap agar efek kabutnya benar-benar terlihat di mata).")]
+    [SerializeField] private Color darknessColor = new Color(0.07f, 0.08f, 0.09f, 1.0f);
+
+    [Header("=== PENERANGAN DASAR LINGKUNGAN (AMBIENT LIGHT) ===")]
+    [Tooltip("Tingkat kecerahan suasana remang-remang saat senter mati (0 = Hitam pekat total, 0.15 - 0.35 = Remang-remang terlihat jelas).")]
+    [Range(0.0f, 1.0f)]
+    [SerializeField] private float ambientBrightness = 0.25f;
+
+    [Tooltip("Warna suasana remang-remang lingkungan (abu-abu malam arang kebiruan).")]
+    [SerializeField] private Color ambientColor = new Color(0.22f, 0.24f, 0.28f, 1.0f);
 
     [Header("=== KOMPONEN TARGET (OPSIONAL / AUTO DETECT) ===")]
     [Tooltip("Kamera Utama pemain (Otomatis mendeteksi Camera.main jika kosong).")]
@@ -136,11 +144,12 @@ public class VisionDistanceManager : MonoBehaviour
         RenderSettings.fog = true;
         RenderSettings.fogColor = darknessColor;
 
-        // MATIKAN PENERANGAN LANGIT (AMBIENT LIGHT) SECARA OTOMATIS LEWAT SCRIPT
-        // Inilah yang membuat lantai/tanah tetap terlihat terang benderang meskipun tidak ada Directional Light!
+        // Terapkan Penerangan Dasar Lingkungan (Remang-remang) agar objek & tekstur tetap terlihat di dekat pemain
+        Color effectiveAmbient = ambientColor * ambientBrightness;
         RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Flat;
-        RenderSettings.ambientLight = Color.black;
-        RenderSettings.ambientIntensity = 0f;
+        RenderSettings.ambientLight = effectiveAmbient;
+        RenderSettings.ambientSkyColor = effectiveAmbient;
+        RenderSettings.ambientIntensity = ambientBrightness;
 
         if (fogType == FogStyle.ExponentialSquared)
         {

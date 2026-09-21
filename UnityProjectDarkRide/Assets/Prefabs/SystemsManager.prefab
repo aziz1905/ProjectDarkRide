@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2569446769425206314}
   - component: {fileID: 913034286680103860}
   - component: {fileID: 4796118567037797386}
+  - component: {fileID: 856070751923456789}
   m_Layer: 0
   m_Name: SystemsManager
   m_TagString: Untagged
@@ -84,3 +85,26 @@ MonoBehaviour:
   reasonTextUI: {fileID: 0}
   audioSource: {fileID: 0}
   gameOverSFX: {fileID: 0}
+--- !u!114 &856070751923456789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1686291725302637778}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a86d1cc333cf87f46b022ee8a9d7ed2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fogType: 1
+  maxVisionDistance: 15
+  fogStartDistance: 3
+  fogDensity: 0.15
+  darknessColor: {r: 0.07, g: 0.08, b: 0.09, a: 1}
+  ambientBrightness: 0.25
+  ambientColor: {r: 0.22, g: 0.24, b: 0.28, a: 1}
+  targetCamera: {fileID: 0}
+  playerFlashlight: {fileID: 0}
+  flashlightIntensity: 3.5
+  flashlightSpotAngle: 50

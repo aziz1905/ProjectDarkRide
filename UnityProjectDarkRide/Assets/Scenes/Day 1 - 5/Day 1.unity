@@ -15,15 +15,15 @@ RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 9
   m_Fog: 1
-  m_FogColor: {r: 0, g: 0, b: 0, a: 1}
-  m_FogMode: 3
+  m_FogColor: {r: 0.07, g: 0.08, b: 0.09, a: 1}
+  m_FogMode: 1
   m_FogDensity: 0.15
-  m_LinearFogStart: 2
-  m_LinearFogEnd: 12
-  m_AmbientSkyColor: {r: 0, g: 0, b: 0, a: 1}
+  m_LinearFogStart: 3
+  m_LinearFogEnd: 15
+  m_AmbientSkyColor: {r: 0.22, g: 0.24, b: 0.28, a: 1}
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
-  m_AmbientIntensity: 0
+  m_AmbientIntensity: 1
   m_AmbientMode: 3
   m_SubtractiveShadowColor: {r: 0.26343894, g: 0.27854502, b: 0.3018868, a: 1}
   m_SkyboxMaterial: {fileID: 0}
@@ -334541,15 +334541,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2865960550566525318, guid: 67de7c7bf80d8114cbf5e43578bc107d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -119.57
+      value: -122.91
       objectReference: {fileID: 0}
     - target: {fileID: 2865960550566525318, guid: 67de7c7bf80d8114cbf5e43578bc107d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 10.274475
+      value: -0.26
       objectReference: {fileID: 0}
     - target: {fileID: 2865960550566525318, guid: 67de7c7bf80d8114cbf5e43578bc107d, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -28.07
+      value: 81.18
       objectReference: {fileID: 0}
     - target: {fileID: 2865960550566525318, guid: 67de7c7bf80d8114cbf5e43578bc107d, type: 3}
       propertyPath: m_LocalRotation.w
@@ -374890,11 +374890,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a86d1cc333cf87f46b022ee8a9d7ed2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fogType: 0
-  maxVisionDistance: 12
+  fogType: 1
+  maxVisionDistance: 15
+  fogStartDistance: 3
   fogDensity: 0.15
-  fogStartDistance: 2
-  darknessColor: {r: 0, g: 0, b: 0, a: 1}
+  darknessColor: {r: 0.07, g: 0.08, b: 0.09, a: 1}
+  ambientBrightness: 1
+  ambientColor: {r: 0.22, g: 0.24, b: 0.28, a: 1}
   targetCamera: {fileID: 716684962}
   playerFlashlight: {fileID: 186200498}
   flashlightIntensity: 3.5
@@ -439249,7 +439251,7 @@ PrefabInstance:
       objectReference: {fileID: 6106129693159518399}
     - target: {fileID: 3941591686772996683, guid: 1284e23b9d7e2c041920cda140db2fb1, type: 3}
       propertyPath: m_Range
-      value: 12
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 3941591686772996683, guid: 1284e23b9d7e2c041920cda140db2fb1, type: 3}
       propertyPath: m_Intensity

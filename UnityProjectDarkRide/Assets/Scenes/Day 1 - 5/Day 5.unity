@@ -14,17 +14,17 @@ OcclusionCullingSettings:
 RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 9
-  m_Fog: 0
-  m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-  m_FogMode: 3
+  m_Fog: 1
+  m_FogColor: {r: 0.07, g: 0.08, b: 0.09, a: 1}
+  m_FogMode: 1
   m_FogDensity: 0.01
-  m_LinearFogStart: 0
-  m_LinearFogEnd: 300
-  m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
+  m_LinearFogStart: 3
+  m_LinearFogEnd: 15
+  m_AmbientSkyColor: {r: 0.22, g: 0.24, b: 0.28, a: 1}
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
   m_AmbientIntensity: 1
-  m_AmbientMode: 0
+  m_AmbientMode: 3
   m_SubtractiveShadowColor: {r: 0.26343894, g: 0.27854502, b: 0.3018868, a: 1}
   m_SkyboxMaterial: {fileID: 0}
   m_HaloStrength: 0.5
@@ -909,18 +909,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 279eb1efe3fe06c499c35300cd2fef72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lampLight: {fileID: 443230553}
-  bolaPijarObject: {fileID: 1114810666}
-  normalIntensity: 3
+  anomalyMode: 0
+  stayUntilRestored: 0
+  minFlickerSpeed: 0.2
+  maxFlickerSpeed: 0.45
+  flickerBeforeBlackout: 1
   emissionColor: {r: 0.57254905, g: 0, b: 0, a: 1}
   normalEmissionGlow: 2
-  enableAutoAnomaly: 0
-  blackoutDuration: 2
-  minIntervalSeconds: 15
-  maxIntervalSeconds: 35
-  flickerBeforeBlackout: 1
   audioSource: {fileID: 0}
   glitchSound: {fileID: 0}
+  restoreSound: {fileID: 0}
 --- !u!1001 &8719514
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9434,18 +9432,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 279eb1efe3fe06c499c35300cd2fef72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lampLight: {fileID: 2020776961}
-  bolaPijarObject: {fileID: 1131617912}
-  normalIntensity: 3
+  anomalyMode: 0
+  stayUntilRestored: 0
+  minFlickerSpeed: 0.2
+  maxFlickerSpeed: 0.45
+  flickerBeforeBlackout: 1
   emissionColor: {r: 0.57254905, g: 0, b: 0, a: 1}
   normalEmissionGlow: 2
-  enableAutoAnomaly: 0
-  blackoutDuration: 2
-  minIntervalSeconds: 15
-  maxIntervalSeconds: 35
-  flickerBeforeBlackout: 1
   audioSource: {fileID: 0}
   glitchSound: {fileID: 0}
+  restoreSound: {fileID: 0}
 --- !u!1001 &44029213
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -20148,18 +20144,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 279eb1efe3fe06c499c35300cd2fef72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lampLight: {fileID: 1422671457}
-  bolaPijarObject: {fileID: 1758679789}
-  normalIntensity: 3
+  anomalyMode: 0
+  stayUntilRestored: 0
+  minFlickerSpeed: 0.2
+  maxFlickerSpeed: 0.45
+  flickerBeforeBlackout: 1
   emissionColor: {r: 0.57254905, g: 0, b: 0, a: 1}
   normalEmissionGlow: 2
-  enableAutoAnomaly: 0
-  blackoutDuration: 2
-  minIntervalSeconds: 15
-  maxIntervalSeconds: 35
-  flickerBeforeBlackout: 1
   audioSource: {fileID: 0}
   glitchSound: {fileID: 0}
+  restoreSound: {fileID: 0}
 --- !u!1001 &101740681
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -21809,18 +21803,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 279eb1efe3fe06c499c35300cd2fef72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lampLight: {fileID: 197119272}
-  bolaPijarObject: {fileID: 416606732}
-  normalIntensity: 3
+  anomalyMode: 0
+  stayUntilRestored: 0
+  minFlickerSpeed: 0.2
+  maxFlickerSpeed: 0.45
+  flickerBeforeBlackout: 1
   emissionColor: {r: 0.57254905, g: 0, b: 0, a: 1}
   normalEmissionGlow: 2
-  enableAutoAnomaly: 0
-  blackoutDuration: 2
-  minIntervalSeconds: 15
-  maxIntervalSeconds: 35
-  flickerBeforeBlackout: 1
   audioSource: {fileID: 0}
   glitchSound: {fileID: 0}
+  restoreSound: {fileID: 0}
 --- !u!1001 &111290269
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -31125,18 +31117,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 279eb1efe3fe06c499c35300cd2fef72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lampLight: {fileID: 1343353634}
-  bolaPijarObject: {fileID: 619562553}
-  normalIntensity: 3
+  anomalyMode: 0
+  stayUntilRestored: 0
+  minFlickerSpeed: 0.2
+  maxFlickerSpeed: 0.45
+  flickerBeforeBlackout: 1
   emissionColor: {r: 0.57254905, g: 0, b: 0, a: 1}
   normalEmissionGlow: 2
-  enableAutoAnomaly: 0
-  blackoutDuration: 2
-  minIntervalSeconds: 15
-  maxIntervalSeconds: 35
-  flickerBeforeBlackout: 1
   audioSource: {fileID: 0}
   glitchSound: {fileID: 0}
+  restoreSound: {fileID: 0}
 --- !u!1001 &148380233
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -58931,18 +58921,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 279eb1efe3fe06c499c35300cd2fef72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lampLight: {fileID: 1236475084}
-  bolaPijarObject: {fileID: 461666064}
-  normalIntensity: 3
+  anomalyMode: 0
+  stayUntilRestored: 0
+  minFlickerSpeed: 0.2
+  maxFlickerSpeed: 0.45
+  flickerBeforeBlackout: 1
   emissionColor: {r: 0.57254905, g: 0, b: 0, a: 1}
   normalEmissionGlow: 2
-  enableAutoAnomaly: 0
-  blackoutDuration: 2
-  minIntervalSeconds: 15
-  maxIntervalSeconds: 35
-  flickerBeforeBlackout: 1
   audioSource: {fileID: 0}
   glitchSound: {fileID: 0}
+  restoreSound: {fileID: 0}
 --- !u!1001 &284659697
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -92067,18 +92055,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 279eb1efe3fe06c499c35300cd2fef72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lampLight: {fileID: 2002773335}
-  bolaPijarObject: {fileID: 2019759091}
-  normalIntensity: 3
+  anomalyMode: 0
+  stayUntilRestored: 0
+  minFlickerSpeed: 0.2
+  maxFlickerSpeed: 0.45
+  flickerBeforeBlackout: 1
   emissionColor: {r: 0.57254905, g: 0, b: 0, a: 1}
   normalEmissionGlow: 2
-  enableAutoAnomaly: 0
-  blackoutDuration: 2
-  minIntervalSeconds: 15
-  maxIntervalSeconds: 35
-  flickerBeforeBlackout: 1
   audioSource: {fileID: 0}
   glitchSound: {fileID: 0}
+  restoreSound: {fileID: 0}
 --- !u!43 &443203932
 Mesh:
   m_ObjectHideFlags: 0
@@ -106748,18 +106734,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 279eb1efe3fe06c499c35300cd2fef72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lampLight: {fileID: 1206407687}
-  bolaPijarObject: {fileID: 1401211093}
-  normalIntensity: 3
+  anomalyMode: 0
+  stayUntilRestored: 0
+  minFlickerSpeed: 0.2
+  maxFlickerSpeed: 0.45
+  flickerBeforeBlackout: 1
   emissionColor: {r: 0.57254905, g: 0, b: 0, a: 1}
   normalEmissionGlow: 2
-  enableAutoAnomaly: 0
-  blackoutDuration: 2
-  minIntervalSeconds: 15
-  maxIntervalSeconds: 35
-  flickerBeforeBlackout: 1
   audioSource: {fileID: 0}
   glitchSound: {fileID: 0}
+  restoreSound: {fileID: 0}
 --- !u!1001 &503566838
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -124412,18 +124396,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 279eb1efe3fe06c499c35300cd2fef72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lampLight: {fileID: 2127431943}
-  bolaPijarObject: {fileID: 1687174591}
-  normalIntensity: 3
+  anomalyMode: 0
+  stayUntilRestored: 0
+  minFlickerSpeed: 0.2
+  maxFlickerSpeed: 0.45
+  flickerBeforeBlackout: 1
   emissionColor: {r: 0.57254905, g: 0, b: 0, a: 1}
   normalEmissionGlow: 2
-  enableAutoAnomaly: 0
-  blackoutDuration: 2
-  minIntervalSeconds: 15
-  maxIntervalSeconds: 35
-  flickerBeforeBlackout: 1
   audioSource: {fileID: 0}
   glitchSound: {fileID: 0}
+  restoreSound: {fileID: 0}
 --- !u!43 &586346080
 Mesh:
   m_ObjectHideFlags: 0
@@ -124635,18 +124617,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 279eb1efe3fe06c499c35300cd2fef72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lampLight: {fileID: 1056296778}
-  bolaPijarObject: {fileID: 1775135209}
-  normalIntensity: 3
+  anomalyMode: 0
+  stayUntilRestored: 0
+  minFlickerSpeed: 0.2
+  maxFlickerSpeed: 0.45
+  flickerBeforeBlackout: 1
   emissionColor: {r: 0.57254905, g: 0, b: 0, a: 1}
   normalEmissionGlow: 2
-  enableAutoAnomaly: 0
-  blackoutDuration: 2
-  minIntervalSeconds: 15
-  maxIntervalSeconds: 35
-  flickerBeforeBlackout: 1
   audioSource: {fileID: 0}
   glitchSound: {fileID: 0}
+  restoreSound: {fileID: 0}
 --- !u!1001 &587710087
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -128952,6 +128932,26 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 856070751923456789, guid: 9da63a644d7012b449cc65d691ac153e, type: 3}
+      propertyPath: targetCamera
+      value: 
+      objectReference: {fileID: 7610039697142224044}
+    - target: {fileID: 856070751923456789, guid: 9da63a644d7012b449cc65d691ac153e, type: 3}
+      propertyPath: playerFlashlight
+      value: 
+      objectReference: {fileID: 7610039697142224043}
+    - target: {fileID: 856070751923456789, guid: 9da63a644d7012b449cc65d691ac153e, type: 3}
+      propertyPath: ambientBrightness
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 856070751923456789, guid: 9da63a644d7012b449cc65d691ac153e, type: 3}
+      propertyPath: flashlightIntensity
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 856070751923456789, guid: 9da63a644d7012b449cc65d691ac153e, type: 3}
+      propertyPath: flashlightSpotAngle
+      value: 60
+      objectReference: {fileID: 0}
     - target: {fileID: 913034286680103860, guid: 9da63a644d7012b449cc65d691ac153e, type: 3}
       propertyPath: hudClockText
       value: 
@@ -140090,18 +140090,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 279eb1efe3fe06c499c35300cd2fef72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lampLight: {fileID: 1413173713}
-  bolaPijarObject: {fileID: 1449660487}
-  normalIntensity: 3
+  anomalyMode: 0
+  stayUntilRestored: 0
+  minFlickerSpeed: 0.2
+  maxFlickerSpeed: 0.45
+  flickerBeforeBlackout: 1
   emissionColor: {r: 0.57254905, g: 0, b: 0, a: 1}
   normalEmissionGlow: 2
-  enableAutoAnomaly: 0
-  blackoutDuration: 2
-  minIntervalSeconds: 15
-  maxIntervalSeconds: 35
-  flickerBeforeBlackout: 1
   audioSource: {fileID: 0}
   glitchSound: {fileID: 0}
+  restoreSound: {fileID: 0}
 --- !u!1001 &661707454
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -140777,18 +140775,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 279eb1efe3fe06c499c35300cd2fef72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lampLight: {fileID: 1081614407}
-  bolaPijarObject: {fileID: 1579743503}
-  normalIntensity: 3
+  anomalyMode: 0
+  stayUntilRestored: 0
+  minFlickerSpeed: 0.2
+  maxFlickerSpeed: 0.45
+  flickerBeforeBlackout: 1
   emissionColor: {r: 0.57254905, g: 0, b: 0, a: 1}
   normalEmissionGlow: 2
-  enableAutoAnomaly: 0
-  blackoutDuration: 2
-  minIntervalSeconds: 15
-  maxIntervalSeconds: 35
-  flickerBeforeBlackout: 1
   audioSource: {fileID: 0}
   glitchSound: {fileID: 0}
+  restoreSound: {fileID: 0}
 --- !u!1001 &663635098
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -147800,18 +147796,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 279eb1efe3fe06c499c35300cd2fef72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lampLight: {fileID: 882519226}
-  bolaPijarObject: {fileID: 1980850106}
-  normalIntensity: 3
+  anomalyMode: 0
+  stayUntilRestored: 0
+  minFlickerSpeed: 0.2
+  maxFlickerSpeed: 0.45
+  flickerBeforeBlackout: 1
   emissionColor: {r: 0.57254905, g: 0, b: 0, a: 1}
   normalEmissionGlow: 2
-  enableAutoAnomaly: 0
-  blackoutDuration: 2
-  minIntervalSeconds: 15
-  maxIntervalSeconds: 35
-  flickerBeforeBlackout: 1
   audioSource: {fileID: 0}
   glitchSound: {fileID: 0}
+  restoreSound: {fileID: 0}
 --- !u!43 &691482836
 Mesh:
   m_ObjectHideFlags: 0
@@ -148023,18 +148017,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 279eb1efe3fe06c499c35300cd2fef72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lampLight: {fileID: 960962265}
-  bolaPijarObject: {fileID: 1152317775}
-  normalIntensity: 3
+  anomalyMode: 0
+  stayUntilRestored: 0
+  minFlickerSpeed: 0.2
+  maxFlickerSpeed: 0.45
+  flickerBeforeBlackout: 1
   emissionColor: {r: 0.57254905, g: 0, b: 0, a: 1}
   normalEmissionGlow: 2
-  enableAutoAnomaly: 0
-  blackoutDuration: 2
-  minIntervalSeconds: 15
-  maxIntervalSeconds: 35
-  flickerBeforeBlackout: 1
   audioSource: {fileID: 0}
   glitchSound: {fileID: 0}
+  restoreSound: {fileID: 0}
 --- !u!1001 &692406663
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -163596,18 +163588,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 279eb1efe3fe06c499c35300cd2fef72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lampLight: {fileID: 986946315}
-  bolaPijarObject: {fileID: 69919589}
-  normalIntensity: 3
+  anomalyMode: 0
+  stayUntilRestored: 0
+  minFlickerSpeed: 0.2
+  maxFlickerSpeed: 0.45
+  flickerBeforeBlackout: 1
   emissionColor: {r: 0.57254905, g: 0, b: 0, a: 1}
   normalEmissionGlow: 2
-  enableAutoAnomaly: 0
-  blackoutDuration: 2
-  minIntervalSeconds: 15
-  maxIntervalSeconds: 35
-  flickerBeforeBlackout: 1
   audioSource: {fileID: 0}
   glitchSound: {fileID: 0}
+  restoreSound: {fileID: 0}
 --- !u!1001 &758034481
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -166482,18 +166472,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 279eb1efe3fe06c499c35300cd2fef72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lampLight: {fileID: 1430116841}
-  bolaPijarObject: {fileID: 593208302}
-  normalIntensity: 3
+  anomalyMode: 0
+  stayUntilRestored: 0
+  minFlickerSpeed: 0.2
+  maxFlickerSpeed: 0.45
+  flickerBeforeBlackout: 1
   emissionColor: {r: 0.57254905, g: 0, b: 0, a: 1}
   normalEmissionGlow: 2
-  enableAutoAnomaly: 0
-  blackoutDuration: 2
-  minIntervalSeconds: 15
-  maxIntervalSeconds: 35
-  flickerBeforeBlackout: 1
   audioSource: {fileID: 0}
   glitchSound: {fileID: 0}
+  restoreSound: {fileID: 0}
 --- !u!43 &774782621
 Mesh:
   m_ObjectHideFlags: 0
@@ -173417,18 +173405,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 279eb1efe3fe06c499c35300cd2fef72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lampLight: {fileID: 832002332}
-  bolaPijarObject: {fileID: 1773416750}
-  normalIntensity: 3
+  anomalyMode: 0
+  stayUntilRestored: 0
+  minFlickerSpeed: 0.2
+  maxFlickerSpeed: 0.45
+  flickerBeforeBlackout: 1
   emissionColor: {r: 0.57254905, g: 0, b: 0, a: 1}
   normalEmissionGlow: 2
-  enableAutoAnomaly: 0
-  blackoutDuration: 2
-  minIntervalSeconds: 15
-  maxIntervalSeconds: 35
-  flickerBeforeBlackout: 1
   audioSource: {fileID: 0}
   glitchSound: {fileID: 0}
+  restoreSound: {fileID: 0}
 --- !u!1001 &805938752
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -181471,20 +181457,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d425ef6afe6cbcf44a82be26eea1df14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetLamps:
-  - {fileID: 587478281}
-  - {fileID: 663530042}
-  - {fileID: 940313813}
-  - {fileID: 993921917}
-  - {fileID: 1154349456}
-  - {fileID: 147610426}
-  - {fileID: 774599145}
-  - {fileID: 690864120}
-  - {fileID: 1257804534}
-  blackoutDuration: 9999999
+  targetRooms: []
+  duration: 3.5
   onlyTriggerOnce: 1
-  audioSource: {fileID: 0}
-  spookySound: {fileID: 0}
 --- !u!65 &835989522
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -185814,18 +185789,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 279eb1efe3fe06c499c35300cd2fef72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lampLight: {fileID: 1564330678}
-  bolaPijarObject: {fileID: 161877927}
-  normalIntensity: 3
+  anomalyMode: 0
+  stayUntilRestored: 0
+  minFlickerSpeed: 0.2
+  maxFlickerSpeed: 0.45
+  flickerBeforeBlackout: 1
   emissionColor: {r: 0.57254905, g: 0, b: 0, a: 1}
   normalEmissionGlow: 2
-  enableAutoAnomaly: 0
-  blackoutDuration: 2
-  minIntervalSeconds: 15
-  maxIntervalSeconds: 35
-  flickerBeforeBlackout: 1
   audioSource: {fileID: 0}
   glitchSound: {fileID: 0}
+  restoreSound: {fileID: 0}
 --- !u!43 &855642193
 Mesh:
   m_ObjectHideFlags: 0
@@ -186354,18 +186327,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 279eb1efe3fe06c499c35300cd2fef72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lampLight: {fileID: 1582161541}
-  bolaPijarObject: {fileID: 1383098423}
-  normalIntensity: 3
+  anomalyMode: 0
+  stayUntilRestored: 0
+  minFlickerSpeed: 0.2
+  maxFlickerSpeed: 0.45
+  flickerBeforeBlackout: 1
   emissionColor: {r: 0.57254905, g: 0, b: 0, a: 1}
   normalEmissionGlow: 2
-  enableAutoAnomaly: 0
-  blackoutDuration: 2
-  minIntervalSeconds: 15
-  maxIntervalSeconds: 35
-  flickerBeforeBlackout: 1
   audioSource: {fileID: 0}
   glitchSound: {fileID: 0}
+  restoreSound: {fileID: 0}
 --- !u!43 &859068299
 Mesh:
   m_ObjectHideFlags: 0
@@ -202408,18 +202379,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 279eb1efe3fe06c499c35300cd2fef72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lampLight: {fileID: 1733401867}
-  bolaPijarObject: {fileID: 1911635873}
-  normalIntensity: 3
+  anomalyMode: 0
+  stayUntilRestored: 0
+  minFlickerSpeed: 0.2
+  maxFlickerSpeed: 0.45
+  flickerBeforeBlackout: 1
   emissionColor: {r: 0.57254905, g: 0, b: 0, a: 1}
   normalEmissionGlow: 2
-  enableAutoAnomaly: 0
-  blackoutDuration: 2
-  minIntervalSeconds: 15
-  maxIntervalSeconds: 35
-  flickerBeforeBlackout: 1
   audioSource: {fileID: 0}
   glitchSound: {fileID: 0}
+  restoreSound: {fileID: 0}
 --- !u!43 &940436286
 Mesh:
   m_ObjectHideFlags: 0
@@ -204177,18 +204146,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 279eb1efe3fe06c499c35300cd2fef72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lampLight: {fileID: 1660593839}
-  bolaPijarObject: {fileID: 1951531995}
-  normalIntensity: 3
+  anomalyMode: 0
+  stayUntilRestored: 0
+  minFlickerSpeed: 0.2
+  maxFlickerSpeed: 0.45
+  flickerBeforeBlackout: 1
   emissionColor: {r: 0.57254905, g: 0, b: 0, a: 1}
   normalEmissionGlow: 2
-  enableAutoAnomaly: 0
-  blackoutDuration: 2
-  minIntervalSeconds: 15
-  maxIntervalSeconds: 35
-  flickerBeforeBlackout: 1
   audioSource: {fileID: 0}
   glitchSound: {fileID: 0}
+  restoreSound: {fileID: 0}
 --- !u!1001 &947126142
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -213991,18 +213958,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 279eb1efe3fe06c499c35300cd2fef72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lampLight: {fileID: 579916419}
-  bolaPijarObject: {fileID: 1747354278}
-  normalIntensity: 3
+  anomalyMode: 0
+  stayUntilRestored: 0
+  minFlickerSpeed: 0.2
+  maxFlickerSpeed: 0.45
+  flickerBeforeBlackout: 1
   emissionColor: {r: 0.57254905, g: 0, b: 0, a: 1}
   normalEmissionGlow: 2
-  enableAutoAnomaly: 0
-  blackoutDuration: 2
-  minIntervalSeconds: 15
-  maxIntervalSeconds: 35
-  flickerBeforeBlackout: 1
   audioSource: {fileID: 0}
   glitchSound: {fileID: 0}
+  restoreSound: {fileID: 0}
 --- !u!1001 &994256424
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -246618,18 +246583,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 279eb1efe3fe06c499c35300cd2fef72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lampLight: {fileID: 1121622041}
-  bolaPijarObject: {fileID: 968613903}
-  normalIntensity: 3
+  anomalyMode: 0
+  stayUntilRestored: 0
+  minFlickerSpeed: 0.2
+  maxFlickerSpeed: 0.45
+  flickerBeforeBlackout: 1
   emissionColor: {r: 0.57254905, g: 0, b: 0, a: 1}
   normalEmissionGlow: 2
-  enableAutoAnomaly: 0
-  blackoutDuration: 2
-  minIntervalSeconds: 15
-  maxIntervalSeconds: 35
-  flickerBeforeBlackout: 1
   audioSource: {fileID: 0}
   glitchSound: {fileID: 0}
+  restoreSound: {fileID: 0}
 --- !u!1001 &1154541362
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -257300,18 +257263,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 279eb1efe3fe06c499c35300cd2fef72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lampLight: {fileID: 1677915611}
-  bolaPijarObject: {fileID: 1001965583}
-  normalIntensity: 3
+  anomalyMode: 0
+  stayUntilRestored: 0
+  minFlickerSpeed: 0.2
+  maxFlickerSpeed: 0.45
+  flickerBeforeBlackout: 1
   emissionColor: {r: 0.57254905, g: 0, b: 0, a: 1}
   normalEmissionGlow: 2
-  enableAutoAnomaly: 0
-  blackoutDuration: 2
-  minIntervalSeconds: 15
-  maxIntervalSeconds: 35
-  flickerBeforeBlackout: 1
   audioSource: {fileID: 0}
   glitchSound: {fileID: 0}
+  restoreSound: {fileID: 0}
 --- !u!1 &1206407684
 GameObject:
   m_ObjectHideFlags: 0
@@ -267309,18 +267270,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 279eb1efe3fe06c499c35300cd2fef72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lampLight: {fileID: 1305691025}
-  bolaPijarObject: {fileID: 1430538717}
-  normalIntensity: 3
+  anomalyMode: 0
+  stayUntilRestored: 0
+  minFlickerSpeed: 0.2
+  maxFlickerSpeed: 0.45
+  flickerBeforeBlackout: 1
   emissionColor: {r: 0.57254905, g: 0, b: 0, a: 1}
   normalEmissionGlow: 2
-  enableAutoAnomaly: 0
-  blackoutDuration: 2
-  minIntervalSeconds: 15
-  maxIntervalSeconds: 35
-  flickerBeforeBlackout: 1
   audioSource: {fileID: 0}
   glitchSound: {fileID: 0}
+  restoreSound: {fileID: 0}
 --- !u!43 &1244008333
 Mesh:
   m_ObjectHideFlags: 0
@@ -270853,18 +270812,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 279eb1efe3fe06c499c35300cd2fef72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lampLight: {fileID: 390750786}
-  bolaPijarObject: {fileID: 1451557671}
-  normalIntensity: 3
+  anomalyMode: 0
+  stayUntilRestored: 0
+  minFlickerSpeed: 0.2
+  maxFlickerSpeed: 0.45
+  flickerBeforeBlackout: 1
   emissionColor: {r: 0.57254905, g: 0, b: 0, a: 1}
   normalEmissionGlow: 2
-  enableAutoAnomaly: 0
-  blackoutDuration: 2
-  minIntervalSeconds: 15
-  maxIntervalSeconds: 35
-  flickerBeforeBlackout: 1
   audioSource: {fileID: 0}
   glitchSound: {fileID: 0}
+  restoreSound: {fileID: 0}
 --- !u!1001 &1257859136
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -273662,18 +273619,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 279eb1efe3fe06c499c35300cd2fef72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lampLight: {fileID: 1038218007}
-  bolaPijarObject: {fileID: 1766144144}
-  normalIntensity: 3
+  anomalyMode: 0
+  stayUntilRestored: 0
+  minFlickerSpeed: 0.2
+  maxFlickerSpeed: 0.45
+  flickerBeforeBlackout: 1
   emissionColor: {r: 0.57254905, g: 0, b: 0, a: 1}
   normalEmissionGlow: 2
-  enableAutoAnomaly: 0
-  blackoutDuration: 2
-  minIntervalSeconds: 15
-  maxIntervalSeconds: 35
-  flickerBeforeBlackout: 1
   audioSource: {fileID: 0}
   glitchSound: {fileID: 0}
+  restoreSound: {fileID: 0}
 --- !u!43 &1267046428
 Mesh:
   m_ObjectHideFlags: 0
@@ -295055,18 +295010,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 279eb1efe3fe06c499c35300cd2fef72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lampLight: {fileID: 1416495651}
-  bolaPijarObject: {fileID: 449049436}
-  normalIntensity: 3
+  anomalyMode: 0
+  stayUntilRestored: 0
+  minFlickerSpeed: 0.2
+  maxFlickerSpeed: 0.45
+  flickerBeforeBlackout: 1
   emissionColor: {r: 0.57254905, g: 0, b: 0, a: 1}
   normalEmissionGlow: 2
-  enableAutoAnomaly: 0
-  blackoutDuration: 2
-  minIntervalSeconds: 15
-  maxIntervalSeconds: 35
-  flickerBeforeBlackout: 1
   audioSource: {fileID: 0}
   glitchSound: {fileID: 0}
+  restoreSound: {fileID: 0}
 --- !u!1001 &1374358608
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -306103,18 +306056,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 279eb1efe3fe06c499c35300cd2fef72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lampLight: {fileID: 381006113}
-  bolaPijarObject: {fileID: 1450962537}
-  normalIntensity: 3
+  anomalyMode: 0
+  stayUntilRestored: 0
+  minFlickerSpeed: 0.2
+  maxFlickerSpeed: 0.45
+  flickerBeforeBlackout: 1
   emissionColor: {r: 0.57254905, g: 0, b: 0, a: 1}
   normalEmissionGlow: 2
-  enableAutoAnomaly: 0
-  blackoutDuration: 2
-  minIntervalSeconds: 15
-  maxIntervalSeconds: 35
-  flickerBeforeBlackout: 1
   audioSource: {fileID: 0}
   glitchSound: {fileID: 0}
+  restoreSound: {fileID: 0}
 --- !u!1001 &1421796290
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -318481,18 +318432,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 279eb1efe3fe06c499c35300cd2fef72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lampLight: {fileID: 1044790347}
-  bolaPijarObject: {fileID: 92380497}
-  normalIntensity: 3
+  anomalyMode: 0
+  stayUntilRestored: 0
+  minFlickerSpeed: 0.2
+  maxFlickerSpeed: 0.45
+  flickerBeforeBlackout: 1
   emissionColor: {r: 0.57254905, g: 0, b: 0, a: 1}
   normalEmissionGlow: 2
-  enableAutoAnomaly: 0
-  blackoutDuration: 2
-  minIntervalSeconds: 15
-  maxIntervalSeconds: 35
-  flickerBeforeBlackout: 1
   audioSource: {fileID: 0}
   glitchSound: {fileID: 0}
+  restoreSound: {fileID: 0}
 --- !u!1001 &1471987575
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -330888,18 +330837,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 279eb1efe3fe06c499c35300cd2fef72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lampLight: {fileID: 1461609277}
-  bolaPijarObject: {fileID: 692882768}
-  normalIntensity: 3
+  anomalyMode: 0
+  stayUntilRestored: 0
+  minFlickerSpeed: 0.2
+  maxFlickerSpeed: 0.45
+  flickerBeforeBlackout: 1
   emissionColor: {r: 0.57254905, g: 0, b: 0, a: 1}
   normalEmissionGlow: 2
-  enableAutoAnomaly: 0
-  blackoutDuration: 2
-  minIntervalSeconds: 15
-  maxIntervalSeconds: 35
-  flickerBeforeBlackout: 1
   audioSource: {fileID: 0}
   glitchSound: {fileID: 0}
+  restoreSound: {fileID: 0}
 --- !u!1001 &1533432374
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -383743,18 +383690,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 279eb1efe3fe06c499c35300cd2fef72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lampLight: {fileID: 1876444523}
-  bolaPijarObject: {fileID: 116684332}
-  normalIntensity: 3
+  anomalyMode: 0
+  stayUntilRestored: 0
+  minFlickerSpeed: 0.2
+  maxFlickerSpeed: 0.45
+  flickerBeforeBlackout: 1
   emissionColor: {r: 0.57254905, g: 0, b: 0, a: 1}
   normalEmissionGlow: 2
-  enableAutoAnomaly: 0
-  blackoutDuration: 2
-  minIntervalSeconds: 15
-  maxIntervalSeconds: 35
-  flickerBeforeBlackout: 1
   audioSource: {fileID: 0}
   glitchSound: {fileID: 0}
+  restoreSound: {fileID: 0}
 --- !u!1001 &1817458933
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -398496,18 +398441,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 279eb1efe3fe06c499c35300cd2fef72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lampLight: {fileID: 1507843521}
-  bolaPijarObject: {fileID: 893665102}
-  normalIntensity: 3
+  anomalyMode: 0
+  stayUntilRestored: 0
+  minFlickerSpeed: 0.2
+  maxFlickerSpeed: 0.45
+  flickerBeforeBlackout: 1
   emissionColor: {r: 0.57254905, g: 0, b: 0, a: 1}
   normalEmissionGlow: 2
-  enableAutoAnomaly: 0
-  blackoutDuration: 2
-  minIntervalSeconds: 15
-  maxIntervalSeconds: 35
-  flickerBeforeBlackout: 1
   audioSource: {fileID: 0}
   glitchSound: {fileID: 0}
+  restoreSound: {fileID: 0}
 --- !u!43 &1890550693
 Mesh:
   m_ObjectHideFlags: 0
@@ -402698,18 +402641,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 279eb1efe3fe06c499c35300cd2fef72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lampLight: {fileID: 186409566}
-  bolaPijarObject: {fileID: 1945604366}
-  normalIntensity: 3
+  anomalyMode: 0
+  stayUntilRestored: 0
+  minFlickerSpeed: 0.2
+  maxFlickerSpeed: 0.45
+  flickerBeforeBlackout: 1
   emissionColor: {r: 0.57254905, g: 0, b: 0, a: 1}
   normalEmissionGlow: 2
-  enableAutoAnomaly: 0
-  blackoutDuration: 2
-  minIntervalSeconds: 15
-  maxIntervalSeconds: 35
-  flickerBeforeBlackout: 1
   audioSource: {fileID: 0}
   glitchSound: {fileID: 0}
+  restoreSound: {fileID: 0}
 --- !u!1001 &1912672403
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -418319,18 +418260,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 279eb1efe3fe06c499c35300cd2fef72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lampLight: {fileID: 678559763}
-  bolaPijarObject: {fileID: 1061398475}
-  normalIntensity: 3
+  anomalyMode: 0
+  stayUntilRestored: 0
+  minFlickerSpeed: 0.2
+  maxFlickerSpeed: 0.45
+  flickerBeforeBlackout: 1
   emissionColor: {r: 0.57254905, g: 0, b: 0, a: 1}
   normalEmissionGlow: 2
-  enableAutoAnomaly: 0
-  blackoutDuration: 2
-  minIntervalSeconds: 15
-  maxIntervalSeconds: 35
-  flickerBeforeBlackout: 1
   audioSource: {fileID: 0}
   glitchSound: {fileID: 0}
+  restoreSound: {fileID: 0}
 --- !u!43 &1984105110
 Mesh:
   m_ObjectHideFlags: 0
@@ -432217,18 +432156,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 279eb1efe3fe06c499c35300cd2fef72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lampLight: {fileID: 2060974189}
-  bolaPijarObject: {fileID: 1590503294}
-  normalIntensity: 3
+  anomalyMode: 0
+  stayUntilRestored: 0
+  minFlickerSpeed: 0.2
+  maxFlickerSpeed: 0.45
+  flickerBeforeBlackout: 1
   emissionColor: {r: 0.57254905, g: 0, b: 0, a: 1}
   normalEmissionGlow: 2
-  enableAutoAnomaly: 0
-  blackoutDuration: 2
-  minIntervalSeconds: 15
-  maxIntervalSeconds: 35
-  flickerBeforeBlackout: 1
   audioSource: {fileID: 0}
   glitchSound: {fileID: 0}
+  restoreSound: {fileID: 0}
 --- !u!43 &2048541489
 Mesh:
   m_ObjectHideFlags: 0
@@ -453902,6 +453839,18 @@ PrefabInstance:
       propertyPath: promptTextUI
       value: 
       objectReference: {fileID: 2022308026}
+    - target: {fileID: 3690877619375067702, guid: 06c5a4da16104064380456bafe2a025d, type: 3}
+      propertyPath: m_Intensity
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3690877619375067702, guid: 06c5a4da16104064380456bafe2a025d, type: 3}
+      propertyPath: m_SpotAngle
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 3690877619375067702, guid: 06c5a4da16104064380456bafe2a025d, type: 3}
+      propertyPath: m_InnerSpotAngle
+      value: 20
+      objectReference: {fileID: 0}
     - target: {fileID: 4815379759843248980, guid: 06c5a4da16104064380456bafe2a025d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.48
@@ -453995,6 +453944,16 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 06c5a4da16104064380456bafe2a025d, type: 3}
+--- !u!108 &7610039697142224043 stripped
+Light:
+  m_CorrespondingSourceObject: {fileID: 3690877619375067702, guid: 06c5a4da16104064380456bafe2a025d, type: 3}
+  m_PrefabInstance: {fileID: 7610039697142224042}
+  m_PrefabAsset: {fileID: 0}
+--- !u!20 &7610039697142224044 stripped
+Camera:
+  m_CorrespondingSourceObject: {fileID: 1850327050640136677, guid: 06c5a4da16104064380456bafe2a025d, type: 3}
+  m_PrefabInstance: {fileID: 7610039697142224042}
+  m_PrefabAsset: {fileID: 0}
 --- !u!65 &7706381062242262427
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -454327,18 +454286,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 279eb1efe3fe06c499c35300cd2fef72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lampLight: {fileID: 0}
-  bolaPijarObject: {fileID: 672809521421161442}
-  normalIntensity: 3
+  anomalyMode: 0
+  stayUntilRestored: 0
+  minFlickerSpeed: 0.2
+  maxFlickerSpeed: 0.45
+  flickerBeforeBlackout: 1
   emissionColor: {r: 0.57254905, g: 0, b: 0, a: 1}
   normalEmissionGlow: 2
-  enableAutoAnomaly: 1
-  blackoutDuration: 2
-  minIntervalSeconds: 15
-  maxIntervalSeconds: 35
-  flickerBeforeBlackout: 1
   audioSource: {fileID: 0}
   glitchSound: {fileID: 0}
+  restoreSound: {fileID: 0}
 --- !u!1 &9117435622596743961
 GameObject:
   m_ObjectHideFlags: 0
