@@ -1,28 +1,32 @@
 using UnityEngine;
-using UnityEngine.Events;
 
 /// <summary>
-/// Dipasang pada Objek Tugas (Rel Kereta / Lukisan Jatuh).
-/// Membuka Minigame Timing saat pemain menekan [E] membawa alat yang sesuai.
+/// Script Interaksi Minigame Timing (misal: Rel Rusak, Lukisan Jatuh, dll).
+/// - Memerlukan alat tertentu di tangan (misal: Hammer / Palu).
+/// - Membuka Minigame Timing saat pemain menekan [E].
+/// - Saat selesai: Mematikan objek rusak/jatuh dan mengaktifkan objek rapi (seperti sistem Screwdriver).
+/// - Tugas di TaskManager langsung tercoret [X].
 /// </summary>
 public class TimingTaskInteractable : MonoBehaviour, IInteractable
 {
     [Header("Task Settings")]
+    [Tooltip("Nama alat di sabuk yang dibutuhkan (misal: Hammer)")]
     [SerializeField] private string requiredItemName = "Hammer";
-    [SerializeField] private int requiredHits = 3; // Butuh 3x ketukan palu tepat
+
+    [Tooltip("Jumlah ketukan timing tepat yang dibutuhkan")]
+    [SerializeField] private int requiredHits = 3;
+
+    [Tooltip("ID Tugas di Notebook TAB (misal: FIX_RAIL atau FIX_FALLEN_PAINTING)")]
     [SerializeField] private string taskId = "FIX_RAIL";
 
-    [Header("Options After Completed")]
-    [SerializeField] private bool disableObjectOnComplete = false;
-    
-    [Tooltip("CENTANG jika ingin seluruh mesh objek anak berubah warna saat tugas selesai (Prototype)")]
-    [SerializeField] private bool changeColorOnComplete = false;
-    [SerializeField] private Color completedColor = Color.green;
+    [Header("Object Toggle Settings")]
+    [Tooltip("Objek rusak/jatuh di lantai yang akan DIMATIKAN saat selesai (Jika kosong, otomatis objek ini sendiri)")]
+    [SerializeField] private GameObject objectToDeactivate;
 
-    [Header("Custom Actions (Events)")]
-    public UnityEvent OnTaskCompleted;
+    [Tooltip("Objek rapi yang akan DIAKTIFKAN saat selesai (misal: lukisan rapi terpasang di dinding)")]
+    [SerializeField] private GameObject objectToActivate;
 
-    // Internal State Guard (Otomatis di balik layar)
+    // Internal State Guard
     private bool isCompleted = false;
 
     // --- IMPLEMENTASI INTERFACE IINTERACTABLE ---
@@ -75,55 +79,27 @@ public class TimingTaskInteractable : MonoBehaviour, IInteractable
         isCompleted = true;
         Debug.Log($"[TASK COMPLETED] Tugas '{gameObject.name}' Selesai via Minigame!");
 
-        // 🎨 1. UBAH WARNA MATERIAL SEMUA MESH (PROTOTYPE VISUAL)
-        if (changeColorOnComplete)
+        // 1. Matikan objek jatuh / rusak di lantai
+        if (objectToDeactivate != null)
         {
-            Renderer[] allRenderers = GetComponentsInChildren<Renderer>();
-            if (allRenderers != null && allRenderers.Length > 0)
-            {
-                foreach (Renderer r in allRenderers)
-                {
-                    if (r != null)
-                    {
-                        r.material.color = completedColor;
-                    }
-                }
-            }
+            objectToDeactivate.SetActive(false);
+        }
+        else
+        {
+            gameObject.SetActive(false);
         }
 
-        // 📋 2. LAPORKAN KE TASKMANAGER (Notebook TAB)
+        // 2. Aktifkan objek rapi / terpasang di dinding
+        if (objectToActivate != null)
+        {
+            objectToActivate.SetActive(true);
+        }
+
+        // 3. Laporkan ke TaskManager (Notebook TAB)
         if (!string.IsNullOrEmpty(taskId))
         {
             TaskManager taskMgr = FindObjectOfType<TaskManager>();
             if (taskMgr != null) taskMgr.CompleteTask(taskId);
         }
-
-        // ⚡ 3. EKSEKUSI EVENT CUSTOM (misal ResetRotationToZero)
-        OnTaskCompleted?.Invoke();
-
-        // 🚫 4. MATIKAN OBJEK JIKA DIPERLUKAN
-        if (disableObjectOnComplete)
-        {
-            gameObject.SetActive(false);
-        }
-    }
-
-    /// <summary>
-    /// Meluruskan rotasi objek ke (0,0,0) saat tugas selesai
-    /// </summary>
-    public void ResetRotationToZero()
-    {
-        transform.localRotation = Quaternion.Euler(Vector3.zero);
-        Debug.Log($"[ROTATE RESET] Rotasi '{gameObject.name}' diluruskan ke (0,0,0) via Minigame!");
-    }
-
-    /// <summary>
-    /// Mengembalikan posisi dan rotasi lukisan jatuh kembali ke (0,0,0) lokal dinding
-    /// </summary>
-    public void ResetTransformToZero()
-    {
-        transform.localPosition = Vector3.zero;
-        transform.localRotation = Quaternion.identity;
-        Debug.Log($"[TRANSFORM RESET] Posisi dan Rotasi '{gameObject.name}' di-reset ke dinding (0,0,0)!");
     }
 }

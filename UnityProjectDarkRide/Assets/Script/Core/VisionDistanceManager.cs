@@ -70,6 +70,21 @@ public class VisionDistanceManager : MonoBehaviour
         ApplyVisionSettings();
     }
 
+    private void OnEnable()
+    {
+        ApplyVisionSettings();
+    }
+
+    private void OnDisable()
+    {
+        // 💡 Saat skrip di-uncheck di Inspector: Matikan fog dan kembalikan ambient terang agar mudah edit objek!
+        RenderSettings.fog = false;
+        RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Flat;
+        RenderSettings.ambientLight = Color.white * 0.5f;
+        RenderSettings.ambientSkyColor = Color.white * 0.5f;
+        RenderSettings.ambientIntensity = 1.0f;
+    }
+
     private void Start()
     {
         AutoFindReferences();
