@@ -67,6 +67,7 @@ public class VisionDistanceManager : MonoBehaviour
     private void Awake()
     {
         if (_instance == null) _instance = this;
+        if (!enabled) return;
         ApplyVisionSettings();
     }
 
@@ -87,12 +88,15 @@ public class VisionDistanceManager : MonoBehaviour
 
     private void Start()
     {
+        if (!enabled) return;
         AutoFindReferences();
         ApplyVisionSettings();
     }
 
     private void Update()
     {
+        if (!enabled) return;
+
         if (Application.isPlaying)
         {
             if (playerFlashlight == null)
@@ -106,10 +110,21 @@ public class VisionDistanceManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Otomatis terpanggil saat kamu menggeser slider nilai di Inspector!
+    /// Otomatis terpanggil saat kamu menggeser slider nilai di Inspector atau ada perubahan scene!
     /// </summary>
     private void OnValidate()
     {
+        // 🛡️ Jika skrip di-uncheck: Pastikan fog tetap mati dan jangan terapkan kegelapan!
+        if (!enabled)
+        {
+            RenderSettings.fog = false;
+            RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Flat;
+            RenderSettings.ambientLight = Color.white * 0.5f;
+            RenderSettings.ambientSkyColor = Color.white * 0.5f;
+            RenderSettings.ambientIntensity = 1.0f;
+            return;
+        }
+
         if (fogStartDistance >= maxVisionDistance)
         {
             fogStartDistance = Mathf.Max(0.5f, maxVisionDistance - 2f);
@@ -155,6 +170,9 @@ public class VisionDistanceManager : MonoBehaviour
     /// </summary>
     public void ApplyVisionSettings()
     {
+        // 🛡️ Jangan terapkan setting jika skrip sedang di-uncheck (disabled)!
+        if (!enabled) return;
+
         // 1. TERAPKAN UNITY FOG (KABUT KEGELAPAN PEKAT)
         RenderSettings.fog = true;
         RenderSettings.fogColor = darknessColor;

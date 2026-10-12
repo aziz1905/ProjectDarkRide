@@ -19,7 +19,14 @@ public class HoldInteraction : MonoBehaviour, IInteractable
     [Tooltip("Isi dengan Task ID di Notebook TAB (misal: CLEAN_TRASH, FIX_PANEL, WIPE_MIRROR, FIX_RAIL)")]
     [SerializeField] private string taskId = "";
 
-    [Header("Options After Hold Completed")]
+    [Header("Object Toggle Settings (Sistem Ganti Objek)")]
+    [Tooltip("Objek rusak/miring yang akan DIMATIKAN saat selesai (Jika kosong, otomatis objek ini sendiri)")]
+    [SerializeField] private GameObject objectToDeactivate;
+
+    [Tooltip("Objek rapi yang akan DIAKTIFKAN saat selesai (misal: lukisan lurus di dinding)")]
+    [SerializeField] private GameObject objectToActivate;
+
+    [Header("Options After Hold Completed (Legacy / Opsional)")]
     [SerializeField] private bool disableObjectOnComplete = false;
     [SerializeField] private bool changeColorOnComplete = false;
     [SerializeField] private Color completedColor = Color.cyan;
@@ -108,9 +115,19 @@ public class HoldInteraction : MonoBehaviour, IInteractable
             }
         }
 
-        if (disableObjectOnComplete)
+        // 🔄 SISTEM TOGGLE OBJEK (Mati-Hidup)
+        if (objectToDeactivate != null)
+        {
+            objectToDeactivate.SetActive(false);
+        }
+        else if (disableObjectOnComplete || objectToActivate != null)
         {
             gameObject.SetActive(false);
+        }
+
+        if (objectToActivate != null)
+        {
+            objectToActivate.SetActive(true);
         }
     }
 
