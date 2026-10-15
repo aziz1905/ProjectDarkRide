@@ -8,12 +8,12 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: WoodenTree
-    second: {fileID: 2100000, guid: 9dc9f7c0e7dfd6040b9ea5dc3096f8c4, type: 2}
+    second: {fileID: 2100000, guid: 01676cf1093d95649ae53a9772511472, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: pine leaf diffuse
-    second: {fileID: 2100000, guid: 408994bff70cf53448880cd7373cd08a, type: 2}
+    second: {fileID: 2100000, guid: f85caa6666d0e5c43be2c793cf9bdcfc, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

@@ -3,7 +3,12 @@ guid: 17a7083161bfc83479163cc64b57adc8
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Aantiquesafe
+    second: {fileID: 2100000, guid: 07826eb11228f9541b23c5c619651a52, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
