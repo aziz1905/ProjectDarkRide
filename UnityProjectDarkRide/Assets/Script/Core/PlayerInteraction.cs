@@ -171,7 +171,6 @@ public class PlayerInteraction : MonoBehaviour
         {
             if (Input.GetKeyDown(activeKey))
             {
-                Debug.Log("[INTERACT SUCCESS] Interaksi berhasil pada: " + prompt);
                 currentInteractable.OnInteract();
             }
         }

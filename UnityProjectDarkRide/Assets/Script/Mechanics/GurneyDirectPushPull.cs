@@ -38,10 +38,6 @@ public class GurneyDirectPushPull : MonoBehaviour, IInteractable
     [Tooltip("CENTANG jika gurney otomatis merapikan posisi & rotasi saat sudah masuk area parkir")]
     [SerializeField] private bool autoSnapToPark = true;
 
-    [Header("Floor Alignment")]
-    [Tooltip("Layer tanah/lantai (Default: Everything)")]
-    [SerializeField] private LayerMask groundLayer = ~0;
-
     [Header("Audio (Opsional)")]
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private AudioClip wheelStepSFX;   // Suara roda berderit per dorongan klik
@@ -51,23 +47,11 @@ public class GurneyDirectPushPull : MonoBehaviour, IInteractable
     private bool isCleared = false;
     private bool isPlayerAimingAtThis = false;
     private float lastClickTime = -999f;
-    private float groundYOffset = 0f;
 
     private void Start()
     {
         if (audioSource == null)
             audioSource = GetComponent<AudioSource>();
-
-        // 🛡️ Hitung tinggi pivot gurney dari lantai (matikan SEMUA collider internal)
-        Collider[] allCols = GetComponentsInChildren<Collider>();
-        foreach (var c in allCols) c.enabled = false;
-
-        if (Physics.Raycast(transform.position + Vector3.up * 3.0f, Vector3.down, out RaycastHit hit, 15.0f, groundLayer))
-        {
-            groundYOffset = transform.position.y - hit.point.y;
-        }
-
-        foreach (var c in allCols) c.enabled = true;
     }
 
     private void Update()
@@ -104,19 +88,67 @@ public class GurneyDirectPushPull : MonoBehaviour, IInteractable
         if (Input.GetMouseButtonDown(0))
         {
             lastClickTime = Time.time;
-            StartCoroutine(StepMoveRoutine(horizontalForward));
+            if (activeStepRoutine != null) StopCoroutine(activeStepRoutine);
+            activeStepRoutine = StartCoroutine(StepMoveRoutine(horizontalForward));
         }
         // 🖱️ 1x KLIK KANAN = TARIK MUNDUR 1 LANGKAH
         else if (Input.GetMouseButtonDown(1))
         {
             lastClickTime = Time.time;
-            StartCoroutine(StepMoveRoutine(-horizontalForward));
+            if (activeStepRoutine != null) StopCoroutine(activeStepRoutine);
+            activeStepRoutine = StartCoroutine(StepMoveRoutine(-horizontalForward));
         }
     }
 
+    [Header("Obstacle Collision Settings")]
+    [Tooltip("Layer rintangan seperti Tembok, Bangunan, Prop padat")]
+    [SerializeField] private LayerMask obstacleLayer = ~0; // Default Everything
+    [Tooltip("Margin jarak pengaman dari tembok/objek")]
+    [SerializeField] private float collisionSkinWidth = 0.08f;
+
+    private Coroutine activeStepRoutine;
+
     private IEnumerator StepMoveRoutine(Vector3 direction)
     {
-        if (direction == Vector3.zero) yield break;
+        if (direction == Vector3.zero || isCleared) yield break;
+
+        Vector3 startPos = transform.position;
+        Bounds bounds = GetGurneyTotalBounds();
+        Vector3 halfExtents = (bounds.size * 0.5f) - Vector3.one * collisionSkinWidth;
+        halfExtents.x = Mathf.Max(halfExtents.x, 0.1f);
+        halfExtents.y = Mathf.Max(halfExtents.y, 0.1f);
+        halfExtents.z = Mathf.Max(halfExtents.z, 0.1f);
+
+        // Matikan sementara collider gurney sendiri agar BoxCast tidak mendeteksi diri sendiri
+        Collider[] allCols = GetComponentsInChildren<Collider>();
+        foreach (var c in allCols) c.enabled = false;
+
+        float maxAllowedMove = stepDistance;
+
+        // BoxCast dari titik tengah ranjang ke arah pergerakan
+        Vector3 boxCenter = bounds.center;
+        // Sedikit naikkan boxCenter agar tidak mendeteksi gundukan lantai/trotoar datar sebagai tembok
+        boxCenter.y += 0.1f;
+        halfExtents.y = Mathf.Max(0.1f, halfExtents.y - 0.15f);
+
+        if (Physics.BoxCast(boxCenter, halfExtents, direction, out RaycastHit hit, transform.rotation, stepDistance + collisionSkinWidth, obstacleLayer))
+        {
+            // Jangan anggap tanah/trotoar tempat berdiri sebagai obstacle
+            if (hit.collider != null && !hit.collider.isTrigger)
+            {
+                float distToObstacle = Mathf.Max(0f, hit.distance - collisionSkinWidth);
+                maxAllowedMove = Mathf.Min(maxAllowedMove, distToObstacle);
+            }
+        }
+
+        foreach (var c in allCols) c.enabled = true;
+
+        // Jika benar-benar terhalang (jarak gerak hampir 0), hentikan dorongan
+        if (maxAllowedMove <= 0.03f)
+        {
+            activeStepRoutine = null;
+            yield break;
+        }
 
         // SFX per dorongan klik
         if (audioSource != null && wheelStepSFX != null)
@@ -124,16 +156,15 @@ public class GurneyDirectPushPull : MonoBehaviour, IInteractable
             audioSource.PlayOneShot(wheelStepSFX);
         }
 
-        Vector3 startPos = transform.position;
-        Vector3 targetPos = startPos + (direction * stepDistance);
-
-        // 🛡️ Deteksi Ketinggian Lantai Baru (Tanpa Menembak Objek Sendiri)
-        float targetY = GetGroundYAt(targetPos);
-        targetPos.y = targetY;
+        Vector3 targetPos = startPos + (direction * maxAllowedMove);
+        // Pertahankan Y agar tetap rata horizontal tanpa raycast tanah berulang
+        targetPos.y = startPos.y;
 
         float elapsed = 0f;
         while (elapsed < stepDuration)
         {
+            if (isCleared) yield break; // JIKA SUDAH PARKIR, JANGAN GERAKKAN LAGI!
+
             elapsed += Time.deltaTime;
             float t = Mathf.Clamp01(elapsed / stepDuration);
             float smoothT = Mathf.SmoothStep(0f, 1f, t);
@@ -142,22 +173,11 @@ public class GurneyDirectPushPull : MonoBehaviour, IInteractable
             yield return null;
         }
 
-        transform.position = targetPos;
-    }
-
-    private float GetGroundYAt(Vector3 point)
-    {
-        Collider[] allCols = GetComponentsInChildren<Collider>();
-        foreach (var c in allCols) c.enabled = false;
-
-        float resultY = point.y;
-        if (Physics.Raycast(point + Vector3.up * 3.0f, Vector3.down, out RaycastHit hit, 15.0f, groundLayer))
+        if (!isCleared)
         {
-            resultY = hit.point.y + groundYOffset;
+            transform.position = targetPos;
         }
-
-        foreach (var c in allCols) c.enabled = true;
-        return resultY;
+        activeStepRoutine = null;
     }
 
     private void CheckTrackClearance()
@@ -166,23 +186,33 @@ public class GurneyDirectPushPull : MonoBehaviour, IInteractable
 
         if (targetParkingSpot != null)
         {
-            float distToParking = Vector3.Distance(transform.position, targetParkingSpot.position);
+            // 🎯 1. SENSOR SELURUH KOTAK BADAN GURNEY (COMPOUND BOUNDING BOX OUTLINE)
+            Bounds totalBounds = GetGurneyTotalBounds();
+            Vector3 closestEdgePoint = totalBounds.ClosestPoint(targetParkingSpot.position);
+
+            Vector2 edgeXZ = new Vector2(closestEdgePoint.x, closestEdgePoint.z);
+            Vector2 targetXZ = new Vector2(targetParkingSpot.position.x, targetParkingSpot.position.z);
+            float distToParking = Vector2.Distance(edgeXZ, targetXZ);
+
             if (distToParking <= parkingRadius)
             {
                 isCleared = true;
 
-                // 🎯 RAPIKAN KE KOORDINAT PARKIR XZ TARGET, TETAPI Y TETAP MENEMPEL PRESISI DI ATAS LANTAI!
+                if (activeStepRoutine != null)
+                {
+                    StopCoroutine(activeStepRoutine);
+                    activeStepRoutine = null;
+                }
+
+                // 🎯 2. RAPIKAN LANGSUNG KE POSISI TARGET:
+                // Menyamakan TITIK TENGAH KASUR (Center) tepat di atas target parkir!
                 if (autoSnapToPark)
                 {
-                    float currentGroundY = transform.position.y;
-                    Vector3 finalParkPos = new Vector3(targetParkingSpot.position.x, currentGroundY, targetParkingSpot.position.z);
-                    
-                    // Double check raycast lantai pada koordinat parkir akhir
-                    float floorY = GetGroundYAt(finalParkPos);
-                    finalParkPos.y = floorY;
-
-                    transform.position = finalParkPos;
+                    // Ambil titik tengah relatif lokal terhadap transform pivot
+                    Vector3 localCenter = transform.InverseTransformPoint(totalBounds.center);
                     transform.rotation = targetParkingSpot.rotation;
+                    // Kurangkan offset lokal yang sudah dirotasi sesuai rotasi target
+                    transform.position = targetParkingSpot.position - (transform.rotation * localCenter);
                 }
 
                 if (audioSource != null && parkSuccessSFX != null)
@@ -237,5 +267,55 @@ public class GurneyDirectPushPull : MonoBehaviour, IInteractable
 
     public void OnInteract()
     {
+    }
+
+    public Bounds GetGurneyTotalBounds()
+    {
+        Collider[] cols = GetComponentsInChildren<Collider>();
+        if (cols != null && cols.Length > 0)
+        {
+            Bounds b = cols[0].bounds;
+            for (int i = 1; i < cols.Length; i++)
+            {
+                b.Encapsulate(cols[i].bounds);
+            }
+            return b;
+        }
+
+        Renderer[] rens = GetComponentsInChildren<Renderer>();
+        if (rens != null && rens.Length > 0)
+        {
+            Bounds b = rens[0].bounds;
+            for (int i = 1; i < rens.Length; i++)
+            {
+                b.Encapsulate(rens[i].bounds);
+            }
+            return b;
+        }
+
+        return new Bounds(transform.position, Vector3.one);
+    }
+
+    public Vector3 GetGurneyCenterPoint()
+    {
+        return GetGurneyTotalBounds().center;
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (targetParkingSpot != null)
+        {
+            Bounds totalBounds = GetGurneyTotalBounds();
+            Vector3 edgePoint = totalBounds.ClosestPoint(targetParkingSpot.position);
+
+            Gizmos.color = isCleared ? Color.green : Color.yellow;
+            Gizmos.DrawWireSphere(targetParkingSpot.position, parkingRadius);
+            Gizmos.DrawLine(edgePoint, targetParkingSpot.position);
+            Gizmos.DrawWireSphere(edgePoint, 0.15f); // Titik terluar aktif yang paling dekat dengan target
+
+            // Gambar kotak garis pembungkus (Bounding Box Outline) ranjang Gurney
+            Gizmos.color = new Color(0f, 1f, 1f, 0.35f); // Biru muda transparan
+            Gizmos.DrawWireCube(totalBounds.center, totalBounds.size);
+        }
     }
 }

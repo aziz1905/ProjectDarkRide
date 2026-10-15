@@ -43,6 +43,10 @@ public class AmbientLampAnomaly : MonoBehaviour
     [SerializeField] private Color emissionColor = new Color(1f, 0.85f, 0.5f); // Kuning Warm
     [SerializeField] private float normalEmissionGlow = 2.5f;
 
+    [Header("Horror Creature Hook (Opsional)")]
+    [Tooltip("Drag 1 atau lebih objek RedEyesStareAnomaly (atau biarkan kosong jika objek mata ditaruh sebagai child, script akan otomatis mendeteksi SEMUANYA!)")]
+    [SerializeField] private RedEyesStareAnomaly[] redEyesAnomalies;
+
     [Header("Audio SFX (Opsional)")]
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private AudioClip glitchSound;
@@ -162,6 +166,9 @@ public class AmbientLampAnomaly : MonoBehaviour
             activeFlickerCoroutines.Add(r);
         }
 
+        // 👁️ MUNCULKAN SEMUA MATA MERAH JUGA JIKA MODE KEDIP AKTIF
+        TriggerAllRedEyes(stayUntilRestored ? 0f : duration);
+
         if (!stayUntilRestored)
         {
             yield return new WaitForSeconds(duration);
@@ -238,6 +245,9 @@ public class AmbientLampAnomaly : MonoBehaviour
             if (pair != null) SetPairState(pair, false, 0f, 0f);
         }
 
+        // 👁️ MUNCULKAN SEMUA PASANG MATA MERAH MENATAP DI KEGELAPAN (Anomali #1)
+        TriggerAllRedEyes(stayUntilRestored ? 0f : duration);
+
         if (!stayUntilRestored)
         {
             yield return new WaitForSeconds(duration);
@@ -249,7 +259,42 @@ public class AmbientLampAnomaly : MonoBehaviour
     {
         isAnomalyActive = false;
         StopAllActiveFlickers();
+
+        // 👁️ HILANGKAN SEMUA MATA MERAH KETIKA LAMPU MENYALA KEMBALI
+        StopAllRedEyes();
+
         StartCoroutine(PerformRestoreSequence(withSparkFlicker));
+    }
+
+    private void TriggerAllRedEyes(float duration)
+    {
+        if (redEyesAnomalies == null || redEyesAnomalies.Length == 0)
+        {
+            redEyesAnomalies = GetComponentsInChildren<RedEyesStareAnomaly>(true);
+            if (redEyesAnomalies == null || redEyesAnomalies.Length == 0)
+            {
+                redEyesAnomalies = FindObjectsOfType<RedEyesStareAnomaly>(true);
+            }
+        }
+
+        if (redEyesAnomalies != null)
+        {
+            foreach (var eye in redEyesAnomalies)
+            {
+                if (eye != null) eye.StartStare(duration);
+            }
+        }
+    }
+
+    private void StopAllRedEyes()
+    {
+        if (redEyesAnomalies != null)
+        {
+            foreach (var eye in redEyesAnomalies)
+            {
+                if (eye != null) eye.StopStare();
+            }
+        }
     }
 
     private IEnumerator PerformRestoreSequence(bool withSparkFlicker)

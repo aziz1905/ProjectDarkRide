@@ -34,7 +34,15 @@ public class LampRestoreTrigger : MonoBehaviour
     {
         if (hasTriggered && onlyTriggerOnce) return;
 
-        if (other.CompareTag("Player") || other.GetComponent<CharacterController>() != null || other.name.ToLower().Contains("player"))
+        bool isPlayerOrCart = other.CompareTag("Player") 
+            || other.GetComponentInParent<CharacterController>() != null 
+            || other.transform.root.CompareTag("Player")
+            || other.name.ToLower().Contains("player")
+            || other.transform.root.name.ToLower().Contains("player")
+            || other.name.ToLower().Contains("cart")
+            || other.name.ToLower().Contains("camera");
+
+        if (isPlayerOrCart)
         {
             hasTriggered = true;
 

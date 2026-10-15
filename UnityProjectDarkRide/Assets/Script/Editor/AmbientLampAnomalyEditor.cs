@@ -16,6 +16,7 @@ public class AmbientLampAnomalyEditor : Editor
     private SerializedProperty flickerBeforeBlackoutProp;
     private SerializedProperty emissionColorProp;
     private SerializedProperty normalEmissionGlowProp;
+    private SerializedProperty redEyesAnomaliesProp;
     private SerializedProperty audioSourceProp;
     private SerializedProperty glitchSoundProp;
     private SerializedProperty restoreSoundProp;
@@ -29,6 +30,7 @@ public class AmbientLampAnomalyEditor : Editor
         flickerBeforeBlackoutProp = serializedObject.FindProperty("flickerBeforeBlackout");
         emissionColorProp = serializedObject.FindProperty("emissionColor");
         normalEmissionGlowProp = serializedObject.FindProperty("normalEmissionGlow");
+        redEyesAnomaliesProp = serializedObject.FindProperty("redEyesAnomalies");
         audioSourceProp = serializedObject.FindProperty("audioSource");
         glitchSoundProp = serializedObject.FindProperty("glitchSound");
         restoreSoundProp = serializedObject.FindProperty("restoreSound");
@@ -71,7 +73,13 @@ public class AmbientLampAnomalyEditor : Editor
 
         EditorGUILayout.Space(8);
 
-        // 5. AUDIO SFX
+        // 5. HORROR CREATURE HOOK (ANOMALI MATA MERAH)
+        EditorGUILayout.LabelField("HORROR CREATURE HOOK (ANOMALI 1)", EditorStyles.boldLabel);
+        EditorGUILayout.PropertyField(redEyesAnomaliesProp, new GUIContent("Red Eyes List"), true);
+
+        EditorGUILayout.Space(8);
+
+        // 6. AUDIO SFX
         EditorGUILayout.LabelField("AUDIO SFX (OPSIONAL)", EditorStyles.boldLabel);
         EditorGUILayout.PropertyField(audioSourceProp, new GUIContent("Audio Source"));
         EditorGUILayout.PropertyField(glitchSoundProp, new GUIContent("Glitch Sound"));
