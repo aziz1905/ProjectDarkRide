@@ -3,7 +3,12 @@ guid: d2114c69137038e4fb415527867f99f5
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: OldMortuaryLocker
+    second: {fileID: 2100000, guid: 7b5721dda97e2d04cbe6878ec6bf0986, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
