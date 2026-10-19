@@ -24,6 +24,10 @@ public class FuseBoxController : MonoBehaviour, IInteractable
     [Tooltip("Isi dengan ID Tugas di TaskManager Notebook TAB (misal: FIX_FUSE / FIX_PANEL)")]
     [SerializeField] private string taskId = "FIX_FUSE";
 
+    [Header("Event Integrasi")]
+    [Tooltip("Event yang dipanggil seketika saat fuse berhasil diganti")]
+    public UnityEngine.Events.UnityEvent OnFuseReplaced;
+
     public bool IsFuseBroken => isFuseBroken;
     public bool IsSwitchOn => powerSwitch != null && powerSwitch.IsPowerOn;
 
@@ -102,6 +106,9 @@ public class FuseBoxController : MonoBehaviour, IInteractable
             TaskManager taskMgr = FindObjectOfType<TaskManager>();
             if (taskMgr != null) taskMgr.CompleteTask(taskId);
         }
+
+        // Panggil event (misal: memicu anomali patung elit di ruang panel)
+        OnFuseReplaced?.Invoke();
     }
 
     public void SetFuseBrokenState(bool broken) => isFuseBroken = broken;

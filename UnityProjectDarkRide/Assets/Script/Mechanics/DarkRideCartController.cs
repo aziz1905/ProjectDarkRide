@@ -58,7 +58,86 @@ public class DarkRideCartController : MonoBehaviour, IInteractable
     // Public Property untuk PlayerInteraction System & Cutscene Triggers
     public bool IsPlayerSeated => isPlayerSeated;
     public Transform HeadCartTransform => headCartTransform;
+    public Transform TailCartTransform => tailCartTransform;
     public Quaternion ForwardRotation => seatTransform != null ? seatTransform.rotation : (headCartTransform != null ? headCartTransform.rotation : transform.rotation);
+
+    public Vector3 GetRearPosition()
+    {
+        if (tailCartTransform != null) return tailCartTransform.position;
+        if (middleCartTransform != null) return middleCartTransform.position;
+        if (headCartTransform != null) return headCartTransform.position;
+        return transform.position;
+    }
+
+    public Vector3 GetForwardDirection()
+    {
+        return GetSplineForwardDirection();
+    }
+
+    public Vector3 GetSplineForwardDirection()
+    {
+        SplineContainer container = activeContainer != null ? activeContainer : (mainSpline != null ? mainSpline : stationSpline);
+        if (container == null)
+        {
+            AutoFindSplines();
+            container = activeContainer != null ? activeContainer : (mainSpline != null ? mainSpline : stationSpline);
+        }
+
+        if (container != null && container.Splines != null && container.Splines.Count > 0)
+        {
+            int sIndex = Mathf.Clamp(activeSplineIndex, 0, container.Splines.Count - 1);
+            if (sIndex < container.Splines.Count && container.Splines[sIndex] != null)
+            {
+                Vector3 tangent = (Vector3)container.EvaluateTangent(sIndex, currentNormalizedT);
+                tangent.y = 0f;
+                if (tangent.sqrMagnitude > 0.001f) return tangent.normalized;
+            }
+        }
+
+        if (headCartTransform != null) return headCartTransform.forward;
+        return transform.forward;
+    }
+
+    public Vector3 GetSplinePositionBehind(float distanceInMeters)
+    {
+        SplineContainer container = activeContainer != null ? activeContainer : (mainSpline != null ? mainSpline : stationSpline);
+        if (container == null)
+        {
+            AutoFindSplines();
+            container = activeContainer != null ? activeContainer : (mainSpline != null ? mainSpline : stationSpline);
+        }
+
+        if (container != null && container.Splines != null && container.Splines.Count > 0)
+        {
+            int sIndex = Mathf.Clamp(activeSplineIndex, 0, container.Splines.Count - 1);
+            ISpline spline = container.Splines[sIndex];
+            if (spline != null)
+            {
+                float len = GetSplineLength(spline, container);
+                if (len > 0.01f)
+                {
+                    float targetDist = (currentNormalizedT * len) - distanceInMeters;
+                    if (targetDist < 0f && sIndex > 0)
+                    {
+                        sIndex--;
+                        ISpline prevSpline = container.Splines[sIndex];
+                        if (prevSpline != null)
+                        {
+                            float prevLen = GetSplineLength(prevSpline, container);
+                            float t = Mathf.Clamp01(1f + (targetDist / prevLen));
+                            return (Vector3)container.EvaluatePosition(sIndex, t) + Vector3.up * verticalHeightOffset;
+                        }
+                    }
+                    else
+                    {
+                        float t = Mathf.Clamp01(targetDist / len);
+                        return (Vector3)container.EvaluatePosition(sIndex, t) + Vector3.up * verticalHeightOffset;
+                    }
+                }
+            }
+        }
+        return GetRearPosition() - (GetSplineForwardDirection() * distanceInMeters);
+    }
 
     // Internal State
     private bool isPlayerSeated = false;
@@ -138,10 +217,19 @@ public class DarkRideCartController : MonoBehaviour, IInteractable
         UpdateCarriagePositions();
     }
 
-    private float GetSplineLength(ISpline spline)
+    private float GetSplineLength(ISpline spline, SplineContainer container = null)
     {
         if (spline == null) return 10f;
-        float len = SplineUtility.CalculateLength(spline, activeContainer.transform.localToWorldMatrix);
+        SplineContainer targetContainer = container != null ? container : (activeContainer != null ? activeContainer : mainSpline);
+        if (targetContainer == null)
+        {
+            if (stationSpline != null) targetContainer = stationSpline;
+            else AutoFindSplines();
+            targetContainer = activeContainer != null ? activeContainer : (mainSpline != null ? mainSpline : stationSpline);
+        }
+
+        Matrix4x4 mat = targetContainer != null ? targetContainer.transform.localToWorldMatrix : transform.localToWorldMatrix;
+        float len = SplineUtility.CalculateLength(spline, mat);
         return Mathf.Max(0.5f, len);
     }
 
@@ -227,6 +315,47 @@ public class DarkRideCartController : MonoBehaviour, IInteractable
             maxSpeed = defaultMaxSpeed;
             isSpeedOverridden = false;
         }
+    }
+
+    /// <summary>
+    /// Memindahkan kereta ke titik spline rel terdekat dari sebuah target transform (misal: di depan pintu Ruang Panel).
+    /// </summary>
+    public void RepositionToTargetTransform(Transform targetSpot)
+    {
+        if (targetSpot == null) return;
+
+        SplineContainer container = mainSpline != null ? mainSpline : (activeContainer != null ? activeContainer : stationSpline);
+        if (container == null || container.Splines == null || container.Splines.Count == 0) return;
+
+        activeContainer = container;
+
+        float bestDist = float.MaxValue;
+        int bestSpline = 0;
+        float bestT = 0f;
+
+        // Cari titik rel terdekat ke targetSpot
+        for (int i = 0; i < container.Splines.Count; i++)
+        {
+            for (float t = 0f; t <= 1f; t += 0.005f)
+            {
+                Vector3 p = (Vector3)container.EvaluatePosition(i, t);
+                float d = Vector3.Distance(p, targetSpot.position);
+                if (d < bestDist)
+                {
+                    bestDist = d;
+                    bestSpline = i;
+                    bestT = t;
+                }
+            }
+        }
+
+        activeSplineIndex = bestSpline;
+        currentNormalizedT = bestT;
+        currentSpeed = 0f;
+        UpdateCarriagePositions();
+
+        if (frontHeadlight != null) frontHeadlight.enabled = true;
+        Debug.Log($"<color=cyan>[DarkRideCartController] Kereta berhasil diposisikan di depan ruang panel (Spline {bestSpline}, T: {bestT:F3})</color>");
     }
 
     private void UpdateCartMovement()
