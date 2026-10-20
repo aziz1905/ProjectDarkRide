@@ -740,7 +740,7 @@ public class MaskedStatueGalleryAnomaly : MonoBehaviour
                         if (lookAtDir.sqrMagnitude > 0.01f)
                         {
                             Quaternion headTurn = Quaternion.LookRotation(lookAtDir, Vector3.up) * Quaternion.Euler(0f, 180f, 0f);
-                            chaserTrans.rotation = Quaternion.Slerp(chaserTrans.rotation, headTurn, dt * 6f);
+                            chaserTrans.rotation = Quaternion.Slerp(chaserTrans.rotation, headTurn, dt * 12f);
                         }
 
                         // Selama masa jeda reaksi, patung TIDAK BERGERAK dan TIDAK BISA MENANGKAP PEMAIN!
@@ -751,51 +751,62 @@ public class MaskedStatueGalleryAnomaly : MonoBehaviour
                     chaser.activeChaseTime += dt;
 
                     // 2. JIKA SUDAH AKTIF BERLARI: Cek apakah berhasil menangkap target
-                    // PENTING: Deteksi tangkap harus mengukur jarak ke TUBUH/KURSI PEMAIN (bukan sekadar bemper belakang kereta)!
-                    // Ini mencegah efek "tiba-tiba flik jumpscare" padahal patung masih jauh di belakang kereta.
-                    if (chaseTimer > 2.5f && chaser.activeChaseTime > chaserCatchGracePeriod && horizontalDistToPlayer <= catchDistance && verticalDistToPlayer <= 2.2f)
+                    // PENTING: Untuk patung depan/ambush, grace period minimal agar langsung bisa menangkap saat menyergap kereta.
+                    // Jika player berada di kursi kereta, radius tangkap dibuat fleksibel (1.85m) agar tidak meleset saat patung melompat/naik ke kereta.
+                    float effectiveGracePeriod = chaser.isImmediateChaser ? chaserCatchGracePeriod : 0.05f;
+                    float effectiveCatchDistance = (darkRideCart != null && darkRideCart.IsPlayerSeated) ? Mathf.Max(catchDistance, 1.85f) : catchDistance;
+
+                    if (chaseTimer > 1.5f && chaser.activeChaseTime > effectiveGracePeriod && horizontalDistToPlayer <= effectiveCatchDistance && verticalDistToPlayer <= 2.5f)
                     {
                         CatchPlayer(chaser.chaserObject);
                         yield break;
                     }
 
-                    // 3. PEMISAHAN ANTAR PATUNG (Soft Repulsion & Hard Anti-Overlap) agar formasi ada jarak dan tidak numpuk
+                    // 3. PEMISAHAN ANTAR PATUNG (Khusus Pasukan Belakang / Gerombolan agar tidak bertumpuk)
                     Vector3 separation = Vector3.zero;
-                    for (int j = 0; j < chasers.Count; j++)
+                    if (chaser.isImmediateChaser)
                     {
-                        if (i == j) continue;
-                        var other = chasers[j];
-                        if (other == null || other.chaserObject == null || !other.chaserObject.activeSelf || !other.isAwakened) continue;
-
-                        // Jangan terpengaruh atau mempengaruhi patung yang masih dalam jeda bangun
-                        if (other.awakenTimer > 0f) continue;
-
-                        Vector3 diff = chaserPos - other.chaserObject.transform.position;
-                        diff.y = 0f;
-                        float distBetween = diff.magnitude;
-
-                        // 👥 HARD ANTI-OVERLAP: Jika jarak kurang dari 0.85m (badan saling menempel), saling tolak seketika agar tidak numpuk!
-                        if (distBetween < 0.85f && distBetween > 0.001f)
+                        for (int j = 0; j < chasers.Count; j++)
                         {
-                            float pushOut = 0.85f - distBetween;
-                            chaserPos += (diff / distBetween) * (pushOut * 0.5f);
-                        }
+                            if (i == j) continue;
+                            var other = chasers[j];
+                            if (other == null || other.chaserObject == null || !other.chaserObject.activeSelf || !other.isAwakened) continue;
 
-                        // 👥 SOFT SEPARATION: Jaga jarak radius 1.8m agar melebar organik seperti gerombolan
-                        if (distBetween > 0.05f && distBetween < 1.8f)
-                        {
-                            float strength = 1.0f - (distBetween / 1.8f);
-                            separation += diff.normalized * strength;
+                            // Jangan terpengaruh atau mempengaruhi patung yang masih dalam jeda bangun
+                            if (other.awakenTimer > 0f) continue;
+
+                            Vector3 diff = chaserPos - other.chaserObject.transform.position;
+                            diff.y = 0f;
+                            float distBetween = diff.magnitude;
+
+                            // 👥 HARD ANTI-OVERLAP: Jika jarak kurang dari 0.85m (badan saling menempel), saling tolak seketika agar tidak numpuk!
+                            if (distBetween < 0.85f && distBetween > 0.001f)
+                            {
+                                float pushOut = 0.85f - distBetween;
+                                chaserPos += (diff / distBetween) * (pushOut * 0.5f);
+                            }
+
+                            // 👥 SOFT SEPARATION: Jaga jarak radius 1.8m agar melebar organik seperti gerombolan
+                            if (distBetween > 0.05f && distBetween < 1.8f)
+                            {
+                                float strength = 1.0f - (distBetween / 1.8f);
+                                separation += diff.normalized * strength;
+                            }
                         }
+                        separation = Vector3.ClampMagnitude(separation, 1.2f);
                     }
-                    separation = Vector3.ClampMagnitude(separation, 1.2f);
 
                     // 4. LARI MENGEJAR TARGET & CEGAH MENEMBUS DINDING
-                    Vector3 moveDir = (horizontalToTarget.normalized + separation * 0.75f).normalized;
+                    // Patung Depan: Berlari lurus sesuai arah pandangannya mengincar pemain tanpa dibelokkan vektor separation
+                    Vector3 moveDir = chaser.isImmediateChaser 
+                        ? (horizontalToTarget.normalized + separation * 0.75f).normalized 
+                        : horizontalToTarget.normalized;
+
                     Vector3 desiredMove = moveDir * (chaseSpeed * dt);
                     float desiredDist = desiredMove.magnitude;
 
-                    // 🛡️ ANTI-PENETRASI DINDING: Deteksi dinding dengan CapsuleCast dan lakukan Wall Sliding
+                    // 🛡️ ANTI-PENETRASI DINDING: Deteksi dinding dengan CapsuleCastAll dan lakukan Wall Sliding
+                    // PENTING: Abaikan Kereta Wahana (DarkRideCartController) agar patung bebas menerobos/naik ke kereta dan tidak terdorong belok ke depan!
                     if (desiredDist > 0.0001f)
                     {
                         Vector3 moveDirection = desiredMove / desiredDist;
@@ -804,35 +815,55 @@ public class MaskedStatueGalleryAnomaly : MonoBehaviour
                         float bodyRadius = 0.32f;
                         int obstacleMask = ~LayerMask.GetMask("Ignore Raycast");
 
-                        if (Physics.CapsuleCast(capsuleBottom, capsuleTop, bodyRadius, moveDirection, out RaycastHit wallHit, desiredDist + 0.08f, obstacleMask, QueryTriggerInteraction.Ignore))
+                        RaycastHit[] wallHits = Physics.CapsuleCastAll(capsuleBottom, capsuleTop, bodyRadius, moveDirection, desiredDist + 0.08f, obstacleMask, QueryTriggerInteraction.Ignore);
+                        System.Array.Sort(wallHits, (a, b) => a.distance.CompareTo(b.distance));
+
+                        bool hitWall = false;
+                        RaycastHit solidWallHit = default;
+                        foreach (var hit in wallHits)
                         {
-                            if (!wallHit.collider.isTrigger && !wallHit.collider.transform.IsChildOf(chaserTrans) && Mathf.Abs(wallHit.normal.y) < 0.65f)
+                            if (hit.collider.isTrigger) continue;
+                            if (hit.collider.transform.IsChildOf(chaserTrans)) continue;
+                            if (hit.collider.GetComponentInParent<DarkRideCartController>() != null) continue; // Abaikan kereta wahana!
+                            if (Mathf.Abs(hit.normal.y) >= 0.65f) continue;
+
+                            solidWallHit = hit;
+                            hitWall = true;
+                            break;
+                        }
+
+                        if (hitWall)
+                        {
+                            Vector3 wallNormal = solidWallHit.normal;
+                            wallNormal.y = 0f;
+                            wallNormal.Normalize();
+
+                            Vector3 slideMove = Vector3.ProjectOnPlane(desiredMove, wallNormal);
+                            slideMove.y = 0f;
+
+                            if (slideMove.sqrMagnitude > 0.0001f)
                             {
-                                Vector3 wallNormal = wallHit.normal;
-                                wallNormal.y = 0f;
-                                wallNormal.Normalize();
+                                float slideDist = slideMove.magnitude;
+                                Vector3 slideDir = slideMove / slideDist;
 
-                                Vector3 slideMove = Vector3.ProjectOnPlane(desiredMove, wallNormal);
-                                slideMove.y = 0f;
+                                bool cornerBlocked = false;
+                                RaycastHit[] cornerHits = Physics.CapsuleCastAll(capsuleBottom, capsuleTop, bodyRadius, slideDir, slideDist + 0.05f, obstacleMask, QueryTriggerInteraction.Ignore);
+                                foreach (var cHit in cornerHits)
+                                {
+                                    if (cHit.collider.isTrigger) continue;
+                                    if (cHit.collider.transform.IsChildOf(chaserTrans)) continue;
+                                    if (cHit.collider.GetComponentInParent<DarkRideCartController>() != null) continue;
+                                    if (Mathf.Abs(cHit.normal.y) >= 0.65f) continue;
 
-                                if (slideMove.sqrMagnitude > 0.0001f)
-                                {
-                                    float slideDist = slideMove.magnitude;
-                                    Vector3 slideDir = slideMove / slideDist;
-                                    if (!Physics.CapsuleCast(capsuleBottom, capsuleTop, bodyRadius, slideDir, out RaycastHit cornerHit, slideDist + 0.05f, obstacleMask, QueryTriggerInteraction.Ignore)
-                                        || cornerHit.collider.isTrigger || cornerHit.collider.transform.IsChildOf(chaserTrans) || Mathf.Abs(cornerHit.normal.y) >= 0.65f)
-                                    {
-                                        desiredMove = slideMove;
-                                    }
-                                    else
-                                    {
-                                        desiredMove = Vector3.zero;
-                                    }
+                                    cornerBlocked = true;
+                                    break;
                                 }
-                                else
-                                {
-                                    desiredMove = Vector3.zero;
-                                }
+
+                                desiredMove = cornerBlocked ? Vector3.zero : slideMove;
+                            }
+                            else
+                            {
+                                desiredMove = Vector3.zero;
                             }
                         }
                     }
@@ -843,7 +874,7 @@ public class MaskedStatueGalleryAnomaly : MonoBehaviour
                         // Hadap ke arah pergerakan lari (jika jalan membelok, patung otomatis ikut belok)
                         // Dikompensasi 180 derajat karena orientasi model FBX menghadap ke belakang
                         Quaternion lookRot = Quaternion.LookRotation(actualMoveDir, Vector3.up) * Quaternion.Euler(0f, 180f, 0f);
-                        chaserTrans.rotation = Quaternion.Slerp(chaserTrans.rotation, lookRot, dt * 8f);
+                        chaserTrans.rotation = Quaternion.Slerp(chaserTrans.rotation, lookRot, dt * 12f);
                     }
 
                     Vector3 nextPos = chaserPos + desiredMove;
