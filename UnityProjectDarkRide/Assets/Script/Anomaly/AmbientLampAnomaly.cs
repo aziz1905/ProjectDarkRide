@@ -47,6 +47,9 @@ public class AmbientLampAnomaly : MonoBehaviour
     [Tooltip("Drag 1 atau lebih objek RedEyesStareAnomaly (atau biarkan kosong jika objek mata ditaruh sebagai child, script akan otomatis mendeteksi SEMUANYA!)")]
     [SerializeField] private RedEyesStareAnomaly[] redEyesAnomalies;
 
+    [Tooltip("Drag objek StalkingSkeletonAnomaly jika ada tengkorak yang mengejar saat lampu padam")]
+    [SerializeField] private StalkingSkeletonAnomaly stalkingSkeleton;
+
     [Header("Audio SFX (Opsional)")]
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private AudioClip glitchSound;
@@ -260,20 +263,36 @@ public class AmbientLampAnomaly : MonoBehaviour
         isAnomalyActive = false;
         StopAllActiveFlickers();
 
-        // 👁️ HILANGKAN SEMUA MATA MERAH KETIKA LAMPU MENYALA KEMBALI
+        // 👁️ HILANGKAN SEMUA MATA MERAH & TENGKORAK KETIKA LAMPU MENYALA KEMBALI
         StopAllRedEyes();
+        if (stalkingSkeleton != null) stalkingSkeleton.StopAnomaly(false);
 
         StartCoroutine(PerformRestoreSequence(withSparkFlicker));
     }
 
     private void TriggerAllRedEyes(float duration)
     {
+        if (stalkingSkeleton != null)
+        {
+            stalkingSkeleton.StartAnomaly();
+        }
+
         if (redEyesAnomalies == null || redEyesAnomalies.Length == 0)
         {
             redEyesAnomalies = GetComponentsInChildren<RedEyesStareAnomaly>(true);
             if (redEyesAnomalies == null || redEyesAnomalies.Length == 0)
             {
-                redEyesAnomalies = FindObjectsOfType<RedEyesStareAnomaly>(true);
+                var allEyes = FindObjectsOfType<RedEyesStareAnomaly>(true);
+                // Filter: Hanya ambil mata yang BUKAN merupakan child dari StalkingSkeletonAnomaly
+                var list = new System.Collections.Generic.List<RedEyesStareAnomaly>();
+                foreach (var eye in allEyes)
+                {
+                    if (eye.GetComponentInParent<StalkingSkeletonAnomaly>() == null)
+                    {
+                        list.Add(eye);
+                    }
+                }
+                redEyesAnomalies = list.ToArray();
             }
         }
 

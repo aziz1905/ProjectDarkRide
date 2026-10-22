@@ -17,6 +17,7 @@ public class AmbientLampAnomalyEditor : Editor
     private SerializedProperty emissionColorProp;
     private SerializedProperty normalEmissionGlowProp;
     private SerializedProperty redEyesAnomaliesProp;
+    private SerializedProperty stalkingSkeletonProp;
     private SerializedProperty audioSourceProp;
     private SerializedProperty glitchSoundProp;
     private SerializedProperty restoreSoundProp;
@@ -31,6 +32,7 @@ public class AmbientLampAnomalyEditor : Editor
         emissionColorProp = serializedObject.FindProperty("emissionColor");
         normalEmissionGlowProp = serializedObject.FindProperty("normalEmissionGlow");
         redEyesAnomaliesProp = serializedObject.FindProperty("redEyesAnomalies");
+        stalkingSkeletonProp = serializedObject.FindProperty("stalkingSkeleton");
         audioSourceProp = serializedObject.FindProperty("audioSource");
         glitchSoundProp = serializedObject.FindProperty("glitchSound");
         restoreSoundProp = serializedObject.FindProperty("restoreSound");
@@ -73,9 +75,10 @@ public class AmbientLampAnomalyEditor : Editor
 
         EditorGUILayout.Space(8);
 
-        // 5. HORROR CREATURE HOOK (ANOMALI MATA MERAH)
+        // 5. HORROR CREATURE HOOK (ANOMALI 1)
         EditorGUILayout.LabelField("HORROR CREATURE HOOK (ANOMALI 1)", EditorStyles.boldLabel);
         EditorGUILayout.PropertyField(redEyesAnomaliesProp, new GUIContent("Red Eyes List"), true);
+        EditorGUILayout.PropertyField(stalkingSkeletonProp, new GUIContent("Stalking Skeleton (Senter)"));
 
         EditorGUILayout.Space(8);
 

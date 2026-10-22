@@ -123,6 +123,12 @@ public class RedEyesStareAnomaly : MonoBehaviour
     /// </summary>
     public void StartStare(float duration = 0f)
     {
+        // Pastikan objek mata aktif di Hierarchy sebelum menjalankan Coroutine
+        if (!gameObject.activeSelf)
+        {
+            gameObject.SetActive(true);
+        }
+
         if (activeStareRoutine != null) StopCoroutine(activeStareRoutine);
         activeStareRoutine = StartCoroutine(StareRoutine(duration));
     }
