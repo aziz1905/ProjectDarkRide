@@ -10,6 +10,7 @@ using UnityEngine;
 /// 4. Berkedip sesekali (Blinking) untuk memberi kesan makhluk hidup yang mengintai.
 /// 5. Seketika lenyap saat lampu kuburan menyala kembali atau setelah durasi habis.
 /// 6. Auto-generate visual mata merah prosedural jika user tidak memasang model khusus.
+/// 7. Mendukung mode Head Socket (Day 4): Bola mata diam di soket tengkorak, hanya pupil/bola mata yang berputar di tempat mengikuti player!
 /// </summary>
 public class RedEyesStareAnomaly : MonoBehaviour
 {
@@ -32,8 +33,6 @@ public class RedEyesStareAnomaly : MonoBehaviour
     [ColorUsage(true, true)]
     [SerializeField] private Color eyeEmissionColor = new Color(3.5f, 0.05f, 0.05f);
 
-
-
     [Header("Behavior Settings")]
     [Tooltip("Kecepatan denyut pupil/cahaya mata")]
     [SerializeField] private float pulseSpeed = 2.5f;
@@ -43,6 +42,13 @@ public class RedEyesStareAnomaly : MonoBehaviour
 
     [Tooltip("Apakah mata sesekali berkedip memejam?")]
     [SerializeField] private bool enableBlink = true;
+
+    [Header("Head Socket Tracking (Khusus Kepala Tengkorak / Day 4)")]
+    [Tooltip("Jika TRUE: kedua bola mata tetap diam di soket tengkorak/kepala, dan hanya pupil/bola mata di tempatnya yang berputar mengikuti pemain. Tidak akan mengubah anomali mata merah standalone di Day 3.")]
+    [SerializeField] private bool headSocketMode = false;
+
+    [Tooltip("Kecepatan pupil melirik mengikuti target")]
+    [SerializeField] private float pupilTrackSpeed = 15f;
 
     [Header("Audio SFX (Opsional)")]
     [SerializeField] private AudioSource audioSource;
@@ -55,6 +61,18 @@ public class RedEyesStareAnomaly : MonoBehaviour
     private Coroutine activeBlinkRoutine;
     private bool isStaring = false;
     private Vector3 originalEyeScale;
+
+    public bool IsHeadSocketMode => headSocketMode;
+
+    /// <summary>
+    /// Mengaktifkan mode soket kepala (digunakan otomatis oleh StalkingSkeletonAnomaly)
+    /// </summary>
+    public void SetHeadSocketMode(bool enabled)
+    {
+        headSocketMode = enabled;
+        ResetPupilPosition(leftEye);
+        ResetPupilPosition(rightEye);
+    }
 
     private void Awake()
     {
@@ -72,6 +90,8 @@ public class RedEyesStareAnomaly : MonoBehaviour
         }
 
         SetupEyesIfNeeded();
+        ResetPupilPosition(leftEye);
+        ResetPupilPosition(rightEye);
         HideEyesInstant();
     }
 
@@ -88,24 +108,43 @@ public class RedEyesStareAnomaly : MonoBehaviour
         }
     }
 
+    private Transform GetActiveLookTarget()
+    {
+        if (Camera.main != null) return Camera.main.transform;
+        if (lookTarget != null) return lookTarget;
+        PlayerMovement pm = FindObjectOfType<PlayerMovement>();
+        if (pm != null) return pm.transform;
+        return null;
+    }
+
     private void Update()
     {
-        if (!isStaring) return;
+        // Lakukan tracking jika anomali sedang aktif ATAU jika mata terlihat di scene
+        bool eyesVisible = (leftEye != null && leftEye.gameObject.activeInHierarchy) ||
+                           (rightEye != null && rightEye.gameObject.activeInHierarchy);
 
-        // Cari target jika belum ada
-        if (lookTarget == null && Camera.main != null)
-        {
-            lookTarget = Camera.main.transform;
-        }
+        if (!isStaring && !eyesVisible) return;
 
-        // Tatap ke arah pemain
-        if (lookTarget != null)
+        Transform target = GetActiveLookTarget();
+        if (target != null)
         {
-            Vector3 targetDir = lookTarget.position - transform.position;
-            if (targetDir.sqrMagnitude > 0.001f)
+            if (!headSocketMode)
             {
-                Quaternion targetRot = Quaternion.LookRotation(targetDir.normalized);
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * 6f);
+                // Mode Standalone Mata Merah Melayang (Day 3): Rotasi transform root menghadap player
+                Vector3 targetDir = target.position - transform.position;
+                if (targetDir.sqrMagnitude > 0.001f)
+                {
+                    Quaternion targetRot = Quaternion.LookRotation(targetDir.normalized);
+                    transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * 6f);
+                }
+            }
+            else
+            {
+                // Mode Soket Tengkorak / Kepala (Day 4):
+                // Transform root & posisi bola mata DIAM 100% di soket kepala.
+                // Masing-masing bola mata berputar di porosnya sendiri sehingga pupil hitam di depannya mengunci tatapan ke player!
+                RotateEyeToPlayer(leftEye, target);
+                RotateEyeToPlayer(rightEye, target);
             }
         }
 
@@ -115,6 +154,30 @@ public class RedEyesStareAnomaly : MonoBehaviour
             float t = (Mathf.Sin(Time.time * pulseSpeed) + 1f) * 0.5f;
             float intensity = Mathf.Lerp(pulseIntensity.x, pulseIntensity.y, t);
             eyeMaterialInstance.SetColor(EmissionColorProp, eyeEmissionColor * intensity);
+        }
+    }
+
+    private void RotateEyeToPlayer(Transform eye, Transform target)
+    {
+        if (eye == null || target == null) return;
+
+        Vector3 toPlayer = target.position - eye.position;
+        if (toPlayer.sqrMagnitude < 0.001f) return;
+
+        // Bola mata berputar pada porosnya sendiri (posisinya di soket kepala tetap 100% diam)
+        Quaternion targetRot = Quaternion.LookRotation(toPlayer.normalized);
+        eye.rotation = Quaternion.Slerp(eye.rotation, targetRot, Time.deltaTime * pupilTrackSpeed);
+    }
+
+    private void ResetPupilPosition(Transform eye)
+    {
+        if (eye == null) return;
+        Transform pupil = eye.Find("BlackPupil");
+        if (pupil != null)
+        {
+            // Pastikan pupil berada di permukaan depan bola mata (+Z)
+            pupil.localPosition = new Vector3(0f, 0f, 0.45f);
+            pupil.localRotation = Quaternion.identity;
         }
     }
 
@@ -320,6 +383,9 @@ public class RedEyesStareAnomaly : MonoBehaviour
             }
         }
 
+        ResetPupilPosition(leftEye);
+        ResetPupilPosition(rightEye);
+
         if (leftEye != null)
         {
             originalEyeScale = leftEye.localScale;
@@ -350,7 +416,7 @@ public class RedEyesStareAnomaly : MonoBehaviour
         GameObject pupil = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         pupil.name = "BlackPupil";
         pupil.transform.SetParent(eyeTransform, false);
-        // Posisikan pupil sedikit menonjol di depan bola mata
+        // Posisikan pupil sedikit menonjol di depan bola mata (+Z)
         pupil.transform.localPosition = new Vector3(0f, 0f, 0.45f);
         pupil.transform.localScale = new Vector3(0.45f, 0.75f, 0.25f); // Sedikit pipih vertikal seperti pupil predator/kucing seram
 
